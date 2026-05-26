@@ -26,12 +26,11 @@ if (!$auth->isAuth()){
         <link rel="stylesheet" href="../../css/site_layout.css" type="text/css">
         <link rel="stylesheet" href="../../css/context_menu.css" type="text/css">
         <link rel="stylesheet" href="reports.css" type="text/css">
-        <link type="text/css" href="../../jquery/jquery-ui.min.css" rel="Stylesheet" />
+        <link type="text/css" href="../../jquery/3.7/jquery-ui.min.css" rel="Stylesheet" />
         <link rel="stylesheet" href="../../css/tree.css" type="text/css">
-         <!--<script src="../jquery/jquery-1.11.3.min.js" type="text/javascript"></script>-->
-		<script src="../../jquery/jquery-3.7.1.js" type="text/javascript"></script>
-		<script src="../../jquery/jquery-migrate-3.4.1.js" type="text/javascript"></script>
-        <script src="../../jquery/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="../../jquery/3.7/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="../../jquery/3.7/jquery-migrate-3.4.1.js" type="text/javascript"></script>
+        <script src="../../jquery/3.7/jquery-ui.min.js" type="text/javascript"></script>
         <script src="../../js/general_function.js" type="text/javascript"></script>
         <script src="reports.js" type="text/javascript"></script>
     </head>

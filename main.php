@@ -33,7 +33,7 @@ if ($auth->isAuth()&&$auth->getStationId() !== null){
         <link type="text/css" href="css/tooltip.css" rel="Stylesheet" />
 		<script src="jquery/3.7/jquery-3.7.1.min.js" type="text/javascript"></script>
         <script src="jquery/3.7/jquery-migrate-3.4.1.js" type="text/javascript"></script>
-        <script src="jquery/3.7/jquery-ui.js" type="text/javascript"></script>
+        <script src="jquery/3.7/jquery-ui.min.js" type="text/javascript"></script>
         <script src="js/tree.js"></script>
         <script src="js/general_function.js?ver=1"></script> <!-- Контекстная менюшка -->
         <script src="js/jquery.select.js"></script>
