@@ -34,7 +34,7 @@
                     minLength: 0,
                     menuMaxHeight:this.options.menuMaxHeight,
                     menuWidth:this.options.menuWidth,
-                    source: $.proxy( this, "_source" )
+                    source: this._source.bind( this )
                   })
                 .tooltip({
                     tooltipClass: "ui-state-highlight"
@@ -70,10 +70,8 @@
                 .tooltip()
                 .appendTo( this.wrapper )
                 .button({
-                    icons: {
-                        primary: "ui-icon-triangle-1-s"
-                    },
-                    text: false
+                    icon: "ui-icon-triangle-1-s",
+                    showLabel: false
                 })
                 .removeClass( "ui-corner-all" )
                 .addClass( "custom-combobox-toggle ui-corner-right" )
