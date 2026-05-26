@@ -31,12 +31,12 @@ if (!$auth->isAuthAdmin()){
         <meta charset="utf-8">
         <title>Внутренняя дислокация</title>
         <!--<script src="../jquery/jquery-1.11.3.min.js" type="text/javascript"></script>-->
-		<script src="../jquery/jquery-3.7.1.js" type="text/javascript"></script>
-		<script src="../jquery/jquery-migrate-3.4.1.js" type="text/javascript"></script>
-        <script src="../jquery/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="../jquery/3.7/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="../jquery/3.7/jquery-migrate-3.4.1.js" type="text/javascript"></script>
+        <script src="../jquery/3.7/jquery-ui.min.js" type="text/javascript"></script>
         
         <script src="../js/general_function.js" type="text/javascript"></script>
-        <link type="text/css" href="../jquery/jquery-ui.min.css" rel="Stylesheet" />
+        <link type="text/css" href="../jquery/3.7/jquery-ui.min.css" rel="Stylesheet" />
 
 		<link rel="stylesheet" href="../css/site_layout.css?ver=2" type="text/css">
         <link rel="stylesheet" href="../css/context_menu.css" type="text/css">
