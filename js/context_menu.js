@@ -82,24 +82,12 @@ function check_undefined (p_obj){
 	}
 }
 
-function get_server_current_time(){
-    var l_result;
-    $.ajax({
-        url: 'data.php',
-        type: 'POST',
-        dataType: "text",
-        async: false,
-        data: { ajax_action: 'get_current_time'
-        },
-        success: function (p_time) {
-            l_result = p_time;/*data;*/
-        },
-        error: function (data) {
-            l_result = 'fail';
-        }
-    });
-    
-    return l_result;
+async function get_server_current_time(){
+    try {
+        return await $.ajax({ url: 'data.php', type: 'POST', dataType: "text", data: { ajax_action: 'get_current_time' } });
+    } catch(e) {
+        return 'fail';
+    }
 }
 
 /*Убираем стандартное контекстное меню*/
@@ -768,22 +756,13 @@ function get_selected_objects_state(){
     return get_cars_state(mas);
 }
 /* Список контейнеров по конкретному вагону */
-function get_car_containers(p_car_number){
-    var l_car_conts=[];
-    $.ajax({
-        url: 'data.php',
-        type: 'POST',
-        dataType: "text",
-        async:false,
-        data: { car_number: p_car_number
-               ,ajax_action: 'get_car_containers'
-              },
-        success: function (data) {
-            l_car_conts = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
-    });
-    return l_car_conts;
+async function get_car_containers(p_car_number){
+    try {
+        return JSON.parse(await $.ajax({ url: 'data.php', type: 'POST', dataType: "text", data: { car_number: p_car_number, ajax_action: 'get_car_containers' } }));
+    } catch(e) {
+        window.alert(e);
+        return [];
+    }
 }
 
 /*функция определяет нужно ли выводить пункт "Принять"*/
@@ -983,84 +962,69 @@ function contextMenuAction1lvl(event,p_clicked_li) {
 }
 
 /*Создаем контексное меню 2-ого уровня для отправки на соседние станции*/
-function create_contect_menu_2lvl_change_cont_attr(p_x,p_y,p_clicked_li) {
+async function create_contect_menu_2lvl_change_cont_attr(p_x,p_y,p_clicked_li) {
     if ($('#context_menu_2lvl_change_cont_attr').length===0) {
-        $.ajax({
-            url: 'data.php',
-            type: 'POST',
-            dataType: "text",
-            async: false,
-            data:   { car_number: p_clicked_li.attr('data-id')
-                     ,ajax_action: 'get_car_containers'},
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    var ul = $('<ul/>');
-                    $.each(records, function( i, item ) {
-                        ul.append(
-                            $('<li/>')
-                            .css({'margin-left': (item.LVL-1)*10 + 'px'})
-                            .text(item.CONT_NUMBER)
-                            .attr('data-id',item.CONT_NUMBER)
-                            .attr('data-type','station')
-                        );
-                    });
-                    $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
-                    .attr('id','context_menu_2lvl_change_cont_attr')
-                    .css({                 
-                            left: p_x+'px', // Задаем позицию меню на X                 
-                            top: p_y+'px' // Задаем позицию меню по Y             
-                    })
-                    .appendTo('body') // Присоединяем наше меню к body документа: 
-                    .append(ul)
-                    .on('click',function(event){
-                        $('.context-menu').remove();
-                       create_md_change_cont_attr(p_clicked_li,$(event.target).attr('data-id'));
-                        //create_modal_dialog_send_to_station(event);
-                    })
-                    .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню     
-                }
-
-        });
+        try {
+            var data = await $.ajax({ url: 'data.php', type: 'POST', dataType: "text", data: { car_number: p_clicked_li.attr('data-id'), ajax_action: 'get_car_containers' } });
+            var records = JSON.parse(data);
+            var ul = $('<ul/>');
+            $.each(records, function( i, item ) {
+                ul.append(
+                    $('<li/>')
+                    .css({'margin-left': (item.LVL-1)*10 + 'px'})
+                    .text(item.CONT_NUMBER)
+                    .attr('data-id',item.CONT_NUMBER)
+                    .attr('data-type','station')
+                );
+            });
+            $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
+            .attr('id','context_menu_2lvl_change_cont_attr')
+            .css({
+                    left: p_x+'px', // Задаем позицию меню на X
+                    top: p_y+'px' // Задаем позицию меню по Y
+            })
+            .appendTo('body') // Присоединяем наше меню к body документа:
+            .append(ul)
+            .on('click',function(event){
+                $('.context-menu').remove();
+               create_md_change_cont_attr(p_clicked_li,$(event.target).attr('data-id'));
+                //create_modal_dialog_send_to_station(event);
+            })
+            .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню
+        } catch(e) {}
     }
 }
 
 /*Создаем контексное меню 2-ого уровня для отправки на соседние станции*/
-function create_contect_menu_2lvl_send_to_station(p_x,p_y) {
+async function create_contect_menu_2lvl_send_to_station(p_x,p_y) {
     if ($('#context_menu_2lvl_send_to_station').length===0) {
-        $.ajax({
-            url: 'data.php',
-            type: 'POST',
-            dataType: "text",
-            async: false,
-            data:   {ajax_action: 'getNextStations'},
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    var ul = $('<ul/>');
-                    $.each(records, function( i, item ) {
-                        ul.append(
-                            $('<li/>')
-                            .css({'margin-left': (item.LVL-1)*10 + 'px'})
-                            .text(item.NAME)
-                            .attr('data-id',item.ID)
-                            .attr('data-type','station')
-                        );
-                    });
-                    $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
-                    .attr('id','context_menu_2lvl_send_to_station')
-                    .css({                 
-                            left: p_x+'px', // Задаем позицию меню на X                 
-                            top: p_y+'px' // Задаем позицию меню по Y             
-                    })
-                    .appendTo('body') // Присоединяем наше меню к body документа: 
-                    .append(ul)
-                    .on('click',function(event){
-                        $('.context-menu').remove();
-                        create_modal_dialog_send_to_station(event);
-                    })
-                    .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню     
-                }
-
-        });
+        try {
+            var data = await $.ajax({ url: 'data.php', type: 'POST', dataType: "text", data: {ajax_action: 'getNextStations'} });
+            var records = JSON.parse(data);
+            var ul = $('<ul/>');
+            $.each(records, function( i, item ) {
+                ul.append(
+                    $('<li/>')
+                    .css({'margin-left': (item.LVL-1)*10 + 'px'})
+                    .text(item.NAME)
+                    .attr('data-id',item.ID)
+                    .attr('data-type','station')
+                );
+            });
+            $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
+            .attr('id','context_menu_2lvl_send_to_station')
+            .css({
+                    left: p_x+'px', // Задаем позицию меню на X
+                    top: p_y+'px' // Задаем позицию меню по Y
+            })
+            .appendTo('body') // Присоединяем наше меню к body документа:
+            .append(ul)
+            .on('click',function(event){
+                $('.context-menu').remove();
+                create_modal_dialog_send_to_station(event);
+            })
+            .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню
+        } catch(e) {}
     }
 }
 
@@ -1094,33 +1058,12 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
     var who_end_select = get_select_users_for_naliv_new();
     var who_zayavka_select = get_select_users_for_naliv_new();
     
-    function md_change_cars_weight_net_ajax(p_cars_with_weight,p_date_post,p_date_start,p_date_end,p_date_zayavka_uvod,p_date_uvod,p_who_looked,p_who_start,p_who_end,p_who_zayavka){
-        var res;
-        $.ajax({
-            url: 'data.php',
-            type: 'POST',
-            dataType: "text",
-            async: false,
-            data: { cars_with_weight: p_cars_with_weight     
-                   ,date_post: p_date_post           
-                   ,date_start: p_date_start           
-                   ,date_end: p_date_end             
-                   ,date_zayavka_uvod: p_date_zayavka_uvod     
-                   ,date_uvod: p_date_uvod            
-                   ,who_looked: p_who_looked           
-                   ,who_start: p_who_start            
-                   ,who_end: p_who_end              
-                   ,who_zayavka: p_who_zayavka           
-                   ,ajax_action: 'change_cars_weight_net'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
-            }
-        });
-        return res;
+    async function md_change_cars_weight_net_ajax(p_cars_with_weight,p_date_post,p_date_start,p_date_end,p_date_zayavka_uvod,p_date_uvod,p_who_looked,p_who_start,p_who_end,p_who_zayavka){
+        try {
+            return await $.ajax({ url: 'data.php', type: 'POST', dataType: "text", data: { cars_with_weight: p_cars_with_weight, date_post: p_date_post, date_start: p_date_start, date_end: p_date_end, date_zayavka_uvod: p_date_zayavka_uvod, date_uvod: p_date_uvod, who_looked: p_who_looked, who_start: p_who_start, who_end: p_who_end, who_zayavka: p_who_zayavka, ajax_action: 'change_cars_weight_net' } });
+        } catch(e) {
+            return 'fail';
+        }
     }
     function railcar_table_const_local(){
         var self = this;
