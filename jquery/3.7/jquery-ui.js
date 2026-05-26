@@ -5548,6 +5548,9 @@ $.widget( "ui.autocomplete", {
 		},
 		source: null,
 
+		menuMaxHeight: null, /*add KuchukbaevRF*/
+		menuWidth: null, /*add KuchukbaevRF*/
+
 		// Callbacks
 		change: null,
 		close: null,
@@ -5705,6 +5708,10 @@ $.widget( "ui.autocomplete", {
 
 		this._initSource();
 		this.menu = $( "<ul>" )
+			.css( { /*add KuchukbaevRF*/
+				"max-height": this.options.menuMaxHeight,
+				"overflow-y": this.options.menuMaxHeight ? "auto" : ""
+			} )
 			.appendTo( this._appendTo() )
 			.menu( {
 
@@ -6029,7 +6036,8 @@ $.widget( "ui.autocomplete", {
 			// Firefox wraps long text (possibly a rounding bug)
 			// so we add 1px to avoid the wrapping (#7513)
 			ul.width( "" ).outerWidth() + 1,
-			this.element.outerWidth()
+			this.element.outerWidth(),
+			this.options.menuWidth /*add KuchukbaevRF*/
 		) );
 	},
 
