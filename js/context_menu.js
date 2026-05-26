@@ -93,7 +93,7 @@ async function get_server_current_time(){
 /*Убираем стандартное контекстное меню*/
 document.oncontextmenu = function() {return false;}; 
 
-$(document).ready(function() {
+$(document).ready(async function() {
     var $accountButton = $("#accountButton");
     var $accountMenu = $("#dropdownMenu");
 
@@ -160,7 +160,7 @@ $(document).ready(function() {
     check_msg_to_users();
     
     /*для кнопки "Добавить номер вагона" меняем цвет фона*/
-    changeBackground();
+    await changeBackground();
     
 	
     /* Загрузка прав пользователя и всех справочников одним запросом */
@@ -805,7 +805,7 @@ function change_cont_count() {
 }
 
 /*Действие на нажатие кнопки контексного меню 1-ого уровня*/
-function contextMenuAction1lvl(event,p_clicked_li) {
+async function contextMenuAction1lvl(event,p_clicked_li) {
     var target = $(event.target);
     var action = target.attr('data-action');
 
@@ -813,7 +813,7 @@ function contextMenuAction1lvl(event,p_clicked_li) {
 		/* Вверх */
         case 'up':
             $('.context-menu').remove();
-            var res = changeOrderAjax(p_clicked_li,action);
+            var res = await changeOrderAjax(p_clicked_li,action);
             if (res === 'done') {
                     p_clicked_li.insertBefore(p_clicked_li.prev());
             }
@@ -821,13 +821,13 @@ function contextMenuAction1lvl(event,p_clicked_li) {
 		/* Вниз */ 
         case 'down':
             $('.context-menu').remove();
-            if (changeOrderAjax(p_clicked_li,action)==='done') {
+            if (await changeOrderAjax(p_clicked_li,action)==='done') {
                 p_clicked_li.insertAfter(p_clicked_li.next());
             }			
             break;
 		/* модальное окно "Переместить внутри станции" */
         case 'move':
-            create_modal_dialog_move_inside_station();
+            await create_modal_dialog_move_inside_station();
             break;
         /*Модальное окно "Принять вагоны"*/
 		case 'receivedIntoStation':
@@ -845,7 +845,7 @@ function contextMenuAction1lvl(event,p_clicked_li) {
         case 'sendToStation':
             $('.context-menu-2lvl').remove();
             /*Создаем контексное меню 2-ого уровня для отправки на соседние станции*/
-			create_contect_menu_2lvl_send_to_station(target.offset().left+target.innerWidth(),target.offset().top);	
+			await create_contect_menu_2lvl_send_to_station(target.offset().left+target.innerWidth(),target.offset().top);	
             break;
 		/*Модальное окно "Измененить атрибуты"*/
         case 'change_attr':
@@ -854,11 +854,11 @@ function contextMenuAction1lvl(event,p_clicked_li) {
         case 'change_cont_attr_in_car':
              $('.context-menu-2lvl').remove();
 			 /*Создаем контексное меню 2-ого уровня для отправки на соседние станции*/
-            create_contect_menu_2lvl_change_cont_attr(target.offset().left+target.innerWidth(),target.offset().top,p_clicked_li);	
+            await create_contect_menu_2lvl_change_cont_attr(target.offset().left+target.innerWidth(),target.offset().top,p_clicked_li);	
             break;
         /*Модальное окно "Измененить атрибы контейнера"*/
 		case 'change_cont_attr':
-            create_md_change_cont_attr(p_clicked_li,p_clicked_li.attr('data-id'));	
+            await create_md_change_cont_attr(p_clicked_li,p_clicked_li.attr('data-id'));	
             break;
 		/*Вывод из системы*/
         case 'send_from_ugl':
@@ -870,7 +870,7 @@ function contextMenuAction1lvl(event,p_clicked_li) {
             break;
 		/*Регистрация уведомлений*/
         case 'register_notification':
-            create_modal_dialog_notification();	
+            await create_modal_dialog_notification();	
             break;
 		/*Доб/убрать любимый путь*/
         case 'toggle_like_railway':
@@ -878,19 +878,19 @@ function contextMenuAction1lvl(event,p_clicked_li) {
             break;
 		/*Погрузка':'Разгрузка*/
         case 'change_cars_weight_net':
-            md_change_cars_weight_net_new(null, null);
+            await md_change_cars_weight_net_new(null, null);
             break;
 		/*Постановка платформы*/
         case 'change_pl_cars_weight_net':
-            md_change_cars_weight_net_new('platform',null);
+            await md_change_cars_weight_net_new('platform',null);
             break;
 		/*Ввод осмотра*/
         case 'enter_inspection':
-            create_md_inspections(p_clicked_li);//create_md_enter_inspection(p_clicked_li);	
+            await create_md_inspections(p_clicked_li);//create_md_enter_inspection(p_clicked_li);	
             break;
 		/* Установить ЗУ */
 		case 'enter_fix_device':
-            create_md_fix_device(p_clicked_li);
+            await create_md_fix_device(p_clicked_li);
             break;
 		/*Ввод осмотра нескольких вагонов*/
         case 'enter_inspection_for_few_cars':
@@ -914,7 +914,7 @@ function contextMenuAction1lvl(event,p_clicked_li) {
             break;
 		/*Результаты взвешиваний*/
         case 'weight_result':
-            create_md_weight_result(p_clicked_li);
+            await create_md_weight_result(p_clicked_li);
             break;
 		/*Переместить контейнера*/
         case 'move_cont':
@@ -926,7 +926,7 @@ function contextMenuAction1lvl(event,p_clicked_li) {
             break;
 		/*Регистрация уведомлений ГУ*/
         case 'register_notification_gu':
-            create_modal_dialog_notification_gu();	
+            await create_modal_dialog_notification_gu();	
             break;
 		/*Вывод. Вагон разобран*/
         case 'output_cars':
@@ -939,12 +939,12 @@ function contextMenuAction1lvl(event,p_clicked_li) {
 		/* Назначить ЗУ*/
         case 'add_fix_device':
             $('.context-menu-2lvl').remove();
-            create_contect_menu_2lvl_add_fix_device(p_clicked_li.attr('data-id'),target.offset().left+target.innerWidth(),target.offset().top);	
+            await create_contect_menu_2lvl_add_fix_device(p_clicked_li.attr('data-id'),target.offset().left+target.innerWidth(),target.offset().top);	
             break;
 		/*Снять закрепление ЗУ*/
 		case 'undock_fix_device':
             $('.context-menu-2lvl').remove();
-            create_contect_menu_2lvl_undock_fix_device(p_clicked_li.attr('data-id'),target.offset().left+target.innerWidth(),target.offset().top);	
+            await create_contect_menu_2lvl_undock_fix_device(p_clicked_li.attr('data-id'),target.offset().left+target.innerWidth(),target.offset().top);	
             break;
 		case 'processing_of_wagons':
             create_md_processing_of_wagons();
@@ -952,11 +952,11 @@ function contextMenuAction1lvl(event,p_clicked_li) {
 		/*Корректировка закреплений ЗУ*/
 		case 'update_fix_device':
             $('.context-menu-2lvl').remove();
-            create_contect_menu_2lvl_update_fix_device(p_clicked_li.attr('data-id'),target.offset().left+target.innerWidth(),target.offset().top);	
+            await create_contect_menu_2lvl_update_fix_device(p_clicked_li.attr('data-id'),target.offset().left+target.innerWidth(),target.offset().top);	
             break;
 		/*Погрузка:Разгрузка при перемещении(АКМ)*/
 		case 'change_cars_weight_net_akm': 
-			md_change_cars_weight_net_new(null,'un-loading-akm');
+			await md_change_cars_weight_net_new(null,'un-loading-akm');
             break;
     }
 }
@@ -985,9 +985,9 @@ async function create_contect_menu_2lvl_change_cont_attr(p_x,p_y,p_clicked_li) {
             })
             .appendTo('body') // Присоединяем наше меню к body документа:
             .append(ul)
-            .on('click',function(event){
+            .on('click',async function(event){
                 $('.context-menu').remove();
-               create_md_change_cont_attr(p_clicked_li,$(event.target).attr('data-id'));
+               await create_md_change_cont_attr(p_clicked_li,$(event.target).attr('data-id'));
                 //create_modal_dialog_send_to_station(event);
             })
             .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню
@@ -1019,9 +1019,9 @@ async function create_contect_menu_2lvl_send_to_station(p_x,p_y) {
             })
             .appendTo('body') // Присоединяем наше меню к body документа:
             .append(ul)
-            .on('click',function(event){
+            .on('click',async function(event){
                 $('.context-menu').remove();
-                create_modal_dialog_send_to_station(event);
+                await create_modal_dialog_send_to_station(event);
             })
             .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню
         } catch(e) {}
@@ -1039,7 +1039,7 @@ function get_select_users_for_naliv_new(){
     return result_select; 
 }
 
-function md_change_cars_weight_net_new(p_type, p_loading_subs){
+async function md_change_cars_weight_net_new(p_type, p_loading_subs){
 	//console.log('p_type = '+p_type+' p_loading_subs = '+p_loading_subs+' r_scale_type_1831_manual='+r_scale_type_1831_manual);
     var date_start_label = $('<label>');
     var date_end_label = $('<label>');
@@ -1392,50 +1392,50 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
 			tr.scales_type.triggerHandler('change');
         };
         
-        this.add_selected_cars_rows_for_table = function (p_objects,p_only_cars,p_loading_subs){
+        this.add_selected_cars_rows_for_table = async function (p_objects,p_only_cars,p_loading_subs){
 			/*console.log(p_objects);
 			console.log(p_only_cars);
 			console.log(p_loading_subs);*/
             var records = [];
-            $.ajax({
+            try {
+                var data = await $.ajax({
                 url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async: false,
                 data: { objects: p_objects
                        ,only_cars: p_only_cars
                        ,ajax_action: 'get_add_info_for_objects'
-                      },
-                success: function (data) {
-					//console.log(data);
-                    records = JSON.parse(data);
-
-                    records.forEach(function(item){
-                        if (item.EXISTS_POST!='Y' 
-								|| p_loading_subs == 'un-loading-akm' // Перемещение АКМ
-								){
-							
-                            self.add_cars_in_table(item.CAR_NUMBER,
-												   item.CONT_NUMBER,
-												   item.FREIGHT_NAME,
-												   ((item.WEIGHT_NET !== null) ? item.WEIGHT_NET : '0'),
-												   item.WEIGHT_DEP,
-												   item.WEIGHT_GROSS,
-												   item.ARRIVE_WEIGHT_NET,
-												   ((item.REFUSAL !== null) ? item.REFUSAL : ''),
-												   null,
-												   p_only_cars, 
-												   item.CAR_TONNAGE,
-												   item.ACCEPTED_WEIGHT,
-												   null,
-												   item.REFUSAL_AKM,
-                                                   0
-												   );
-                        }
-                    });            
-                },
-                error: function (m1,m2) {window.alert(m1+m2);}
+                      }
             });
+                //console.log(data);
+                                    records = JSON.parse(data);
+
+                                    records.forEach(async function(item){
+                                        if (item.EXISTS_POST!='Y' 
+                								|| p_loading_subs == 'un-loading-akm' // Перемещение АКМ
+                								){
+
+                                            self.await add_cars_in_table(item.CAR_NUMBER,
+                												   item.CONT_NUMBER,
+                												   item.FREIGHT_NAME,
+                												   ((item.WEIGHT_NET !== null) ? item.WEIGHT_NET : '0'),
+                												   item.WEIGHT_DEP,
+                												   item.WEIGHT_GROSS,
+                												   item.ARRIVE_WEIGHT_NET,
+                												   ((item.REFUSAL !== null) ? item.REFUSAL : ''),
+                												   null,
+                												   p_only_cars, 
+                												   item.CAR_TONNAGE,
+                												   item.ACCEPTED_WEIGHT,
+                												   null,
+                												   item.REFUSAL_AKM,
+                                                                   0
+                												   );
+                                        }
+                                    });
+            } catch(e) {
+                window.alert(e);
+            };
             
             return records;
         };
@@ -1693,61 +1693,55 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
         return result_select; 
     }
 	
-    function get_cont_out_date(p_conts){
+    async function get_cont_out_date(p_conts){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { conts: p_conts             
                    ,ajax_action: 'get_cont_out_date'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = '';
             }
         });
+            res = data;
+        } catch(e) {
+            res = '';
+        };
         return res;
     }
-    function get_railcar_in_date(p_cars){
+    async function get_railcar_in_date(p_cars){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { cars: p_cars             
                    ,ajax_action: 'get_railcar_in_date'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = '';
             }
         });
+            res = data;
+        } catch(e) {
+            res = '';
+        };
         return res;
     }
-    function get_move_cont_to_pl(p_cars){
+    async function get_move_cont_to_pl(p_cars){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { cars: p_cars             
                    ,ajax_action: 'get_move_cont_to_pl'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = '';
             }
         });
+            res = data;
+        } catch(e) {
+            res = '';
+        };
         return res;
     }
     
@@ -1831,7 +1825,7 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
         
     });
     
-    var l_selected_car_cont_mas = railcar_table.add_selected_cars_rows_for_table(l_selected_objects,(p_type === 'platform'?'1':'0'), p_loading_subs);
+    var l_selected_car_cont_mas = railcar_table.await add_selected_cars_rows_for_table(l_selected_objects,(p_type === 'platform'?'1':'0'), p_loading_subs);
     var l_selected_car_cont = [];
     l_selected_car_cont_mas.forEach(function(item){
         if (item.CONT_NUMBER != null){
@@ -1843,20 +1837,20 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
     railcar_table.mark_same_platform();
     //console.log('p_type='+(p_type === 'platform'?'1':'0'));
     var l_cars_from_shop=[];
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async:false,
         data: {return_type:(p_type === 'platform'?'1':'0'),
 			   loading_subs:p_loading_subs,
-               ajax_action: 'get_cars_from_shop'},
-        success: function (data) {
-			//console.log(data);
-            l_cars_from_shop = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+               ajax_action: 'get_cars_from_shop'}
     });
+        //console.log(data);
+                    l_cars_from_shop = JSON.parse(data);
+    } catch(e) {
+        window.alert(e);
+    };
     
     var l_cars_from_shop_mas =[];
     var l_prev_id = 0;
@@ -1916,16 +1910,16 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
     });
     
     if (l_conts_in_table != '') {
-        date_post_input.val(get_cont_out_date(l_conts_in_table));
+        date_post_input.val(await get_cont_out_date(l_conts_in_table));
     }
     if (l_platforms_in_table != ''){
-        var l_date = get_railcar_in_date(l_platforms_in_table);
+        var l_date = await get_railcar_in_date(l_platforms_in_table);
         date_post_input.val(l_date);
     }
     
     var l_init_val_date_end = '';
     
-    history_select.on('change',{p_cars:l_cars_from_shop_mas},function(e){
+    history_select.on('change',{p_cars:l_cars_from_shop_mas},async function(e){
         var l_history = e.data.p_cars[$(e.target).val()];
         
         date_post_input.val(l_history.date_post);
@@ -1944,8 +1938,8 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
         railcar_table.empty_table();
         var mas = [];
         var l_pl = '';
-        l_history.cars.forEach(function(item,i){
-            railcar_table.add_cars_in_table(
+        l_history.cars.forEach(async function(item,i){
+            railcar_table.await add_cars_in_table(
                 item.car_number,
                 item.cont_number,
                 (item.freight_name !== null) ? item.freight_name : '',
@@ -1970,7 +1964,7 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
         
         if (p_type === 'platform'){
             if (l_history.date_start == null){
-                date_start_input.val(get_move_cont_to_pl(l_pl)); 
+                date_start_input.val(await get_move_cont_to_pl(l_pl)); 
             } 
         } else{
             railcar_table.mark_same_platform();
@@ -1984,7 +1978,7 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
     var l_state = get_selected_objects_state();
     change_label_text(l_state, p_loading_subs);
     
-    var l_compare_date = get_server_current_time();
+    var l_compare_date = await get_server_current_time();
     var l_compare_date_from = add_day_to_date(l_compare_date,-30);
     var l_compare_date_to = add_day_to_date(l_compare_date,1);
     
@@ -2018,7 +2012,7 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
             'Сохранить':{
                 text: "Сохранить",
                   id: "md_save_btn",
-               click: function(){
+               click: async function(){
 						if (date_end_input.val() != ''){
 							
 							if (date_comparison(date_post_input.val(),date_end_input.val(),'>')){
@@ -2047,7 +2041,7 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
 							//console.log('l_cars='+l_cars);
 							
 							
-							var f_res = md_change_cars_weight_net_ajax(l_cars,date_post_input.val(),date_start_input.val(),date_end_input.val(),date_zayavka_uvod_input.val()
+							var f_res = await md_change_cars_weight_net_ajax(l_cars,date_post_input.val(),date_start_input.val(),date_end_input.val(),date_zayavka_uvod_input.val()
                                                               ,date_uvod_input.val(),who_looked_select.val(),who_start_select.val(),who_end_select.val()
                                                               ,who_zayavka_select.val()
                                                               );
@@ -2106,31 +2100,29 @@ function md_change_cars_weight_net_new(p_type, p_loading_subs){
     disable_save_btn();
 }
 
-function toggle_like_railway(p_clicked_li){
-    function toggle_like_railway_ajax(p_obj_id,p_obj_type){
+async function toggle_like_railway(p_clicked_li){
+    async function toggle_like_railway_ajax(p_obj_id,p_obj_type){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { obj_id: p_obj_id
                    ,obj_type: p_obj_type
                    ,ajax_action: 'toggle_like_railway'
-               },
-            success: function (data) {
-                    res = data;
-                },
-            error: function (data) {
-                    res = 'fail';
-                }
+               }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
     $('.context-menu').remove();
     
-    if (toggle_like_railway_ajax(p_clicked_li.attr('data-id'),p_clicked_li.attr('data-type'))==='done') {
+    if (await toggle_like_railway_ajax(p_clicked_li.attr('data-id'),p_clicked_li.attr('data-type'))==='done') {
         if (p_clicked_li.attr('data-id')=='railway'){
             p_clicked_li.children('div.tree_img').toggleClass('tree_img_like_railway');
         }else{
@@ -2178,12 +2170,12 @@ function railcar_table_const(){
     this.car_number_input = return_table.add_carnumber_input;
     
     return_table.add_carnumber_btn = $('<input>',{type:'button',css:{'font-size':'11px','height':'17px'}, class:'btnAdd'}).val('Добавить');
-    return_table.add_carnumber_btn.on('click', function(){
-        self.add_cars_in_table(null,true);
+    return_table.add_carnumber_btn.on('click', async function(){
+        self.await add_cars_in_table(null,true);
     });
-    return_table.add_carnumber_input.on('keypress', function(e){
+    return_table.add_carnumber_input.on('keypress', async function(e){
         if(e.keyCode===13){
-            self.add_cars_in_table(null,true);
+            self.await add_cars_in_table(null,true);
         }
     });
 
@@ -2320,7 +2312,7 @@ function railcar_table_const(){
 
     /*p_carnumber может быть просто номер вагона: когда добавляем вагон на форме по кнопке
       или же список номеров вагонов разделенных "|": вызывается при открытии формы*/
-    this.add_cars_in_table = function(p_car_number,p_need_check){
+    this.add_cars_in_table = async function(p_car_number,p_need_check){
         var add_car_number;
         if (p_car_number === null || p_car_number === '') {
             add_car_number = return_table.add_carnumber_input.val();
@@ -2334,54 +2326,53 @@ function railcar_table_const(){
         }
 
         if (check_car_number_result && add_car_number !== null && add_car_number !== '') {
-            $.ajax({
+            try {
+                var data = await $.ajax({
                 url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async: false,
                 data: { cars: add_car_number
                        ,ajax_action: 'get_add_info_for_cars'
-                      },
-                success: function (data) {
-					
-                    var records = JSON.parse(data);
-
-                    for(var i=0; i<records.length; i++) {
-                        self.cars_count++;
-                        var child = records[i];
-
-                        var tr = $('<tr/>');
-                        tr.append(
-                            $('<td>').append(
-                                $('<div>',{class:'up_image'}).on('click', function(){up_down_cars_table_tr('up',$(this).parent().parent());})
-                            )
-                        );
-                        tr.append(
-                            $('<td>').append(
-                                $('<div>',{class:'down_image'}).on('click', function(){up_down_cars_table_tr('down',$(this).parent().parent());})
-                            )
-                        );
-                        tr.append('<td>'+self.cars_count+'</td>');
-                        tr.append('<td>'+child.ID+'</td>');
-                        tr.append('<td>'+((child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '')+'</td>');
-                        tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
-                        tr.append('<td>'+((child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '')+'</td>');
-                        tr.append('<td>'+((child.WEIGHT_GROSS !== null) ? child.WEIGHT_GROSS.replace(',','.') : '')+'</td>');
-                        tr.append('<td>'+((child.CAR_LENGTH !== null) ? child.CAR_LENGTH.replace(',','.') : '')+'</td>');
-						tr.append('<td>'+((child.COND_LENGTH_TRAIN !== null) ? child.COND_LENGTH_TRAIN.replace(',','.') : '')+'</td>');
-                        tr.append(
-                            $('<td>').append(
-                                $('<div>',{class:'deleteImage deleteImage13px'}).on('click', function(){
-                                    del_cars_table_tr($(this).parent().parent());
-                                    change_cars_table_total_tr(); 
-                                })
-                            )
-                        );
-                        tr.appendTo(return_table.cars_table); 
-                    }
-                },
-                error: function (m1,m2) {window.alert(m1+m2);}
+                      }
             });
+                var records = JSON.parse(data);
+
+                                    for(var i=0; i<records.length; i++) {
+                                        self.cars_count++;
+                                        var child = records[i];
+
+                                        var tr = $('<tr/>');
+                                        tr.append(
+                                            $('<td>').append(
+                                                $('<div>',{class:'up_image'}).on('click', function(){up_down_cars_table_tr('up',$(this).parent().parent());})
+                                            )
+                                        );
+                                        tr.append(
+                                            $('<td>').append(
+                                                $('<div>',{class:'down_image'}).on('click', function(){up_down_cars_table_tr('down',$(this).parent().parent());})
+                                            )
+                                        );
+                                        tr.append('<td>'+self.cars_count+'</td>');
+                                        tr.append('<td>'+child.ID+'</td>');
+                                        tr.append('<td>'+((child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '')+'</td>');
+                                        tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
+                                        tr.append('<td>'+((child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '')+'</td>');
+                                        tr.append('<td>'+((child.WEIGHT_GROSS !== null) ? child.WEIGHT_GROSS.replace(',','.') : '')+'</td>');
+                                        tr.append('<td>'+((child.CAR_LENGTH !== null) ? child.CAR_LENGTH.replace(',','.') : '')+'</td>');
+                						tr.append('<td>'+((child.COND_LENGTH_TRAIN !== null) ? child.COND_LENGTH_TRAIN.replace(',','.') : '')+'</td>');
+                                        tr.append(
+                                            $('<td>').append(
+                                                $('<div>',{class:'deleteImage deleteImage13px'}).on('click', function(){
+                                                    del_cars_table_tr($(this).parent().parent());
+                                                    change_cars_table_total_tr(); 
+                                                })
+                                            )
+                                        );
+                                        tr.appendTo(return_table.cars_table); 
+                                    }
+            } catch(e) {
+                window.alert(e);
+            };
         }
         change_cars_table_total_tr();
     };
@@ -2429,12 +2420,12 @@ function cont_table_const(){
     this.number_input = return_table.add_number_input;
     
     return_table.add_number_btn = $('<input>',{type:'button',css:{'font-size':'11px','height':'17px'}, class:'btnAdd'}).val('Добавить');
-    return_table.add_number_btn.on('click', function(){
-        self.add_in_table(null,true);
+    return_table.add_number_btn.on('click', async function(){
+        self.await add_in_table(null,true);
     });
-    return_table.add_number_btn.on('keypress', function(e){
+    return_table.add_number_btn.on('keypress', async function(e){
         if(e.keyCode===13){
-            self.add_in_table(null,true);
+            self.await add_in_table(null,true);
         }
     });
 
@@ -2551,7 +2542,7 @@ function cont_table_const(){
 
     /*p_number может быть просто номер вагона: когда добавляем вагон на форме по кнопке
       или же список номеров вагонов разделенных "|": вызывается при открытии формы*/
-    this.add_in_table = function(p_number,p_need_check){
+    this.add_in_table = async function(p_number,p_need_check){
         var add_number;
         if (p_number === null || p_number === '') {
             add_number = return_table.add_number_input.val();
@@ -2565,50 +2556,50 @@ function cont_table_const(){
         }
 
         if (check_car_number_result && add_number !== null && add_number !== '') {
-            $.ajax({
+            try {
+                var data = await $.ajax({
                 url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async: false,
                 data: { conts: add_number
-                       ,ajax_action: 'get_add_info_for_conts'},
-                success: function (data) {
-                    var records = JSON.parse(data);
-
-                    for(var i=0; i<records.length; i++) {
-                        self.count++;
-                        var child = records[i];
-
-                        var tr = $('<tr/>');
-                        tr.append(
-                            $('<td>').append(
-                                $('<div>',{class:'up_image'}).on('click', function(){up_down_table_tr('up',$(this).parent().parent());})
-                            )
-                        );
-                        tr.append(
-                            $('<td>').append(
-                                $('<div>',{class:'down_image'}).on('click', function(){up_down_table_tr('down',$(this).parent().parent());})
-                            )
-                        );
-                        tr.append('<td>'+self.count+'</td>');
-                        tr.append('<td>'+child.ID+'</td>');
-                        tr.append('<td>'+((child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '')+'</td>');
-                        tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
-                        tr.append('<td>'+((child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '')+'</td>');
-                        tr.append('<td>'+((child.WEIGHT_GROSS !== null) ? child.WEIGHT_GROSS.replace(',','.') : '')+'</td>');
-                        tr.append(
-                            $('<td>').append(
-                                $('<div>',{class:'deleteImage deleteImage13px'}).on('click', function(){
-                                    del_table_tr($(this).parent().parent());
-                                    change_table_total_tr(); 
-                                })
-                            )
-                        );
-                        tr.appendTo(return_table.table); 
-                    }
-                },
-                error: function (m1,m2) {window.alert(m1+m2);}
+                       ,ajax_action: 'get_add_info_for_conts'}
             });
+                var records = JSON.parse(data);
+
+                                    for(var i=0; i<records.length; i++) {
+                                        self.count++;
+                                        var child = records[i];
+
+                                        var tr = $('<tr/>');
+                                        tr.append(
+                                            $('<td>').append(
+                                                $('<div>',{class:'up_image'}).on('click', function(){up_down_table_tr('up',$(this).parent().parent());})
+                                            )
+                                        );
+                                        tr.append(
+                                            $('<td>').append(
+                                                $('<div>',{class:'down_image'}).on('click', function(){up_down_table_tr('down',$(this).parent().parent());})
+                                            )
+                                        );
+                                        tr.append('<td>'+self.count+'</td>');
+                                        tr.append('<td>'+child.ID+'</td>');
+                                        tr.append('<td>'+((child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '')+'</td>');
+                                        tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
+                                        tr.append('<td>'+((child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '')+'</td>');
+                                        tr.append('<td>'+((child.WEIGHT_GROSS !== null) ? child.WEIGHT_GROSS.replace(',','.') : '')+'</td>');
+                                        tr.append(
+                                            $('<td>').append(
+                                                $('<div>',{class:'deleteImage deleteImage13px'}).on('click', function(){
+                                                    del_table_tr($(this).parent().parent());
+                                                    change_table_total_tr(); 
+                                                })
+                                            )
+                                        );
+                                        tr.appendTo(return_table.table); 
+                                    }
+            } catch(e) {
+                window.alert(e);
+            };
         }
         change_table_total_tr();
     };
@@ -2627,28 +2618,26 @@ function cont_table_const(){
 };
 
 /*Создание модального окна "Переместить внутри станции"*/
-function create_modal_dialog_move_inside_station(){
-    function move_inside_station_ajax(p_cars,p_new_parent_id,p_new_parent_type,p_operation_date,p_comment) {
+async function create_modal_dialog_move_inside_station(){
+    async function move_inside_station_ajax(p_cars,p_new_parent_id,p_new_parent_type,p_operation_date,p_comment) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { cars: p_cars
                    ,parent_id: p_new_parent_id
                    ,parent_type: p_new_parent_type
                    ,operation_date: p_operation_date
                    ,comment: p_comment
                    ,ajax_action: 'move_inside_station_few_child'
-               },
-            success: function (data) {
-                    res = data;
-                },
-            error: function (data) {
-                    res = 'fail';
-                }
+               }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     function get_selected_cars_rows_for_moved_table(){
@@ -2672,25 +2661,24 @@ function create_modal_dialog_move_inside_station(){
         });
         return res;
     }
-    function get_select_with_station_child(p_id,p_station_id){
+    async function get_select_with_station_child(p_id,p_station_id){
         var result = '<select id="'+p_id+'" class="required">';
         result+='<option value=""></option>';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {station_id: p_station_id 
                     ,ajax_action: 'get_all_station_child'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        result += '<option '+((item.DISABLED=='Y')?'disabled':'')+' style="'+('margin-left: '+(item.LVL-1)*10 + 'px')+'" data-id="'+item.ID
-                                 +'" data-type="'+item.TYPE+'" value="'+item.ID+'" '+'" data-cars_count="'+item.COUNT_RAILCARS+'" data-free_length="'+item.FREE_LENGTH+'">'+item.NAME+'</option>';
-                    }); 
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    result += '<option '+((item.DISABLED=='Y')?'disabled':'')+' style="'+('margin-left: '+(item.LVL-1)*10 + 'px')+'" data-id="'+item.ID
+                                             +'" data-type="'+item.TYPE+'" value="'+item.ID+'" '+'" data-cars_count="'+item.COUNT_RAILCARS+'" data-free_length="'+item.FREE_LENGTH+'">'+item.NAME+'</option>';
+                                });
+        } catch(e) { window.alert(e); };
         result += '</select>';
         return result;
     }
@@ -2728,20 +2716,18 @@ function create_modal_dialog_move_inside_station(){
     
     $('.context-menu').remove();
     
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: { ajax_action: 'get_current_time'
-        },
-        success: function (data) {
-            server_current_time = data;
-        },
-        error: function (data) {
-            server_current_time = 'fail';
         }
     });
+        server_current_time = data;
+    } catch(e) {
+        server_current_time = 'fail';
+    };
     
     // создаем div для отображения модального окна
     $('<div/>')
@@ -2785,7 +2771,7 @@ function create_modal_dialog_move_inside_station(){
                         '<div class="attr" style="border:none; width: 470px;">'+
                             '<div>'+
                                 '<label for="md_new_parent">Куда перемещаем</label>'+
-                                get_select_with_station_child('md_new_parent',$('#currentCarstree li[data-type="station"]').attr('data-id')) +
+                                await get_select_with_station_child('md_new_parent',$('#currentCarstree li[data-type="station"]').attr('data-id')) +
                             '</div>'+
                         '</div>'+
                     '</div>'+
@@ -2826,7 +2812,7 @@ function create_modal_dialog_move_inside_station(){
            );
     
     // инициализируем input с датой
-    var l_compare_date = get_server_current_time();
+    var l_compare_date = await get_server_current_time();
     var l_compare_date_from = add_day_to_date(l_compare_date,-30);
     var l_compare_date_to = add_day_to_date(l_compare_date,1);
     
@@ -2874,7 +2860,7 @@ function create_modal_dialog_move_inside_station(){
             'Переместить':{
                 text: "Переместить",
                   id: "md_moved_btn",
-               click: function(){
+               click: async function(){
                         if (check_open_period('2',$('#md_operation_date').val())=='0') {
                             create_info_modal_dialog_new('Оповещение','Для даты '+$('#md_operation_date').val()+' нет открытого периода! Переместить вагоны не возможно!');
                         }else{
@@ -2884,7 +2870,7 @@ function create_modal_dialog_move_inside_station(){
 
                             var new_parent = {'id':$('#md_new_parent > option:selected').attr('data-id'),'type':$('#md_new_parent > option:selected').attr('data-type')}
 
-                            if (move_inside_station_ajax(l_cars,new_parent.id,new_parent.type,$('#md_operation_date').val(),$('#md_comment').val())==='done') {
+                            if (await move_inside_station_ajax(l_cars,new_parent.id,new_parent.type,$('#md_operation_date').val(),$('#md_comment').val())==='done') {
                                 //Выбираем все элементы li с заданными аттрибутами внутри ul с заданным id и берем потомок ul
                                 var newParent = $('ul#cur_station li[data-id='+new_parent.id+'][data-type='+new_parent.type+']');
                                 var newParentCont = newParent.children('ul');
@@ -3174,19 +3160,19 @@ function get_select_locomotives_obj(){
 
 
 /*Действие на нажатие кнопки контексного меню 2-ого уровня: отправка вагонов на другую станцию*/
-function create_modal_dialog_send_to_station(event) {
+async function create_modal_dialog_send_to_station(event) {
     /*Изменяем предка на сервере*/
-    function send_to_station_ajax(p_cars,p_send_stat_id,p_dest_stat_id,p_send_date,p_arrival_date,p_reason,p_train_num
+    async function send_to_station_ajax(p_cars,p_send_stat_id,p_dest_stat_id,p_send_date,p_arrival_date,p_reason,p_train_num
                                  ,p_loco1_num,p_loco1_driver1,p_loco1_driver2,p_loco1_conductor
                                  ,p_loco2_num,p_loco2_driver1,p_loco2_driver2,p_loco2_conductor
                                  ,p_save_name) 
     {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { cars: p_cars
                    ,send_stat_id:p_send_stat_id
                    ,dest_stat_id:p_dest_stat_id
@@ -3204,14 +3190,12 @@ function create_modal_dialog_send_to_station(event) {
                    ,loco2_conductor:p_loco2_conductor
                    ,save_name:p_save_name
                    ,ajax_action: 'send_to_station_few_cars'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }   
     function get_selected_cars_rows(){
@@ -3281,20 +3265,18 @@ function create_modal_dialog_send_to_station(event) {
     }
     
     var server_current_time; 
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: { ajax_action: 'get_current_time'
-        },
-        success: function (data) {
-            server_current_time = data;
-        },
-        error: function (data) {
-            server_current_time = 'fail';
         }
     });
+        server_current_time = data;
+    } catch(e) {
+        server_current_time = 'fail';
+    };
     
     var target = $(event.target); // сохраняем элемент на который нажали (станция на которую отправляем) 
     
@@ -3329,15 +3311,15 @@ function create_modal_dialog_send_to_station(event) {
                             '<input id="md_save_send_to_station_form_inp" class="md_save_load" type="text" value="'+user_name.slice(0, user_name.indexOf(' '))+'_'+server_current_time+'" maxlength="30">'+
                         '</div>'+
                         '<div style="float: left; margin-left: 15px;">'+
-                            '<input id="md_load_send_to_station_form_btn" class="md_save_load" type="button" value="Загрузить" onclick="load_send_to_station_form_btn_action()"></br>'+
+                            '<input id="md_load_send_to_station_form_btn" class="md_save_load" type="button" value="Загрузить" onclick="await load_send_to_station_form_btn_action()"></br>'+
                             '<select id="md_load_send_to_station_form_sel" class="md_save_load">'+
-                                get_select_options_with_saved_send_to_station_forms()+
+                                await get_select_options_with_saved_send_to_station_forms()+
                             '</select>'+
                         '</div>'+
                         '<div style="float: left; margin-left: 15px;">'+
                             '<input id="md_del_send_to_station_form_btn" class="md_save_load" type="button" value="Очистить" onclick="del_send_to_station_form_btn_action()"></br>'+
                             '<select id="md_del_send_to_station_form_sel" class="md_save_load">'+
-                                get_select_options_with_saved_send_to_station_forms()+
+                                await get_select_options_with_saved_send_to_station_forms()+
                             '</select>'+
                         '</div>'+
                     '</div>'+
@@ -3493,7 +3475,7 @@ function create_modal_dialog_send_to_station(event) {
     /*end заполняем input с автозаполнением вагонов*/
     
     // инициализируем input с датой
-    var l_compare_date = get_server_current_time();
+    var l_compare_date = await get_server_current_time();
     var l_compare_date_from = add_day_to_date(l_compare_date,-30);
     var l_compare_date_to = add_hours_to_date(l_compare_date,2);
     
@@ -3532,7 +3514,7 @@ function create_modal_dialog_send_to_station(event) {
             'Отправить':{
                 text: "Отправить",
                   id: "md_sent_btn",
-               click: function(){
+               click: async function(){
                     if (user_station_id=='2' && target.attr('data-id') =='1' && check_open_period('1',$('#md_send_to_station_sending_time').val())=='0') {
                         create_info_modal_dialog_new('Оповещение','Для даты '+$('#md_send_to_station_sending_time').val()+' нет открытого периода! Отправить вагоны с данной датой не возможно!');
                     }else if ((user_station_id=='3' || target.attr('data-id') =='3') && check_open_period('2',$('#md_send_to_station_sending_time').val())=='0') {
@@ -3542,7 +3524,7 @@ function create_modal_dialog_send_to_station(event) {
                         var l_cars_mas = l_cars.split('$'); //создаем массив
                         l_cars_mas.pop(); //убираем последний элемент массива, т.к. он пустой
 
-                        if (send_to_station_ajax(l_cars,user_station_id,target.attr('data-id'),$('#md_send_to_station_sending_time').val(),$('#md_send_to_station_arrival_time').val()
+                        if (await send_to_station_ajax(l_cars,user_station_id,target.attr('data-id'),$('#md_send_to_station_sending_time').val(),$('#md_send_to_station_arrival_time').val()
                                                 ,$('#md_send_to_station_reason').val(),$('#md_send_to_station_train_num').val()
                                                 ,$('#md_send_to_station_loco1_num').val(),$('#md_send_to_station_loco1_driver1').val(),$('#md_send_to_station_loco1_driver2').val(),$('#md_send_to_station_loco1_conductor').val()        
                                                 ,$('#md_send_to_station_loco2_num').val(),$('#md_send_to_station_loco2_driver1').val(),$('#md_send_to_station_loco2_driver2').val(),$('#md_send_to_station_loco2_conductor').val()
@@ -3814,54 +3796,52 @@ function get_sent_cars_for_wagon_list(){
     return param;
 }
 // Возвращем части пути
-function get_railway_parts (p_railway_id,p_part_id){
+async function get_railway_parts (p_railway_id,p_part_id){
 	var l_params = {};
 	var records;
         l_params.railway_id = p_railway_id;
 		l_params.p_part_id = p_part_id;
-		$.ajax({
+		try {
+		    var data = await $.ajax({
 				url: 'data.php',
 				type: 'POST',
 				dataType: "text",
-				async: false,
 				data:   {params: JSON.stringify(l_params)
-						,ajax_action: 'get_railway_parts'},
-				success: function (data) {
-					records = JSON.parse(data);
-				}
+						,ajax_action: 'get_railway_parts'}
 		});
+		    records = JSON.parse(data);
+		} catch(e) { window.alert(e); };
 	return records;
 }
 
 
 // Возвращем название пути
-function get_railway_add_info (p_railway_id){
+async function get_railway_add_info (p_railway_id){
 	var records;
-		$.ajax({
+		try {
+		    var data = await $.ajax({
 				url: 'data.php',
 				type: 'POST',
 				dataType: "text",
-				async: false,
 				data:   {railway_id: p_railway_id
-						,ajax_action: 'get_railway_add_info'},
-				success: function (data) {
-					records = JSON.parse(data);	
-				}
+						,ajax_action: 'get_railway_add_info'}
 		});
+		    records = JSON.parse(data);
+		} catch(e) { window.alert(e); };
 	return records;
 }
 
 
-function save_send_to_station_form_btn_action(){
-    function save_send_to_station_form_ajax() 
+async function save_send_to_station_form_btn_action(){
+    async function save_send_to_station_form_ajax() 
     {
         var l_cars = get_sent_cars_for_wagon_list(); //сохраняем выбранные элементы
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: {
                  name: $('#md_save_send_to_station_form_inp').val() 
                 ,sending_time:$('#md_send_to_station_sending_time').val()
@@ -3878,228 +3858,219 @@ function save_send_to_station_form_btn_action(){
                 ,loco2_conductor:$('#md_send_to_station_loco2_conductor').val()
                 ,cars:l_cars
                 ,ajax_action: 'save_send_to_station_form'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
     $('#md_save_send_to_station_form_btn,#md_load_send_to_station_form_btn,#md_del_send_to_station_form_btn').removeClass('md_save_load_btn_done md_save_load_btn_fail');
     
-    if (save_send_to_station_form_ajax()==='done'){
+    if (await save_send_to_station_form_ajax()==='done'){
         $('#md_save_send_to_station_form_btn').addClass('md_save_load_btn_done');
         $('#md_load_send_to_station_form_sel,#md_del_send_to_station_form_sel').empty();
-        $('#md_load_send_to_station_form_sel,#md_del_send_to_station_form_sel').append(get_select_options_with_saved_send_to_station_forms());
+        $('#md_load_send_to_station_form_sel,#md_del_send_to_station_form_sel').append(await get_select_options_with_saved_send_to_station_forms());
     }else{
         $('#md_save_send_to_station_form_btn').addClass('md_save_load_btn_fail');
     }
 }
-function get_select_options_with_saved_send_to_station_forms(){
+async function get_select_options_with_saved_send_to_station_forms(){
     var result = '';
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: { ajax_action: 'get_saved_send_to_station_forms'
-              },
-        success: function (data) {
-            var saved_notifications = JSON.parse(data);
-            var options = '<option value="-1"></option>';
-            $.each(saved_notifications, function( i, item ) {
-                options += '<option value="'+item.NAME+'">'+item.NAME+'</option>';
-            });
-            result = options; 
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        var saved_notifications = JSON.parse(data);
+                    var options = '<option value="-1"></option>';
+                    $.each(saved_notifications, function( i, item ) {
+                        options += '<option value="'+item.NAME+'">'+item.NAME+'</option>';
+                    });
+                    result = options;
+    } catch(e) {
+        window.alert(e);
+    };
     return result;
 }
-function load_send_to_station_form_btn_action(){
+async function load_send_to_station_form_btn_action(){
     $('#md_save_send_to_station_form_btn,#md_load_send_to_station_form_btn,#md_del_send_to_station_form_btn').removeClass('md_save_load_btn_done md_save_load_btn_fail');
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: {name: $('#md_load_send_to_station_form_sel').val() 
               ,ajax_action: 'load_send_to_station_form'
-              },
-        success: function (data) {
-            try {
-                var l_save = JSON.parse(data);
-
-                if (l_save[0].CARS !== null){
-                    var l_cars = l_save[0].CARS.split('|');
-                    l_cars.pop();
-
-                    $('table#sent_cars_table > tbody > tr').remove();
-                    $.each(l_cars, function( i, item ) {
-                        add_car_in_sent_table(item);
-                    });
-                }
-                
-                $('#md_send_to_station_sending_time').val(l_save[0].SENDING_TIME);
-                $('#md_send_to_station_arrival_time').val(l_save[0].ARRIVAL_TIME);
-                $('#md_send_to_station_reason').val(l_save[0].REASON);
-                $('#md_send_to_station_train_num').val(l_save[0].TRAIN_NUM);
-                $('#md_send_to_station_loco1_num').val(l_save[0].LOCO1_NUM);
-                $('#md_send_to_station_loco1_driver1').val(l_save[0].LOCO1_DRIVER1);
-                $('#md_send_to_station_loco1_driver2').val(l_save[0].LOCO1_DRIVER2);
-                $('#md_send_to_station_loco1_conductor').val(l_save[0].LOCO1_CONDUCTOR);
-                $('#md_send_to_station_loco2_num').val(l_save[0].LOCO2_NUM);
-                $('#md_send_to_station_loco2_driver1').val(l_save[0].LOCO2_DRIVER1);
-                $('#md_send_to_station_loco2_driver2').val(l_save[0].LOCO2_DRIVER2);
-                $('#md_send_to_station_loco2_conductor').val(l_save[0].LOCO2_CONDUCTOR);
-
-                $('#md_save_send_to_station_form_inp').val($('#md_load_send_to_station_form_sel').val());
-                $('#md_load_send_to_station_form_sel').val('-1');
-
-                $('#md_load_send_to_station_form_btn').addClass('md_save_load_btn_done');
-                md_disable_send_btn();
-                
-            } catch(e){
-                $('#md_load_send_to_station_form_btn').addClass('md_save_load_btn_fail');
-            }
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        try {
+                        var l_save = JSON.parse(data);
+
+                        if (l_save[0].CARS !== null){
+                            var l_cars = l_save[0].CARS.split('|');
+                            l_cars.pop();
+
+                            $('table#sent_cars_table > tbody > tr').remove();
+                            $.each(l_cars, function( i, item ) {
+                                add_car_in_sent_table(item);
+                            });
+                        }
+
+                        $('#md_send_to_station_sending_time').val(l_save[0].SENDING_TIME);
+                        $('#md_send_to_station_arrival_time').val(l_save[0].ARRIVAL_TIME);
+                        $('#md_send_to_station_reason').val(l_save[0].REASON);
+                        $('#md_send_to_station_train_num').val(l_save[0].TRAIN_NUM);
+                        $('#md_send_to_station_loco1_num').val(l_save[0].LOCO1_NUM);
+                        $('#md_send_to_station_loco1_driver1').val(l_save[0].LOCO1_DRIVER1);
+                        $('#md_send_to_station_loco1_driver2').val(l_save[0].LOCO1_DRIVER2);
+                        $('#md_send_to_station_loco1_conductor').val(l_save[0].LOCO1_CONDUCTOR);
+                        $('#md_send_to_station_loco2_num').val(l_save[0].LOCO2_NUM);
+                        $('#md_send_to_station_loco2_driver1').val(l_save[0].LOCO2_DRIVER1);
+                        $('#md_send_to_station_loco2_driver2').val(l_save[0].LOCO2_DRIVER2);
+                        $('#md_send_to_station_loco2_conductor').val(l_save[0].LOCO2_CONDUCTOR);
+
+                        $('#md_save_send_to_station_form_inp').val($('#md_load_send_to_station_form_sel').val());
+                        $('#md_load_send_to_station_form_sel').val('-1');
+
+                        $('#md_load_send_to_station_form_btn').addClass('md_save_load_btn_done');
+                        md_disable_send_btn();
+
+                    } catch(e){
+                        $('#md_load_send_to_station_form_btn').addClass('md_save_load_btn_fail');
+                    }
+    } catch(e) {
+        window.alert(e);
+    };
 }
-function del_send_to_station_form_btn_action(){
-    function del_send_to_station_form_ajax() 
+async function del_send_to_station_form_btn_action(){
+    async function del_send_to_station_form_ajax() 
     {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: {
                  name: $('#md_del_send_to_station_form_sel').val() 
                 ,ajax_action: 'del_send_to_station_form'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
     $('#md_save_send_to_station_form_btn,#md_load_send_to_station_form_btn,#md_del_send_to_station_form_btn').removeClass('md_save_load_btn_done md_save_load_btn_fail');
     
-    if (del_send_to_station_form_ajax()==='done'){
+    if (await del_send_to_station_form_ajax()==='done'){
         $('#md_del_send_to_station_form_btn').addClass('md_save_load_btn_done');
         $('#md_load_send_to_station_form_sel,#md_del_send_to_station_form_sel').empty();
-        $('#md_load_send_to_station_form_sel,#md_del_send_to_station_form_sel').append(get_select_options_with_saved_send_to_station_forms());
+        $('#md_load_send_to_station_form_sel,#md_del_send_to_station_form_sel').append(await get_select_options_with_saved_send_to_station_forms());
     }else{
         $('#md_del_send_to_station_form_btn').addClass('md_save_load_btn_fail');
     }
 }
 
 /*Изменяем порядок на сервере*/
-function changeOrderAjax(p_elem,p_action) {
+async function changeOrderAjax(p_elem,p_action) {
 	var res;
-	$.ajax({
+	try {
+	    var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { id: p_elem.attr('data-id')
                    ,type: p_elem.attr('data-type')
                    ,action: p_action
                    ,ajax_action: 'change_order'
-                  },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
-            }
+                  }
 	});
+	    res = data;
+	} catch(e) {
+	    res = 'fail';
+	};
 	return res;
 }
 /*Создаем контексное меню 2-ого уровня для перемещения по уровням дерева*/
-function createContectMenu2lvl(addId,p_x,p_y) {
+async function createContectMenu2lvl(addId,p_x,p_y) {
     if ($('#context-menu-2lvl'+addId).length===0) {
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {station_id: $('#selectStation option:selected').val() 
                     ,ajax_action: 'get_all_station_child'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    var ul = $('<ul/>');
-                    $.each(records, function( i, item ) {
-                        ul.append($('<li/>')
-                                    .css({'margin-left': (item.LVL-1)*10 + 'px'})
-                                    .text(item.NAME)
-                                    .attr('data-id',item.ID)
-                                    .attr('data-type',item.TYPE)
-                                    .addClass(((item.DISABLED=='Y')?'disabled':''))
-                                    
-                                );
-                    });
-                    $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
-                    .attr('id','context-menu-2lvl'+addId)
-                    .css({                 
-                            left: p_x+'px', // Задаем позицию меню на X                 
-                            top: p_y+'px' // Задаем позицию меню по Y             
-                    })
-                    .appendTo('body') // Присоединяем наше меню к body документа: 
-                    .append(ul)
-                    .on('click',function(event){
-                        if (addId==='Move') {
-                            contextMenuAction2lvlMove(event);
-                        }
-                    })
-                    .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню     
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                var ul = $('<ul/>');
+                                $.each(records, function( i, item ) {
+                                    ul.append($('<li/>')
+                                                .css({'margin-left': (item.LVL-1)*10 + 'px'})
+                                                .text(item.NAME)
+                                                .attr('data-id',item.ID)
+                                                .attr('data-type',item.TYPE)
+                                                .addClass(((item.DISABLED=='Y')?'disabled':''))
+
+                                            );
+                                });
+                                $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
+                                .attr('id','context-menu-2lvl'+addId)
+                                .css({                 
+                                        left: p_x+'px', // Задаем позицию меню на X                 
+                                        top: p_y+'px' // Задаем позицию меню по Y             
+                                })
+                                .appendTo('body') // Присоединяем наше меню к body документа: 
+                                .append(ul)
+                                .on('click',function(event){
+                                    if (addId==='Move') {
+                                        contextMenuAction2lvlMove(event);
+                                    }
+                                })
+                                .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню
+        } catch(e) { window.alert(e); };
     }
 }
 
 /*Создаем модальное окно - добавление групп вагонов */
 function createModalDialogAddBandwagon() {
-    function addElemTreeAjax() {
-        $.ajax({
+    async function addElemTreeAjax() {
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { name: $('#modalDialogAddName').val()
                    ,parent_id: clickedLi.attr('data-id')
                    ,parent_type: clickedLi.attr('data-type')
                    ,ajax_action: 'addBandwagon'
-                  },
-            success: function (data) {
-                        if (data!=='0'){
-                            var li = $('<li/>');
-                            li.attr('data-id',data)
-                            li.attr('data-type','bandwagon');
-                            li.addClass('tree_Node tree_ExpandOpen');
-                            li.append('<div class="tree_Expand"></div><div class="tree_Content">'+$('#modalDialogAddName').val()+'</div>');
-                            li.append('<ul class="tree_Container"></ul>');
-                            var newParentCont = clickedLi.children('ul');
-                            li.appendTo(newParentCont);
-                        } else {
-                            window.alert('Ошибка при добавлении!!!');
-                        }
-                    },
-            error: function (m1,m2) {
-                        window.alert(m1+m2);
-                    }
+                  }
         });
+            if (data!=='0'){
+                                        var li = $('<li/>');
+                                        li.attr('data-id',data)
+                                        li.attr('data-type','bandwagon');
+                                        li.addClass('tree_Node tree_ExpandOpen');
+                                        li.append('<div class="tree_Expand"></div><div class="tree_Content">'+$('#modalDialogAddName').val()+'</div>');
+                                        li.append('<ul class="tree_Container"></ul>');
+                                        var newParentCont = clickedLi.children('ul');
+                                        li.appendTo(newParentCont);
+                                    } else {
+                                        window.alert('Ошибка при добавлении!!!');
+                                    }
+        } catch(e) {
+            window.alert(e);
+        };
     }
     $('#modalDialog').remove();
     $('.context-menu').remove();
@@ -4117,8 +4088,8 @@ function createModalDialogAddBandwagon() {
         width: 'auto',
         draggable: false,
         buttons:{
-            'Добавить': function(){
-                addElemTreeAjax();
+            'Добавить': async function(){
+                await addElemTreeAjax();
                 $(this).dialog( "close" );
             },
             'Закрыть': function(){
@@ -4133,27 +4104,25 @@ function createModalDialogAddBandwagon() {
 
 /*Создаем модальное окно - удаление групп вагонов */
 function createModalDialogDeleteBandwagon() {
-    function deleteElemTreeAjax() {
-        $.ajax({
+    async function deleteElemTreeAjax() {
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { id: clickedLi.attr('data-id')
                    ,type: clickedLi.attr('data-type')
                    ,ajax_action: 'deleteBandwagon'
-                  },
-            success: function (data) {
-                        if (data==='done'){
-                            $('li[data-id="' + clickedLi.attr('data-id')+'"][data-type="'+clickedLi.attr('data-type')+'"]').remove();
-                        } else {
-                            window.alert('Ошибка при удалении!!!');
-                        }
-                    },
-            error: function (m1,m2) {
-                        window.alert(m1+m2);
-                    }
+                  }
         });
+            if (data==='done'){
+                                        $('li[data-id="' + clickedLi.attr('data-id')+'"][data-type="'+clickedLi.attr('data-type')+'"]').remove();
+                                    } else {
+                                        window.alert('Ошибка при удалении!!!');
+                                    }
+        } catch(e) {
+            window.alert(e);
+        };
     }
     $('#modalDialog').remove();
     $('.context-menu').remove();
@@ -4170,8 +4139,8 @@ function createModalDialogDeleteBandwagon() {
             width: 'auto',
             draggable: false,
             buttons:{
-                'Да': function(){
-                    deleteElemTreeAjax();
+                'Да': async function(){
+                    await deleteElemTreeAjax();
                     $(this).dialog( "close" );
                 },
                 'Нет': function(){
@@ -4228,21 +4197,21 @@ function addInfo(data,ctrlKey) {
     //alert(data);
 	//console.log(data);
     var records = JSON.parse(data);
+    var tbody = $('table.addInfoTable > tbody');
     if (ctrlKey!==true){
-        $('table.addInfoTable tbody').empty();
+        tbody.empty();
     }
-    var table = $('table.addInfoTable');
 
     for(var i=0; i<records.length; i++) {
         var child = records[i];
-        if ($('table.addInfoTable tbody tr td:contains("'+child.ID+'")').length===0){
+        if (tbody.find('tr[data-wagon-id="'+child.ID+'"]').length===0){
 			var ClassFromUgl;
 			
 			if (child.INV_FROM_UGL === '1'){
 				ClassFromUgl = 'FromUgl';
 			}
 			
-            var tr = $('<tr/>');
+            var tr = $('<tr/>', {'data-wagon-id': child.ID});
             tr.append('<td>'+child.ID+'</td>');
             tr.append('<td>'+((child.CAR_TYPE !== null) ? child.CAR_TYPE : '')+'</td>'); 
             tr.append('<td>'+((child.STATUS !== null) ? child.STATUS : '')+'</td>'); 
@@ -4277,7 +4246,7 @@ function addInfo(data,ctrlKey) {
 				tr.addClass('blue_row');
 			}*/
 			tr.un_loading_subs = child.UN_LOADING_SUBS;
-            tr.appendTo(table);
+            tr.appendTo(tbody);
         }
     }
     changeTotalTr();
@@ -4285,13 +4254,13 @@ function addInfo(data,ctrlKey) {
 }
 
 function remAddInfo(clickedElem){
+    var tbody = $('table.addInfoTable > tbody');
     if (clickedElem.attr('data-type') === 'railcar'||clickedElem.attr('data-type') === 'cont') {
-        $('table.addInfoTable tbody tr td:contains("'+clickedElem.attr('data-id')+'")').parent('tr').remove();
+        tbody.find('tr[data-wagon-id="'+clickedElem.attr('data-id')+'"]').remove();
     }
-    
+
     clickedElem.find('li.tree_Node').each(function(){
-        $('table.addInfoTable tbody tr td:contains("'+$(this).attr('data-id')+'")').parent('tr').remove();
-        
+        tbody.find('tr[data-wagon-id="'+$(this).attr('data-id')+'"]').remove();
     });
     changeTotalTr();
 }
@@ -4302,8 +4271,8 @@ function clear_add_info(){
 }
 
 function changeTotalTr(){
-    var table = $('table.addInfoTable');
-    $('table.addInfoTable tbody tr#addInfoTableTotalTr').remove();
+    var tbody = $('table.addInfoTable > tbody');
+    $('table.addInfoTable > tbody tr#addInfoTableTotalTr').remove();
     if ($('table.addInfoTable tbody tr').length!==0) {
         var sum_weight_net = 0;
         var t = (($(this).text() !== '') ? $(this).text() : '0');
@@ -4335,7 +4304,7 @@ function changeTotalTr(){
         tr.append('<td></td>');
         tr.append('<td></td>');
         tr.append('<td></td>');
-        tr.appendTo(table);
+        tr.appendTo(tbody);
     }
 }
 
@@ -4355,25 +4324,23 @@ function create_md_send_from_ugl(){
 		return true;
 	}
 	
-    function sendFromUglAjax(elem) {
+    async function sendFromUglAjax(elem) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { id_type: elem
                    ,dateFact: $('#modalDialogDateFact').val()
                    ,comment: $('#modalDialogComment').val()
                    ,ajax_action: 'send_cars_from_ugl'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
@@ -4403,12 +4370,12 @@ function create_md_send_from_ugl(){
         modal:true,
         width: 'auto',
         buttons:{
-            'Отправить': function(){
+            'Отправить': async function(){
 				if (!checkRequired()) {
 					return;
 				}
 				else {
-					if (sendFromUglAjax(param)==='done') {
+					if (await sendFromUglAjax(param)==='done') {
 						params.forEach(function(item, i, arr) {
 							var items = item.split('|');
 							$('li[data-id="'+items[0]+'"][data-type="'+items[1]+'"]').remove();
@@ -4436,7 +4403,7 @@ function create_md_send_from_ugl(){
     }); 
 }
 
-function entry_foreign_railcar(){
+async function entry_foreign_railcar(){
     function return_foreign_elem(){
         var param = '';
         $('.entryRailcarTable > tbody > tr').each(function(){
@@ -4479,44 +4446,40 @@ function entry_foreign_railcar(){
         return result; 
     }
 
-    function entry_foreign_railcar_ajax(p_railcars) {
+    async function entry_foreign_railcar_ajax(p_railcars) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { railcars: p_railcars
                    ,date_fact: $('#modalDialogDateFact').val()
                    ,ajax_action: 'entry_foreign_railcar'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
     $('.context-menu').remove();
     
     var server_current_time; 
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: { ajax_action: 'get_current_time'
-        },
-        success: function (data) {
-            server_current_time = data;
-        },
-        error: function (data) {
-            server_current_time = 'fail';
         }
     });
+        server_current_time = data;
+    } catch(e) {
+        server_current_time = 'fail';
+    };
     
     // создаем div для отображения модального окна
     $('<div/>')
@@ -4746,12 +4709,12 @@ function entry_foreign_railcar(){
             'Сохранить': {
                 text:'Сохранить',
                 id:'md_entry_foreign_railcar_save_btn',
-                click: function(){
+                click: async function(){
                     var entry_elem = return_foreign_elem(); //сохраняем выбранные элементы
                     var entry_elem_mas = entry_elem.split('$'); //создаем массив
                     entry_elem_mas.pop(); //убираем последний элемент массива, т.к. он пустой
 
-                    var f_res = entry_foreign_railcar_ajax(entry_elem);
+                    var f_res = await entry_foreign_railcar_ajax(entry_elem);
                     var f_res_mas = f_res.split('$');
 
                     if (f_res_mas[0]==='done'){
@@ -4907,28 +4870,27 @@ function md_entry_foreign_railcar_disable_change_btn(){
 }
 
 /*Создание модального окна "Принять"*/
-function get_select_with_station_child(p_station_id){
+async function get_select_with_station_child(p_station_id){
     var result = $('<select>',{class:'required',css:{'width':'200px'}});
     result.append('<option val=""></option>');
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data:   {station_id: p_station_id 
                 ,ajax_action: 'get_all_station_child'
-                },
-        success: function (data) {
-                var records = JSON.parse(data);
-                $.each(records, function( i, item ) {
-                    result.append('<option '+((item.DISABLED=='Y')?'disabled':'')+' style="'+('margin-left: '+(item.LVL-1)*10 + 'px')+'" data-id="'+item.ID
-                             +'" data-type="'+item.TYPE+'" value="'+item.ID+'" data-cars_count="'+item.COUNT_RAILCARS+'" data-free_length="'+item.FREE_LENGTH+'">'+item.NAME+'</option>');
-                }); 
-            }
+                }
     });
+        var records = JSON.parse(data);
+                        $.each(records, function( i, item ) {
+                            result.append('<option '+((item.DISABLED=='Y')?'disabled':'')+' style="'+('margin-left: '+(item.LVL-1)*10 + 'px')+'" data-id="'+item.ID
+                                     +'" data-type="'+item.TYPE+'" value="'+item.ID+'" data-cars_count="'+item.COUNT_RAILCARS+'" data-free_length="'+item.FREE_LENGTH+'">'+item.NAME+'</option>');
+                        });
+    } catch(e) { window.alert(e); };
     return result;
 } 
-function create_md_received_into_station_new(){
+async function create_md_received_into_station_new(){
     function md_received_into_station_constr(){
         var self = this;
         
@@ -4942,7 +4904,7 @@ function create_md_received_into_station_new(){
             }
         }
         
-        this.show_window = function(){
+        this.show_window = async function(){
             $('.context-menu').remove();
             
             var md_div = $('<div/>')
@@ -4960,7 +4922,7 @@ function create_md_received_into_station_new(){
                             '</div>'+
                         '</div>'+
                         '<div class="attr" style="margin-left:14px; text-align:right; float:right">'+
-                            '<input disabled type="text" size="14" class="text ui-widget-content ui-corner-all" value="'+get_server_current_time()+'"></input><br>'+
+                            '<input disabled type="text" size="14" class="text ui-widget-content ui-corner-all" value="'+await get_server_current_time()+'"></input><br>'+
                             '<input disabled type="text" size="20" class="text ui-widget-content ui-corner-all" style="margin-top:5px;" value="'+user_name+'"></input>'+
                         '</div>'+
                     '</div>'
@@ -4985,7 +4947,7 @@ function create_md_received_into_station_new(){
                 )    
             );   
             
-            md_div.railway = get_select_with_station_child($('#currentCarstree li[data-type="station"]').attr('data-id'));
+            md_div.railway = await get_select_with_station_child($('#currentCarstree li[data-type="station"]').attr('data-id'));
             md_div.bef_after = $('<select>')
                 .append('<option value="before">перед</option>'+
                         '<option value="after" selected>после</option>');
@@ -5112,7 +5074,7 @@ function create_md_received_into_station_new(){
                 )
             );
 
-            railcar_table.add_cars_in_table(return_selected_cars(),false);
+            railcar_table.await add_cars_in_table(return_selected_cars(),false);
             
             var check_need_wagon_list = function (p_car_number){
                 if ($('#currentCarstree > li').attr('data-id')!='2'){
@@ -5136,19 +5098,19 @@ function create_md_received_into_station_new(){
             
             /*beg заполняем input с автозаполнением вагонов*/
             var l_coming_cars;
-            $.ajax({
+            try {
+                var data = await $.ajax({
                 url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async: false,
                 data: { station_id: user_station_id
                        ,ajax_action: 'get_coming_cars'
-                      },
-                success: function (data) {
-                    l_coming_cars = JSON.parse(data);
-                },
-                error: function (m1,m2) {window.alert('Ошибка! Обратитесь к разработчику!');}
+                      }
             });
+                l_coming_cars = JSON.parse(data);
+            } catch(e) {
+                window.alert('Ошибка! Обратитесь к разработчику!');
+            };
 
             var coming_cars_mas = [];
             l_coming_cars.forEach(function (item){
@@ -5311,23 +5273,23 @@ function create_md_received_into_station_new(){
     
     start_loading_animation();
     var md_received_into_station = new md_received_into_station_constr;
-    md_received_into_station.show_window();
+    md_received_into_station.await show_window();
     stop_loading_animation();
 }
-function received_into_station_OK(p_cars,p_new_parent_id,p_new_parent_type,p_bef_aft,p_after_elem_id,p_after_elem_type,p_operation_date,p_comment
+async function received_into_station_OK(p_cars,p_new_parent_id,p_new_parent_type,p_bef_aft,p_after_elem_id,p_after_elem_type,p_operation_date,p_comment
                                  ,p_sending_time,p_train_num
                                  ,p_loco1_num,p_loco1_driver1,p_loco1_driver2,p_loco1_conductor
                                  ,p_loco2_num,p_loco2_driver1,p_loco2_driver2,p_loco2_conductor){
-    function ReceivedIntoStationAjax(p_elem,p_new_parent_id,p_new_parent_type,p_after_elem_id,p_after_elem_type,p_operation_date,p_comment
+    async function ReceivedIntoStationAjax(p_elem,p_new_parent_id,p_new_parent_type,p_after_elem_id,p_after_elem_type,p_operation_date,p_comment
                                     ,p_sending_time,p_train_num
                                     ,p_loco1_num,p_loco1_driver1,p_loco1_driver2,p_loco1_conductor
                                     ,p_loco2_num,p_loco2_driver1,p_loco2_driver2,p_loco2_conductor){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { cars: p_elem
                    ,parent_id: p_new_parent_id
                    ,parent_type: p_new_parent_type
@@ -5347,14 +5309,12 @@ function received_into_station_OK(p_cars,p_new_parent_id,p_new_parent_type,p_bef
                    ,loco2_driver2:p_loco2_driver2 
                    ,loco2_conductor:p_loco2_conductor 
                    ,ajax_action: 'receive_into_station_few_child'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     var after_elem_next;
@@ -5371,7 +5331,7 @@ function received_into_station_OK(p_cars,p_new_parent_id,p_new_parent_type,p_bef
     
     var params = p_cars.split('|');
     params.pop();
-    if (ReceivedIntoStationAjax(p_cars,p_new_parent_id,p_new_parent_type,p_after_elem_id,p_after_elem_type,p_operation_date,p_comment
+    if (await ReceivedIntoStationAjax(p_cars,p_new_parent_id,p_new_parent_type,p_after_elem_id,p_after_elem_type,p_operation_date,p_comment
                                ,p_sending_time,p_train_num
                                ,p_loco1_num,p_loco1_driver1,p_loco1_driver2,p_loco1_conductor
                                ,p_loco2_num,p_loco2_driver1,p_loco2_driver2,p_loco2_conductor)==='done') {
@@ -5427,25 +5387,23 @@ function changeSelectWithChild(p_select_id,p_parent_id,p_parent_type){
 }
 /*Добавить груз/тип*/
 function create_modal_dialog_fill_railcar_attr(p_clicked_li){
-    function fill_railcar_attr_ajax(p_car_number,p_car_type,p_freight_name) {
+    async function fill_railcar_attr_ajax(p_car_number,p_car_type,p_freight_name) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,car_type: p_car_type
                    ,freight_name: p_freight_name
                    ,ajax_action: 'fill_railcar_attr'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
@@ -5509,8 +5467,8 @@ function create_modal_dialog_fill_railcar_attr(p_clicked_li){
         width: 'auto',
         draggable: false,
         buttons:{
-            'Добавить': function(){
-                if (fill_railcar_attr_ajax(p_clicked_li.attr('data-id'),$('#modalDialogCarType').val(),$('#modalDialogFreightName').val())==='done') {
+            'Добавить': async function(){
+                if (await fill_railcar_attr_ajax(p_clicked_li.attr('data-id'),$('#modalDialogCarType').val(),$('#modalDialogFreightName').val())==='done') {
                     $('table.addInfoTable > tbody > tr:first-child > td:nth-child(2)').text($('#modalDialogCarType').val());
                     $('table.addInfoTable > tbody > tr:first-child > td:nth-child(5)').text($('#modalDialogFreightName').val());
                     
@@ -5533,45 +5491,42 @@ function create_modal_dialog_fill_railcar_attr(p_clicked_li){
     });  
 }
 
-function fill_railcar_for_invoice(){
-    function createSelectBadInvoices(p_id){
+async function fill_railcar_for_invoice(){
+    async function createSelectBadInvoices(p_id){
         var result = '<select id="'+p_id+'">';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   { ajax_action: 'returnBadInvoices'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        result += '<option data-cont="'+item.CONT_NUMBER+'" data-owner="'+item.OWNER+'" value="'+item.INVOICE_ID+'">'+item.INV_NUMBER+'</option>';
-                    }); 
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    result += '<option data-cont="'+item.CONT_NUMBER+'" data-owner="'+item.OWNER+'" value="'+item.INVOICE_ID+'">'+item.INV_NUMBER+'</option>';
+                                });
+        } catch(e) { window.alert(e); };
         result += '</select>';
         return result;
     }
     
-    function fill_railcar_for_invoice_ajax(p_inv_id,p_car_number) {
+    async function fill_railcar_for_invoice_ajax(p_inv_id,p_car_number) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { inv_id: p_inv_id
                    ,carnumber: p_car_number
                    ,ajax_action: 'fill_railcar_for_invoice'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
@@ -5586,7 +5541,7 @@ function fill_railcar_for_invoice(){
             .appendTo('body') // Присоединяем наше меню к body документа: 
             .append('<div>' +
                     '<label for="md_invoice">Накладная</label><br>'+
-                    createSelectBadInvoices('md_invoice') + '<br>'+
+                    await createSelectBadInvoices('md_invoice') + '<br>'+
                     '<label>Контейнеры</label><br>'+
                     '<input disabled id="md_cont_number" type="text" style="width:150px;" class="text ui-widget-content ui-corner-all"><br>'+
                     '<label>Предприятие</label><br>'+
@@ -5642,9 +5597,9 @@ function fill_railcar_for_invoice(){
                 'Добавить':{
                     text:'Добавить',
                     id:'md_invoice_save',
-                    click: function(){
-                        if (fill_railcar_for_invoice_ajax($('#md_invoice option:selected').val(),$('#md_invoice_car_number').val())==='done') {
-                            changeBackground();
+                    click: async function(){
+                        if (await fill_railcar_for_invoice_ajax($('#md_invoice option:selected').val(),$('#md_invoice_car_number').val())==='done') {
+                            await changeBackground();
                             create_info_modal_dialog_new('Оповещение','Процедура завершилась успешно!');
                         } else {
                             create_info_modal_dialog_new('Ошибка','Процедура завершилась с ошибкой!');
@@ -5669,22 +5624,20 @@ function md_change_cont_number(){
     $('#md_owner').val($('#md_invoice > option:selected').attr('data-owner'));
 }
 /*для кнопки "Добавить номер вагона" меняем цвет фона*/
-function changeBackground (){
+async function changeBackground (){
     var res;
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: { ajax_action: 'returnCountBadInvoices'
-        },
-        success: function (data) {
-            res = data;
-        },
-        error: function (data) {
-            res = 'fail';
         }
     });
+        res = data;
+    } catch(e) {
+        res = 'fail';
+    };
     
     if (res!=='0') {
         $('#fillRailcarForInvoice').addClass('redBackground');
@@ -5696,7 +5649,7 @@ function changeBackground (){
 }
 
 /* Имзение атрибутов на контейнере */
-function create_md_change_cont_attr(p_clicked_li,p_cont_number){
+async function create_md_change_cont_attr(p_clicked_li,p_cont_number){
     function get_freight_select(p_selected_elem){
         var select = $('<select>');
         $.each(g_freight_list, function( i, item ) {
@@ -5714,50 +5667,48 @@ function create_md_change_cont_attr(p_clicked_li,p_cont_number){
         return select; 
     };
     
-    function change_cont_attr_ajax(){
+    async function change_cont_attr_ajax(){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { 
                  cont_number:p_cont_number
                 ,freight_name:md_content.freight.val()
                 ,weight_dep:md_content.weight_dep.val()
                 ,owner:md_content.owner.val()
                 ,ajax_action: 'change_cont_add_info'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
     $('.context-menu').remove();
   
     var l_cont_info = {};
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: { car_number: p_cont_number
                ,ajax_action: 'get_add_info_for_cont'
-              },
-        success: function (data) {
-            var records = JSON.parse(data);
-            var child = records[0];
-            l_cont_info.freight = (child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '';
-            l_cont_info.owner = (child.OWNER !== null) ? child.OWNER : '';
-            l_cont_info.weight_dep = (child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '';
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        var records = JSON.parse(data);
+                    var child = records[0];
+                    l_cont_info.freight = (child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '';
+                    l_cont_info.owner = (child.OWNER !== null) ? child.OWNER : '';
+                    l_cont_info.weight_dep = (child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '';
+    } catch(e) {
+        window.alert(e);
+    };
     
    var md_content = $('<div>')
         .addClass('')
@@ -5798,8 +5749,8 @@ function create_md_change_cont_attr(p_clicked_li,p_cont_number){
             'Изменить':{
                 text: "Изменить",
                 id: "change_btn",
-                click: function(){
-                    var res = change_cont_attr_ajax();
+                click: async function(){
+                    var res = await change_cont_attr_ajax();
                     if (res === 'done') {
                         addInfoAjax(p_clicked_li,false,$('#selectStation > option:selected').val());
                     } else if (res === 'cant change') {
@@ -5858,13 +5809,13 @@ function create_md_change_attr(p_clicked_li){
         return select; 
     };
     
-    function change_attr_ajax(){
+    async function change_attr_ajax(){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { 
                  car_number:l_car_number
                 ,car_type: md_content.car_type.val()
@@ -5872,14 +5823,12 @@ function create_md_change_attr(p_clicked_li){
                 ,weight_dep:md_content.weight_dep.val()
                 ,owner:md_content.owner.val()
                 ,ajax_action: 'change_railcar_add_info'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
@@ -5966,8 +5915,8 @@ function create_md_change_attr(p_clicked_li){
             'Изменить':{
                 text: "Изменить",
                 id: "md_change_attr",
-                click: function(){
-                    var res = change_attr_ajax();
+                click: async function(){
+                    var res = await change_attr_ajax();
                     if (res === 'done') {
                         addInfoAjax(p_clicked_li,false,$('#selectStation > option:selected').val());
                     } else if (res === 'cant change') {
@@ -5990,28 +5939,26 @@ function create_md_change_attr(p_clicked_li){
 }
 /* Не используется */
 function create_md_change_attr_old(p_clicked_li) {
-    function change_attr_ajax(p_car_number,p_car_type,p_freight_name,p_weight_dep,p_cont){
+    async function change_attr_ajax(p_car_number,p_car_type,p_freight_name,p_weight_dep,p_cont){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number:p_car_number
                    ,car_type: p_car_type
                    ,freight_name:p_freight_name
                    ,weight_dep:p_weight_dep
                    ,cont:p_cont
                    ,ajax_action: 'change_railcar_add_info'
-            },
-            success: function (data) {
-                //alert(data);
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            //alert(data);
+                            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
@@ -6127,8 +6074,8 @@ function create_md_change_attr_old(p_clicked_li) {
         buttons:{
             'Изменить':{text: "Изменить",
                         id: "md_change_attr",
-                        click: function(){
-                            var res = change_attr_ajax(l_car_number
+                        click: async function(){
+                            var res = await change_attr_ajax(l_car_number
                                                       ,$('#modalDialogFreightName').val()
                                                       ,$('#modalDialogWeightNet').val()
                                                       ,$('#modalDialogWeightDep').val()
@@ -6167,42 +6114,42 @@ function md_disable_change_attr_btn(){
     }
 }
 /* Фунция возвращает список пользователей для формы "Регистрация уведомлений" */
-function get_select_users(p_id,p_credential_id,p_class){
+async function get_select_users(p_id,p_credential_id,p_class){
     var result;
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: { credential_id: p_credential_id
                ,ajax_action: 'get_users_for_notification'
-              },
-        success: function (data) {
-            var l_users = JSON.parse(data);
-
-            result = '<select id="'+p_id+'" class="'+p_class+'">';
-            result += '<option value=""></option>';
-            $.each(l_users, function( i, item ) {
-                result += '<option value="'+item.ID+'">'+item.NAME+'</option>';
-            });
-            result += '</select>';
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        var l_users = JSON.parse(data);
+
+                    result = '<select id="'+p_id+'" class="'+p_class+'">';
+                    result += '<option value=""></option>';
+                    $.each(l_users, function( i, item ) {
+                        result += '<option value="'+item.ID+'">'+item.NAME+'</option>';
+                    });
+                    result += '</select>';
+    } catch(e) {
+        window.alert(e);
+    };
     
     return result; 
 }
 /*Регистрация уведомлений*/
-function create_modal_dialog_notification(){
+async function create_modal_dialog_notification(){
     /*Изменяем предка на сервере*/
-    function notification_ajax(p_cars,p_notification_time_from,p_notification_person_from,p_notification_railway_number,p_notification_time_to,p_notification_person_to,p_notification_name) 
+    async function notification_ajax(p_cars,p_notification_time_from,p_notification_person_from,p_notification_railway_number,p_notification_time_to,p_notification_person_to,p_notification_name) 
     {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { cars: p_cars
                    ,notification_time_from:p_notification_time_from
                    ,notification_person_from:p_notification_person_from
@@ -6211,14 +6158,12 @@ function create_modal_dialog_notification(){
                    ,notification_person_to:p_notification_person_to
                    ,notification_name:p_notification_name
                    ,ajax_action: 'register_notification'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     function get_selected_cars_rows_for_notification_table(){
@@ -6246,20 +6191,18 @@ function create_modal_dialog_notification(){
     $('.xdsoft_datetimepicker').remove();
     
     var server_current_time; 
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: { ajax_action: 'get_current_time'
-        },
-        success: function (data) {
-            server_current_time = data;
-        },
-        error: function (data) {
-            server_current_time = 'fail';
         }
     });
+        server_current_time = data;
+    } catch(e) {
+        server_current_time = 'fail';
+    };
     
     // создаем div для отображения модального окна
     $('<div/>')
@@ -6290,15 +6233,15 @@ function create_modal_dialog_notification(){
                             '<input id="md_save_notification_inp" class="md_save_load" type="text" value="'+user_name.slice(0, user_name.indexOf(' '))+'_'+server_current_time+'" maxlength="30">'+
                         '</div>'+
                         '<div style="float: left; margin-left: 15px;">'+
-                            '<input id="md_load_notification_btn" class="md_save_load" type="button" value="Загрузить" onclick="md_load_notification_btn_action()"></br>'+
+                            '<input id="md_load_notification_btn" class="md_save_load" type="button" value="Загрузить" onclick="await md_load_notification_btn_action()"></br>'+
                             '<select id="md_load_notification_sel" class="md_save_load">'+
-                                get_select_options_with_saved_notifications()+
+                                await get_select_options_with_saved_notifications()+
                             '</select>'+
                         '</div>'+
                         '<div style="float: left; margin-left: 15px;">'+
                             '<input id="md_del_notification_btn" class="md_save_load" type="button" value="Очистить" onclick="md_del_notification_btn_action()"></br>'+
                             '<select id="md_del_notification_sel" class="md_save_load">'+
-                                get_select_options_with_saved_notifications()+
+                                await get_select_options_with_saved_notifications()+
                             '</select>'+
                         '</div>'+
                     '</div>'+
@@ -6337,7 +6280,7 @@ function create_modal_dialog_notification(){
                             '</div>'+
                             '<div>'+
                                 '<label for="md_notification_person_to">Кто принял</label>'+
-                                get_select_users('md_notification_person_to',1,'required')+
+                                await get_select_users('md_notification_person_to',1,'required')+
                             '</div>'+
                         '</div>'+
                     '</div>'+
@@ -6359,7 +6302,7 @@ function create_modal_dialog_notification(){
             '</table>'+
             '<div style="margin-left:61px;">'+
                 '<input id="md_notification_add_car" style="font-size: 11px;" type="text" maxlength="8" size="8" class="text ui-widget-content ui-corner-all">' +
-                '<input type="button" style="font-size: 11px; height: 17px;" value="Добавить" onclick="add_car_in_notification_table();" class="btnAdd">'+
+                '<input type="button" style="font-size: 11px; height: 17px;" value="Добавить" onclick="await add_car_in_notification_table();" class="btnAdd">'+
             '</div>'+
             '<div class="modalDialogContainer" style="display: inline-block;">'+
                 '<table id="notification_cars_table" class="notification_cars_table">'+
@@ -6374,9 +6317,9 @@ function create_modal_dialog_notification(){
                 '</tbody>'+
             '</table>'
            );
-    $('#md_notification_add_car').on('keypress', function(e){
+    $('#md_notification_add_car').on('keypress', async function(e){
         if(e.keyCode===13){
-            add_car_in_notification_table();
+            await add_car_in_notification_table();
         }
     });
     
@@ -6384,19 +6327,19 @@ function create_modal_dialog_notification(){
     
     /*beg заполняем input с автозаполнением вагонов*/
     var cars_in_ugl;
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: { ajax_action: 'get_cars_in_ugl'
-              },
-        success: function (data) {
-            //alert(data);
-            cars_in_ugl = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert('Ошибка! Обратитесь к разработчику!');}
+              }
     });
+        //alert(data);
+                    cars_in_ugl = JSON.parse(data);
+    } catch(e) {
+        window.alert('Ошибка! Обратитесь к разработчику!');
+    };
     
     g_cars_in_ugl_mas = [];
     cars_in_ugl.forEach(function (item){
@@ -6422,14 +6365,14 @@ function create_modal_dialog_notification(){
             'Отправить':{
                 text: "Отправить",
                   id: "md_notification_btn",
-               click: function(){
+               click: async function(){
                     if (check_open_period('2',$('#md_notification_time_from').val())=='0') {
                         create_info_modal_dialog_new('Оповещение','Для даты '+$('#md_notification_time_from').val()+' нет открытого периода! Сохранить уведомление не возможно!');
                     }else{
                         var l_cars = get_cars_for_notification(); //сохраняем выбранные элементы
                         var l_cars_mas = l_cars.split('$'); //создаем массив
                         l_cars_mas.pop();
-                        if (notification_ajax(l_cars,$('#md_notification_time_from').val(),$('#md_notification_person_from').val(),$('#md_notification_railway_number').val()
+                        if (await notification_ajax(l_cars,$('#md_notification_time_from').val(),$('#md_notification_person_from').val(),$('#md_notification_railway_number').val()
                                              ,$('#md_notification_time_to').val(),$('#md_notification_person_to').val(),$('#md_save_notification_inp').val())==='done'){           
 
                             l_cars_mas.forEach(function(item, i, arr) {
@@ -6473,36 +6416,36 @@ function get_cars_for_notification(){
 
     return param;
 }
-function get_select_options_with_saved_notifications(){
+async function get_select_options_with_saved_notifications(){
 var result = '';
-$.ajax({
+try {
+    var data = await $.ajax({
     url: 'data.php',
     type: 'POST',
     dataType: "text",
-    async: false,
     data: { ajax_action: 'get_saved_notifications'
-          },
-    success: function (data) {
-        var saved_notifications = JSON.parse(data);
-        var options = '<option value="-1"></option>';
-        $.each(saved_notifications, function( i, item ) {
-            options += '<option value="'+item.NAME+'">'+item.NAME+'</option>';
-        });
-        result = options; 
-    },
-    error: function (m1,m2) {window.alert(m1+m2);}
+          }
 });
+    var saved_notifications = JSON.parse(data);
+            var options = '<option value="-1"></option>';
+            $.each(saved_notifications, function( i, item ) {
+                options += '<option value="'+item.NAME+'">'+item.NAME+'</option>';
+            });
+            result = options;
+} catch(e) {
+    window.alert(e);
+};
 return result;
 }
-function md_save_notification_btn_action(){
-    function save_notification_ajax(p_notification_name,p_cars,p_notification_time_from,p_notification_person_from,p_notification_railway_number,p_notification_time_to,p_notification_person_to) 
+async function md_save_notification_btn_action(){
+    async function save_notification_ajax(p_notification_name,p_cars,p_notification_time_from,p_notification_person_from,p_notification_railway_number,p_notification_time_to,p_notification_person_to) 
     {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { notification_name:p_notification_name
                    ,cars: p_cars
                    ,notification_time_from:p_notification_time_from
@@ -6511,107 +6454,103 @@ function md_save_notification_btn_action(){
                    ,notification_time_to:p_notification_time_to
                    ,notification_person_to:p_notification_person_to
                    ,ajax_action: 'save_notification'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
     $('#md_save_notification_btn,#md_load_notification_btn,#md_del_notification_btn').removeClass('md_save_load_btn_done md_save_load_btn_fail');
     var l_cars = get_cars_for_notification(); //сохраняем выбранные элементы
-    if (save_notification_ajax($('#md_save_notification_inp').val(),l_cars,$('#md_notification_time_from').val(),$('#md_notification_person_from').val(),$('#md_notification_railway_number').val()
+    if (await save_notification_ajax($('#md_save_notification_inp').val(),l_cars,$('#md_notification_time_from').val(),$('#md_notification_person_from').val(),$('#md_notification_railway_number').val()
                               ,$('#md_notification_time_to').val(),$('#md_notification_person_to').val())==='done')
     {
         $('#md_save_notification_btn').addClass('md_save_load_btn_done');
         $('#md_load_notification_sel,#md_del_notification_sel').empty();
-        $('#md_load_notification_sel,#md_del_notification_sel').append(get_select_options_with_saved_notifications());
+        $('#md_load_notification_sel,#md_del_notification_sel').append(await get_select_options_with_saved_notifications());
     }else{
         $('#md_save_notification_btn').addClass('md_save_load_btn_fail');
     }
 }
-function md_load_notification_btn_action(){
+async function md_load_notification_btn_action(){
     $('#md_save_notification_btn,#md_load_notification_btn,#md_del_notification_btn').removeClass('md_save_load_btn_done md_save_load_btn_fail');
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async: false,
         data: {notification_name: $('#md_load_notification_sel').val() 
               ,ajax_action: 'load_notification'
-              },
-        success: function (data) {
-            try {
-                var l_notification = JSON.parse(data);
-
-                if (l_notification[0].CARS !== null){
-                    var l_cars = l_notification[0].CARS.split('$');
-                    l_cars.pop();
-
-                    $('table#notification_cars_table > tbody > tr').remove();
-                    $.each(l_cars, function( i, item ) {
-                        var car = item.split('|');
-                        add_car_in_notification_table(car[0]);
-                    });
-                }
-                $('#md_notification_time_from').val(l_notification[0].NOTIFICATION_TIME_FROM);
-                $('#md_notification_person_from').val(l_notification[0].NOTIFICATION_PERSON_FROM);
-                $('#md_notification_railway_number').val(l_notification[0].NOTIFICATION_RAILWAY_NUMBER);
-                $('#md_notification_time_to').val(l_notification[0].NOTIFICATION_TIME_TO);
-                $('#md_notification_person_to').val(l_notification[0].NOTIFICATION_PERSON_TO);
-
-                $('#md_save_notification_inp').val($('#md_load_notification_sel').val());
-                $('#md_load_notification_sel').val('-1');
-
-                $('#md_load_notification_btn').addClass('md_save_load_btn_done');
-                md_disable_notification_btn();
-            } catch(e){
-                $('#md_load_notification_btn').addClass('md_save_load_btn_fail');
-            }
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        try {
+                        var l_notification = JSON.parse(data);
+
+                        if (l_notification[0].CARS !== null){
+                            var l_cars = l_notification[0].CARS.split('$');
+                            l_cars.pop();
+
+                            $('table#notification_cars_table > tbody > tr').remove();
+                            $.each(l_cars, async function( i, item ) {
+                                var car = item.split('|');
+                                await add_car_in_notification_table(car[0]);
+                            });
+                        }
+                        $('#md_notification_time_from').val(l_notification[0].NOTIFICATION_TIME_FROM);
+                        $('#md_notification_person_from').val(l_notification[0].NOTIFICATION_PERSON_FROM);
+                        $('#md_notification_railway_number').val(l_notification[0].NOTIFICATION_RAILWAY_NUMBER);
+                        $('#md_notification_time_to').val(l_notification[0].NOTIFICATION_TIME_TO);
+                        $('#md_notification_person_to').val(l_notification[0].NOTIFICATION_PERSON_TO);
+
+                        $('#md_save_notification_inp').val($('#md_load_notification_sel').val());
+                        $('#md_load_notification_sel').val('-1');
+
+                        $('#md_load_notification_btn').addClass('md_save_load_btn_done');
+                        md_disable_notification_btn();
+                    } catch(e){
+                        $('#md_load_notification_btn').addClass('md_save_load_btn_fail');
+                    }
+    } catch(e) {
+        window.alert(e);
+    };
 }
 /* Удаление записи из системы (Форма Уведомление ГУ) */
-function md_del_notification_btn_action(){
-    function save_notification_ajax(p_notification_name) 
+async function md_del_notification_btn_action(){
+    async function save_notification_ajax(p_notification_name) 
     {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { notification_name:p_notification_name
                    ,ajax_action: 'del_notification'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
     $('#md_save_notification_btn,#md_load_notification_btn,#md_del_notification_btn').removeClass('md_save_load_btn_done md_save_load_btn_fail');
-    if (save_notification_ajax($('#md_del_notification_sel').val())==='done')
+    if (await save_notification_ajax($('#md_del_notification_sel').val())==='done')
     {
         $('#md_del_notification_btn').addClass('md_save_load_btn_done');
         $('#md_load_notification_sel,#md_del_notification_sel').empty();
-        $('#md_load_notification_sel,#md_del_notification_sel').append(get_select_options_with_saved_notifications());
+        $('#md_load_notification_sel,#md_del_notification_sel').append(await get_select_options_with_saved_notifications());
         md_disable_notification_btn();
     }else{
         $('#md_del_notification_btn').addClass('md_save_load_btn_fail');
     }
 }
 /* Добавление вагонов в таблицу на форме Уведомление ГУ */
-function add_car_in_notification_table(p_railcar){
+async function add_car_in_notification_table(p_railcar){
     var notification_table = $('table#notification_cars_table > tbody');
     var add_car;
     if (p_railcar === undefined) {
@@ -6629,43 +6568,42 @@ function add_car_in_notification_table(p_railcar){
         $('#md_notification_add_car').addClass('red_bckg_color');
         alert('Вагон '+add_car+' уже добавлен!');
     } else{
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { id: add_car
                    ,type: 'railcar'
                    ,station_id: $('#selectStation').val()
                    ,ajax_action: 'addInfo'
-                  },
-            success: function (data) {
-				
-                var records = JSON.parse(data);
-
-                for(var i=0; i<records.length; i++) {
-                    var child = records[i];
-                    
-                    var tr = $('<tr/>');
-                    tr.append('<td><div class="up_image" onclick="up_down_notifications_cars_table_tr(\'up\',$(this).parent().parent());"></div></td>');
-                    tr.append('<td><div class="down_image" onclick="up_down_notifications_cars_table_tr(\'down\',$(this).parent().parent());"></div></td>');
-                    tr.append('<td>'+count+'</td>');
-                    tr.append('<td>'+child.ID+'</td>');
-                    tr.append('<td>'+((child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '')+'</td>');
-                    tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
-                    tr.append('<td>'+((child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '')+'</td>');
-                    tr.append('<td>'+((child.WEIGHT_GROSS !== null) ? child.WEIGHT_GROSS.replace(',','.') : '')+'</td>');
-                    tr.append('<td>'+'<div class="deleteImage deleteImage13px" title="Удалить" onclick="$(this).parent().parent().remove(); change_notification_cars_table_total_tr();md_disable_notification_btn();"></div>'+'</td>');
-                    tr.appendTo(notification_table);
-                }
-                
-                md_disable_notification_btn();
-                change_notification_cars_table_total_tr();
-                $('#md_notification_add_car').removeClass('red_bckg_color');
-                $('#md_notification_add_car').val('');
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                  }
         });
+            var records = JSON.parse(data);
+
+                            for(var i=0; i<records.length; i++) {
+                                var child = records[i];
+
+                                var tr = $('<tr/>');
+                                tr.append('<td><div class="up_image" onclick="up_down_notifications_cars_table_tr(\'up\',$(this).parent().parent());"></div></td>');
+                                tr.append('<td><div class="down_image" onclick="up_down_notifications_cars_table_tr(\'down\',$(this).parent().parent());"></div></td>');
+                                tr.append('<td>'+count+'</td>');
+                                tr.append('<td>'+child.ID+'</td>');
+                                tr.append('<td>'+((child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '')+'</td>');
+                                tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
+                                tr.append('<td>'+((child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '')+'</td>');
+                                tr.append('<td>'+((child.WEIGHT_GROSS !== null) ? child.WEIGHT_GROSS.replace(',','.') : '')+'</td>');
+                                tr.append('<td>'+'<div class="deleteImage deleteImage13px" title="Удалить" onclick="$(this).parent().parent().remove(); change_notification_cars_table_total_tr();md_disable_notification_btn();"></div>'+'</td>');
+                                tr.appendTo(notification_table);
+                            }
+
+                            md_disable_notification_btn();
+                            change_notification_cars_table_total_tr();
+                            $('#md_notification_add_car').removeClass('red_bckg_color');
+                            $('#md_notification_add_car').val('');
+        } catch(e) {
+            window.alert(e);
+        };
     } 
 }
 
@@ -6740,7 +6678,7 @@ function md_disable_notification_btn(){
     }
 }
 /*Ввод осмотра*/
-function create_md_inspections(p_clicked_li){ 
+async function create_md_inspections(p_clicked_li){ 
     function get_defects_string(){
         var param = '';
         $('#tbl_list_of_defects > tbody > tr').each(function(){
@@ -6763,13 +6701,13 @@ function create_md_inspections(p_clicked_li){
         return param;
     }
     
-    function md_enter_inspection_ajax(p_car_number,p_cont,p_inspection_id,p_inspection_date,p_inspection_place,p_inspection_person,p_inspection_person_appoint,p_master,p_priority,p_result,p_status_kurs,p_comment,p_defects){
+    async function md_enter_inspection_ajax(p_car_number,p_cont,p_inspection_id,p_inspection_date,p_inspection_place,p_inspection_person,p_inspection_person_appoint,p_master,p_priority,p_result,p_status_kurs,p_comment,p_defects){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,cont: p_cont
                    ,inspection_id:p_inspection_id
@@ -6784,72 +6722,64 @@ function create_md_inspections(p_clicked_li){
                    ,comment:p_comment
                    ,defects:p_defects
                    ,ajax_action: 'enter_inspection'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
-    function md_delete_inspection_ajax(p_inspection_id) {
+    async function md_delete_inspection_ajax(p_inspection_id) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { inspection_id:p_inspection_id
                    ,ajax_action: 'delete_inspection'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
-    function create_request_ajax(p_inspection_id){
+    async function create_request_ajax(p_inspection_id){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { inspection_id:p_inspection_id
                    ,ajax_action: 'create_work_request'
-            },
-            success: function (data) {
-                res = JSON.parse(data);
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = JSON.parse(data);
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
-    function refusal_to_repair_ajax(p_inspection_id,p_person){
+    async function refusal_to_repair_ajax(p_inspection_id,p_person){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { inspection_id:p_inspection_id
                    ,person:p_person
                    ,ajax_action: 'refusal_to_repair'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     function run_report(p_car_number,p_inspection_id,p_user_name){
@@ -6904,12 +6834,12 @@ function create_md_inspections(p_clicked_li){
 
                     '<div>'+
                         '<label for="md_ins_inspection_place">Место осмотра вагона</label>'+
-                        get_select_places('md_ins_inspection_place')+
+                        await get_select_places('md_ins_inspection_place')+
                     '</div>'+
 
                     '<div>'+
                         '<label for="md_ins_inspection_person">Осмотр произвел ФИО</label>'+
-                        get_inspection_persons('md_ins_inspection_person')+
+                        await get_inspection_persons('md_ins_inspection_person')+
                     '</div>'+
 
                     '<div>'+
@@ -6919,7 +6849,7 @@ function create_md_inspections(p_clicked_li){
 
                     '<div>'+
                         '<label for="md_ins_master">Мастер смены ФИО</label>'+
-                        get_masters('md_ins_master')+
+                        await get_masters('md_ins_master')+
                     '</div>'+
 
                     '<div>'+
@@ -6934,7 +6864,7 @@ function create_md_inspections(p_clicked_li){
 
                     '<div>'+
                         '<label for="md_ins_priority">Приоритет</label>'+
-                        get_priority('md_ins_priority') +
+                        await get_priority('md_ins_priority') +
                     '</div>'+
 
                     '<div>'+
@@ -6945,7 +6875,7 @@ function create_md_inspections(p_clicked_li){
 
                     '<div>'+
                         '<label for="md_ins_status_kurs">Статус курсирования</label>'+
-                        get_status_kurs('md_ins_status_kurs') +
+                        await get_status_kurs('md_ins_status_kurs') +
                     '</div>'+
 
                     '<div>'+
@@ -7002,7 +6932,7 @@ function create_md_inspections(p_clicked_li){
     
     var l_car_inspections=[];
     var l_car_inspections_mas = [];
-    md_ins_refresh_railcar_btn.on('click', function(e,p_obj_type){
+    md_ins_refresh_railcar_btn.on('click', async function(e,p_obj_type){
         p_obj_type = (p_obj_type==undefined?'railcar':p_obj_type);
         
         md_ins_refresh_car_number.removeClass('true-car-number');
@@ -7017,26 +6947,26 @@ function create_md_inspections(p_clicked_li){
             md_ins_enter_car_number.val(l_obj_number);
         }
         
-        var l_asset_info = get_asset_info(l_obj_number);
+        var l_asset_info = await get_asset_info(l_obj_number);
         $('input#md_ins_asset_number').val(l_asset_info.instance_id!=-1?l_asset_info.asset_number:'');
         $('input#md_ins_asset_group').val(l_asset_info.instance_id!=-1?l_asset_info.asset_group:'');
 
         /*формируем историю по осмотрам*/
         l_car_inspections=[];
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { obj_number: l_obj_number
                    ,obj_type: p_obj_type
                    ,ajax_action: 'get_car_inspections'
-                  },
-            success: function (data) {
-                l_car_inspections = JSON.parse(data);
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                  }
         });
+            l_car_inspections = JSON.parse(data);
+        } catch(e) {
+            window.alert(e);
+        };
         l_car_inspections_mas = [];
         var l_prev_inspection_id = 0;
         l_car_inspections.forEach(function(item) {
@@ -7103,7 +7033,7 @@ function create_md_inspections(p_clicked_li){
         md_ins_history.empty().append(options);
         
         /*формируем список из платформы и контейнеров на ней*/
-        var l_car_conts=get_car_containers(l_obj_number);
+        var l_car_conts=await get_car_containers(l_obj_number);
         
         md_div_ins_cont.find('input[name="md_ins_cont"]').parent().remove();
         
@@ -7127,7 +7057,7 @@ function create_md_inspections(p_clicked_li){
     
     init_date_time_input($('#md_ins_inspection_date'));
     
-    var l_compare_date = get_server_current_time();
+    var l_compare_date = await get_server_current_time();
     l_compare_date = add_day_to_date_trunc(l_compare_date,1);
     
     init_date_time_input_add($('#md_ins_inspection_date'),l_compare_date);
@@ -7227,23 +7157,23 @@ function create_md_inspections(p_clicked_li){
         md_ins_refresh_railcar_btn.triggerHandler('click',p_clicked_li.attr('data-type'));
         $('div#md_ins_refresh_railcar_div').hide();
     } else {
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
-            data: { ajax_action: 'get_all_cars'},
-            success: function (data) {
-                var l_cars_json = JSON.parse(data);
-                var l_cars = [];
-                l_cars_json.forEach(function (item){
-                    l_cars.push(item.ID);
-                });
-                l_cars.push('ВЕСЫ-МОД-ЖД-7260SM');
-                md_ins_refresh_car_number.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '50em',menuWidth: 80});
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+            data: { ajax_action: 'get_all_cars'}
         });
+            var l_cars_json = JSON.parse(data);
+                            var l_cars = [];
+                            l_cars_json.forEach(function (item){
+                                l_cars.push(item.ID);
+                            });
+                            l_cars.push('ВЕСЫ-МОД-ЖД-7260SM');
+                            md_ins_refresh_car_number.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '50em',menuWidth: 80});
+        } catch(e) {
+            window.alert(e);
+        };
         
         md_ins_refresh_car_number.on('keyup', function (e){        
             if (check_car_number($(this).val())||$(this).val()==='ВЕСЫ-МОД-ЖД-7260SM'){                
@@ -7273,13 +7203,13 @@ function create_md_inspections(p_clicked_li){
     }
 	// 19.05.2025 по наряду 0000085955
 	
-	function validation_save_inspection (){
+	async function validation_save_inspection (){
 		
 		var l_inspections = l_car_inspections_mas[md_ins_history.val()].inspection_id;
 		var l_place = $('#md_ins_inspection_place').val();
 		var l_date = $('#md_ins_inspection_date').val();
 		
-		var l_inspections_d = get_server_current_time();
+		var l_inspections_d = await get_server_current_time();
 		var l_inspections_d_7 = add_day_to_date(l_inspections_d,-7);
 		var l_compare_date_to = add_day_to_date(l_compare_date,1);
 		
@@ -7306,7 +7236,7 @@ function create_md_inspections(p_clicked_li){
             'Сохранить':{ 
                 text: "Сохранить",
                 id: "md_btn_save_inspection",
-                click: function(){
+                click: async function(){
                     
                     var l_defects = get_defects_string();
                     var l_cont = '';
@@ -7320,7 +7250,7 @@ function create_md_inspections(p_clicked_li){
 					}
 					
                     $('#md_btn_save_inspection').prop( "disabled", true );
-					var res = md_enter_inspection_ajax(md_ins_enter_car_number.val(),l_cont,l_car_inspections_mas[md_ins_history.val()].inspection_id,$('#md_ins_inspection_date').val(),$('#md_ins_inspection_place').val(),$('#md_ins_inspection_person').val()
+					var res = await md_enter_inspection_ajax(md_ins_enter_car_number.val(),l_cont,l_car_inspections_mas[md_ins_history.val()].inspection_id,$('#md_ins_inspection_date').val(),$('#md_ins_inspection_place').val(),$('#md_ins_inspection_person').val()
                                                       ,$('#md_ins_inspection_person_appoint').val(),$('#md_ins_master').val(),$('#md_ins_priority').val(),$('#md_ins_result').val()
                                                       ,$('#md_ins_status_kurs').val(),$('#md_ins_comment').val(),l_defects
                                                       );
@@ -7337,8 +7267,8 @@ function create_md_inspections(p_clicked_li){
             'Удалить':{
                 text: "Удалить",
                 id: "md_btn_delete_inspection",
-                click: function(){
-                    var res = md_delete_inspection_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id);
+                click: async function(){
+                    var res = await md_delete_inspection_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id);
 
                     if (res === 'done') {
                         clear_add_info();
@@ -7353,8 +7283,8 @@ function create_md_inspections(p_clicked_li){
             'Создать заявку':{
                 text: "Создать заявку",
                 id: "md_btn_create_request",
-                click: function(){
-                    var res = create_request_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id);
+                click: async function(){
+                    var res = await create_request_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id);
 
                     if (res[0] == 'S') {
                         clear_add_info();
@@ -7387,8 +7317,8 @@ function create_md_inspections(p_clicked_li){
                         width: 'auto',
                         draggable: false,
                         buttons:{
-                            'Сохранить': function(){
-                                var res = refusal_to_repair_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id,$('#md_ins_refusal_to_repair_person').val());
+                            'Сохранить': async function(){
+                                var res = await refusal_to_repair_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id,$('#md_ins_refusal_to_repair_person').val());
                                 
                                 if (res === 'done') {
                                     clear_add_info();
@@ -7445,7 +7375,7 @@ function create_md_inspections(p_clicked_li){
     stop_loading_animation();
 }
 /* Установить ЗУ */
-function create_md_fix_device(p_clicked_li){  
+async function create_md_fix_device(p_clicked_li){  
     function get_defects_string(){
         var param = '';
         $('#tbl_list_of_defects > tbody > tr').each(function(){
@@ -7468,85 +7398,77 @@ function create_md_fix_device(p_clicked_li){
         return param;
     }
     
-    function md_enter_inspection_dev_ajax(p_param){
+    async function md_enter_inspection_dev_ajax(p_param){
 		//console.log(JSON.stringify(p_param));
         var res;
-		$.ajax({
+		try {
+		    var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { params: JSON.stringify(p_param)
                    ,ajax_action: 'enter_dev_inspection'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+		    res = data;
+		} catch(e) {
+		    res = 'fail';
+		};
         return res;
     }
-    function get_device_id (p_param){
+    async function get_device_id (p_param){
 		
 		var l_param = p_param;
 		console.log(JSON.stringify(l_param));
 		var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { params: JSON.stringify(l_param)
                    ,ajax_action: 'get_device_id'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
 	}
-	function md_delete_dev_inspection_ajax(p_inspection_id) {
+	async function md_delete_dev_inspection_ajax(p_inspection_id) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { inspection_id:p_inspection_id
                    ,ajax_action: 'delete_dev_inspection'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
-    function refusal_dev_to_repair_ajax(p_inspection_id,p_person){
+    async function refusal_dev_to_repair_ajax(p_inspection_id,p_person){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { inspection_id:p_inspection_id
                    ,person:p_person
                    ,ajax_action: 'refusal_dev_to_repair'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     function run_report(p_car_number,p_inspection_id,p_user_name){
@@ -7601,12 +7523,12 @@ function create_md_fix_device(p_clicked_li){
 
                     '<div>'+
                         '<label for="md_ins_inspection_place">Место осмотра ЗУ</label>'+
-                        get_select_places('md_ins_inspection_place')+
+                        await get_select_places('md_ins_inspection_place')+
                     '</div>'+
 
                     '<div>'+
                         '<label for="md_ins_inspection_person">Осмотр произвел ФИО</label>'+
-                        get_inspection_persons('md_ins_inspection_person')+
+                        await get_inspection_persons('md_ins_inspection_person')+
                     '</div>'+
 
                     '<div>'+
@@ -7616,7 +7538,7 @@ function create_md_fix_device(p_clicked_li){
 
                     '<div>'+
                         '<label for="md_ins_master">Мастер смены ФИО</label>'+
-                        get_masters('md_ins_master')+
+                        await get_masters('md_ins_master')+
                     '</div>'+
 
                     '<div>'+
@@ -7631,7 +7553,7 @@ function create_md_fix_device(p_clicked_li){
 
                     '<div>'+
                         '<label for="md_ins_priority">Приоритет</label>'+
-                        get_priority('md_ins_priority') +
+                        await get_priority('md_ins_priority') +
                     '</div>'+
 
                     '<div>'+
@@ -7642,7 +7564,7 @@ function create_md_fix_device(p_clicked_li){
 
                     '<div>'+
                         '<label for="md_ins_status_kurs">Статус курсирования</label>'+
-                        get_status_kurs('md_ins_status_kurs') +
+                        await get_status_kurs('md_ins_status_kurs') +
                     '</div>'+
 
                     '<div>'+
@@ -7699,7 +7621,7 @@ function create_md_fix_device(p_clicked_li){
     
     var l_car_inspections=[];
     var l_car_inspections_mas = [];
-    md_ins_refresh_railcar_btn.on('click', function(e,p_obj_type){
+    md_ins_refresh_railcar_btn.on('click', async function(e,p_obj_type){
 		var l_obj_number = md_ins_refresh_car_number.val();
         p_obj_type = (p_obj_type==undefined?'railcar':p_obj_type);
         
@@ -7715,7 +7637,7 @@ function create_md_fix_device(p_clicked_li){
             md_ins_enter_car_number.val(l_obj_number);
         }
         
-        var l_asset_info = get_device_info(l_obj_number);
+        var l_asset_info = await get_device_info(l_obj_number);
 		//console.log(l_asset_info);
 		md_ins_enter_car_number.attr('instance_id',l_asset_info.instance_id);
         $('input#md_ins_asset_number').val(l_asset_info.instance_id!=-1?l_asset_info.asset_number:'');
@@ -7723,20 +7645,20 @@ function create_md_fix_device(p_clicked_li){
 
         /*формируем историю по осмотрам*/
         l_car_inspections=[];
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { obj_number: l_obj_number
                    ,obj_type: p_obj_type
                    ,ajax_action: 'get_car_dev_inspections'
-                  },
-            success: function (data) {
-                l_car_inspections = JSON.parse(data);
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                  }
         });
+            l_car_inspections = JSON.parse(data);
+        } catch(e) {
+            window.alert(e);
+        };
         l_car_inspections_mas = [];
         var l_prev_inspection_id = 0;
         l_car_inspections.forEach(function(item) {
@@ -7803,7 +7725,7 @@ function create_md_fix_device(p_clicked_li){
         md_ins_history.empty().append(options);
         
         /*формируем список из платформы и контейнеров на ней*/
-        var l_car_conts=get_car_containers(l_obj_number);
+        var l_car_conts=await get_car_containers(l_obj_number);
         
         md_div_ins_cont.find('input[name="md_ins_cont"]').parent().remove();
         
@@ -7827,7 +7749,7 @@ function create_md_fix_device(p_clicked_li){
     
     init_date_time_input($('#md_ins_inspection_date'));
     
-    var l_compare_date = get_server_current_time();
+    var l_compare_date = await get_server_current_time();
     l_compare_date = add_day_to_date_trunc(l_compare_date,1);
     
     init_date_time_input_add($('#md_ins_inspection_date'),l_compare_date);
@@ -7927,24 +7849,24 @@ function create_md_fix_device(p_clicked_li){
         md_ins_refresh_railcar_btn.triggerHandler('click',p_clicked_li.attr('data-type'));
         $('div#md_ins_refresh_railcar_div').hide();
     } else {
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
-            data: { ajax_action: /*'get_all_cars'*/'get_all_fix_dev'},
-            success: function (data) {
-                var l_cars_json = JSON.parse(data);
-                var l_cars = [];
-                l_cars_json.forEach(function (item){
-                    l_cars.push(item.NAME);
-                });
-				//console.log(l_cars)
-                //l_cars.push('ВЕСЫ-МОД-ЖД-7260SM');
-                md_ins_refresh_car_number.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '50em',menuWidth: 80});
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+            data: { ajax_action: /*'get_all_cars'*/'get_all_fix_dev'}
         });
+            var l_cars_json = JSON.parse(data);
+                            var l_cars = [];
+                            l_cars_json.forEach(function (item){
+                                l_cars.push(item.NAME);
+                            });
+            				//console.log(l_cars)
+                            //l_cars.push('ВЕСЫ-МОД-ЖД-7260SM');
+                            md_ins_refresh_car_number.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '50em',menuWidth: 80});
+        } catch(e) {
+            window.alert(e);
+        };
         
         md_ins_refresh_car_number.on('keyup', function (e){
             /*if (check_car_number($(this).val())||$(this).val()==='ВЕСЫ-МОД-ЖД-7260SM'){                
@@ -7970,7 +7892,7 @@ function create_md_fix_device(p_clicked_li){
             'Сохранить':{ 
                 text: "Сохранить",
                 id: "md_btn_save_inspection",
-                click: function(){
+                click: async function(){
                     $('#md_btn_save_inspection').prop( "disabled", true );
                     var l_defects = get_defects_string();
                     var l_cont = '';
@@ -7994,7 +7916,7 @@ function create_md_fix_device(p_clicked_li){
 						//console.log(JSON.stringify(v_param));
 						//return;
                     //var cont = $('input[name="md_ins_cont"]:checked').attr('val');
-                    var res = md_enter_inspection_dev_ajax(v_param);
+                    var res = await md_enter_inspection_dev_ajax(v_param);
 
                     if (res === 'done') {
                         clear_add_info();
@@ -8008,8 +7930,8 @@ function create_md_fix_device(p_clicked_li){
             'Удалить':{
                 text: "Удалить",
                 id: "md_btn_delete_inspection",
-                click: function(){
-                    var res = md_delete_dev_inspection_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id);
+                click: async function(){
+                    var res = await md_delete_dev_inspection_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id);
 
                     if (res === 'done') {
                         clear_add_info();
@@ -8024,8 +7946,8 @@ function create_md_fix_device(p_clicked_li){
             /*'Создать заявку':{
                 text: "Создать заявку",
                 id: "md_btn_create_request",
-                click: function(){
-                    var res = create_request_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id);
+                click: async function(){
+                    var res = await create_request_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id);
 
                     if (res[0] == 'S') {
                         clear_add_info();
@@ -8058,8 +7980,8 @@ function create_md_fix_device(p_clicked_li){
                         width: 'auto',
                         draggable: false,
                         buttons:{
-                            'Сохранить': function(){
-                                var res = refusal_dev_to_repair_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id,$('#md_ins_refusal_to_repair_person').val());
+                            'Сохранить': async function(){
+                                var res = await refusal_dev_to_repair_ajax(l_car_inspections_mas[md_ins_history.val()].inspection_id,$('#md_ins_refusal_to_repair_person').val());
                                 
                                 if (res === 'done') {
                                     clear_add_info();
@@ -8146,23 +8068,23 @@ function md_disable_inspection_add_btns(){
         md_btn_refusal_to_repair.prop("disabled",false);
     }
 }
-function add_defect_tr(p_defect_id,p_defect_code,p_defect_descr,p_doc_type,p_doc_num,p_defect_date){
+async function add_defect_tr(p_defect_id,p_defect_code,p_defect_descr,p_doc_type,p_doc_num,p_defect_date){
     /*beg "Статус курсирования"*/
-    function get_defects(){
+    async function get_defects(){
         var l_places;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { ajax_action: 'get_defects'
-                  },
-            success: function (data) {
-                //alert(data);
-                l_places = JSON.parse(data);
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                  }
         });
+            //alert(data);
+                            l_places = JSON.parse(data);
+        } catch(e) {
+            window.alert(e);
+        };
         
         var l_select = $('<select>')
                        .addClass('md-select required')
@@ -8179,21 +8101,21 @@ function add_defect_tr(p_defect_id,p_defect_code,p_defect_descr,p_doc_type,p_doc
     }
     /*end "Статус курсирования"*/   
     /*beg "Документ"*/
-    function get_document_types(){
+    async function get_document_types(){
         var l_places;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { ajax_action: 'get_document_types'
-                  },
-            success: function (data) {
-                //alert(data);
-                l_places = JSON.parse(data);
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                  }
         });
+            //alert(data);
+                            l_places = JSON.parse(data);
+        } catch(e) {
+            window.alert(e);
+        };
         
         var l_select = $('<select>')
                        .addClass('md-select')
@@ -8213,8 +8135,8 @@ function add_defect_tr(p_defect_id,p_defect_code,p_defect_descr,p_doc_type,p_doc
     if (   ($('input#md_ins_enter_car_number').val()==='ВЕСЫ-МОД-ЖД-7260SM' && $('#tbl_list_of_defects').find('tr').length === 0) 
          || $('input#md_ins_enter_car_number').val()!=='ВЕСЫ-МОД-ЖД-7260SM'){
         var tr = $('<tr>');
-        var l_defect_select = get_defects();
-        var l_document_types_select = get_document_types();
+        var l_defect_select = await get_defects();
+        var l_document_types_select = await get_document_types();
         var l_defect_date_input = $('<input>')
                                    .attr({type:'text'})
                                    .addClass('text ui-widget-content ui-corner-all')
@@ -8244,23 +8166,23 @@ function add_defect_tr(p_defect_id,p_defect_code,p_defect_descr,p_doc_type,p_doc
     }
 }
 
-function add_defect_dev_tr(p_defect_id,p_defect_code,p_defect_descr,p_doc_type,p_doc_num,p_defect_date){
+async function add_defect_dev_tr(p_defect_id,p_defect_code,p_defect_descr,p_doc_type,p_doc_num,p_defect_date){
     /*beg "Статус курсирования"*/
-    function get_defects(){
+    async function get_defects(){
         var l_places;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { ajax_action: 'get_device_defects'
-                  },
-            success: function (data) {
-                //alert(data);
-                l_places = JSON.parse(data);
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                  }
         });
+            //alert(data);
+                            l_places = JSON.parse(data);
+        } catch(e) {
+            window.alert(e);
+        };
         
         var l_select = $('<select>')
                        .addClass('md-select required')
@@ -8277,21 +8199,21 @@ function add_defect_dev_tr(p_defect_id,p_defect_code,p_defect_descr,p_doc_type,p
     }
     /*end "Статус курсирования"*/   
     /*beg "Документ"*/
-    function get_document_types(){
+    async function get_document_types(){
         var l_places;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { ajax_action: 'get_document_types'
-                  },
-            success: function (data) {
-                //alert(data);
-                l_places = JSON.parse(data);
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                  }
         });
+            //alert(data);
+                            l_places = JSON.parse(data);
+        } catch(e) {
+            window.alert(e);
+        };
         
         var l_select = $('<select>')
                        .addClass('md-select')
@@ -8311,8 +8233,8 @@ function add_defect_dev_tr(p_defect_id,p_defect_code,p_defect_descr,p_doc_type,p
     if (   ($('input#md_ins_enter_car_number').val()==='ВЕСЫ-МОД-ЖД-7260SM' && $('#tbl_list_of_defects').find('tr').length === 0) 
          || $('input#md_ins_enter_car_number').val()!=='ВЕСЫ-МОД-ЖД-7260SM'){
         var tr = $('<tr>');
-        var l_defect_select = get_defects();
-        var l_document_types_select = get_document_types();
+        var l_defect_select = await get_defects();
+        var l_document_types_select = await get_document_types();
         var l_defect_date_input = $('<input>')
                                    .attr({type:'text'})
                                    .addClass('text ui-widget-content ui-corner-all')
@@ -8399,21 +8321,21 @@ function md_disable_btn_save_dev_inspection(){
 }
 
 /*"Место осмотра вагона"*/
-function get_select_places(p_id){
+async function get_select_places(p_id){
     var l_places;
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async:false,
         data: { ajax_action: 'get_place_inspection_cars'
-              },
-        success: function (data) {
-            //alert(data);
-            l_places = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        //alert(data);
+                    l_places = JSON.parse(data);
+    } catch(e) {
+        window.alert(e);
+    };
 
     var result = '<select id="'+p_id+'" class="required md-select" style="width: 14em;">';
     result += '<option value=""></option>';
@@ -8424,21 +8346,21 @@ function get_select_places(p_id){
     return result; 
 }
 /*"Осмотр произвел ФИО"*/
-function get_inspection_persons(p_id){
+async function get_inspection_persons(p_id){
     var l_inspection_persons;
-    /*$.ajax({
+    /*try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async:false,
         data: { ajax_action: 'get_inspection_persons'
-              },
-        success: function (data) {
-            //alert(data);
-            l_inspection_persons = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
-    });*/
+              }
+    });
+        //alert(data);
+                    l_inspection_persons = JSON.parse(data);
+    } catch(e) {
+        window.alert(e);
+    };*/
     l_inspection_persons = g_inspection_persons;
 
     var result = '<select id="'+p_id+'" class="md-select required" style="width: 16em;">';
@@ -8450,21 +8372,21 @@ function get_inspection_persons(p_id){
     return result; 
 }
 /*"Мастер смены ФИО"*/
-function get_masters(p_id){
+async function get_masters(p_id){
     var l_masters;
-    /*$.ajax({
+    /*try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async:false,
         data: { ajax_action: 'get_masters'
-              },
-        success: function (data) {
-            //alert(data);
-            l_masters = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
-    });*/
+              }
+    });
+        //alert(data);
+                    l_masters = JSON.parse(data);
+    } catch(e) {
+        window.alert(e);
+    };*/
     l_masters = g_masters;
 
     var result = '<select id="'+p_id+'" class="md-select required" style="width: 16em;">';
@@ -8476,22 +8398,22 @@ function get_masters(p_id){
     return result; 
 }
 /*"Инф-ия по вагону(группа актива, серийный номер)"*/
-function get_asset_info(p_car_number){
+async function get_asset_info(p_car_number){
     var l_asset_info;
     var l_asset_info_obj;
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async:false,
         data: { car_number:p_car_number
                ,ajax_action: 'get_asset_info'
-              },
-        success: function (data) {
-            l_asset_info = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        l_asset_info = JSON.parse(data);
+    } catch(e) {
+        window.alert(e);
+    };
 
     if (l_asset_info.length!=1){
         l_asset_info_obj = {'instance_id':-1};
@@ -8506,22 +8428,22 @@ function get_asset_info(p_car_number){
     return l_asset_info_obj; 
 }
 /* Информация по вагону(актив) (атрибуты из OeBS)*/
-function get_device_info(p_car_number){
+async function get_device_info(p_car_number){
     var l_asset_info;
     var l_asset_info_obj;
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async:false,
         data: { car_number:p_car_number
                ,ajax_action: 'get_asset_info'
-              },
-        success: function (data) {
-            l_asset_info = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        l_asset_info = JSON.parse(data);
+    } catch(e) {
+        window.alert(e);
+    };
 
     if (l_asset_info.length!=1){
         l_asset_info_obj = {'instance_id':-1};
@@ -8536,21 +8458,21 @@ function get_device_info(p_car_number){
     return l_asset_info_obj; 
 }
 /*"Приоритет"*/
-function get_priority(p_id){
+async function get_priority(p_id){
     var l_places;
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async:false,
         data: { ajax_action: 'get_priority'
-              },
-        success: function (data) {
-            //alert(data);
-            l_places = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        //alert(data);
+                    l_places = JSON.parse(data);
+    } catch(e) {
+        window.alert(e);
+    };
 
     var result = '<select id="'+p_id+'" class="md-select" style="width: 10em;">';
     result += '<option value=""></option>';
@@ -8575,21 +8497,21 @@ function get_ins_results(p_id,p_few_cars_flag){
     return result; 
 }
 /*"Статус курсирования"*/
-function get_status_kurs(p_id){
+async function get_status_kurs(p_id){
     var l_places;
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async:false,
         data: { ajax_action: 'get_status_kurs'
-              },
-        success: function (data) {
-            //alert(data);
-            l_places = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+              }
     });
+        //alert(data);
+                    l_places = JSON.parse(data);
+    } catch(e) {
+        window.alert(e);
+    };
 
     var result = '<select id="'+p_id+'" class="md-select" style="width: 14em;">';
     result += '<option value=""></option>';
@@ -8600,7 +8522,7 @@ function get_status_kurs(p_id){
     return result; 
 }
 /* Ввод осмотра нескольких вагонов */
-function create_md_enter_inspection_for_few_cars(p_obj_type){
+async function create_md_enter_inspection_for_few_cars(p_obj_type){
 	/* Заполнение таблицы с номером вагона, контейнером и грузом */
     function get_tr_for_inspection_table(p_obj_type,p_number,p_obj_number,p_freight,p_cont,p_status_nsi){
         var tr = $('<tr>');
@@ -8651,7 +8573,7 @@ function create_md_enter_inspection_for_few_cars(p_obj_type){
 	/* 
 		Добавляем введен вагон в таблицу
 	*/
-    function add_car_in_inspection_table(p_type_obj){
+    async function add_car_in_inspection_table(p_type_obj){
         var ins_tbl = $('table#inspection_cars_table');
         var car_number_input = $('#md_inspection_add_car');
         
@@ -8665,46 +8587,46 @@ function create_md_enter_inspection_for_few_cars(p_obj_type){
             car_number_input.addClass('red_bckg_color');
             alert((p_type_obj=='railcar'?'Вагон ':'Контейнер ') + obj_number + ' уже добавлен!');
         } else{
-            $.ajax({
+            try {
+                var data = await $.ajax({
                 url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async: false,
                 data: { car_number: obj_number
                        ,ajax_action: (p_type_obj=='railcar'?'get_add_info_for_car':'get_add_info_for_cont')
-                      },
-                success: function (data) {
-                    var records = JSON.parse(data);
-
-                    for(var i=0; i<records.length; i++) {
-                        var child = records[i];
-                        
-                        var freight = (child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '';
-                        var cont = null;
-						var status_nsi = (child.STATUS !== null) ? child.STATUS : '';
-                        if (p_type_obj == 'railcar'){
-                            cont = (child.CONT !== null) ? child.CONT : '';
-                        }
-                        
-                        ins_tbl.append(get_tr_for_inspection_table(p_obj_type,count+1,obj_number,freight,cont,status_nsi));
-                    }
-
-                    md_disable_notification_btn();
-                    car_number_input.removeClass('red_bckg_color');
-                    car_number_input.val('');
-                },
-                error: function (m1,m2) {window.alert(m1+m2);}
+                      }
             });
+                var records = JSON.parse(data);
+
+                                    for(var i=0; i<records.length; i++) {
+                                        var child = records[i];
+
+                                        var freight = (child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '';
+                                        var cont = null;
+                						var status_nsi = (child.STATUS !== null) ? child.STATUS : '';
+                                        if (p_type_obj == 'railcar'){
+                                            cont = (child.CONT !== null) ? child.CONT : '';
+                                        }
+
+                                        ins_tbl.append(get_tr_for_inspection_table(p_obj_type,count+1,obj_number,freight,cont,status_nsi));
+                                    }
+
+                                    md_disable_notification_btn();
+                                    car_number_input.removeClass('red_bckg_color');
+                                    car_number_input.val('');
+            } catch(e) {
+                window.alert(e);
+            };
         } 
     }
 	/* Сохраняем данные */
-    function md_enter_inspection_for_few_cars_ajax(p_obj_type,p_obj_numbers,p_cars_nsi,p_inspection_date,p_inspection_place,p_inspection_person,p_inspection_person_appoint,p_master,p_priority,p_result,p_status_kurs,p_comment){
+    async function md_enter_inspection_for_few_cars_ajax(p_obj_type,p_obj_numbers,p_cars_nsi,p_inspection_date,p_inspection_place,p_inspection_person,p_inspection_person_appoint,p_master,p_priority,p_result,p_status_kurs,p_comment){
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { obj_numbers: p_obj_numbers
                    ,obj_type:p_obj_type
                    ,inspection_date:p_inspection_date
@@ -8718,14 +8640,12 @@ function create_md_enter_inspection_for_few_cars(p_obj_type){
                    ,comment:p_comment
 				   ,cars_nsi:p_cars_nsi //add 26/10/2022 BekmansurovRR
                    ,ajax_action: 'enter_inspection_for_few_cars'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     function get_cars_from_inspection_tbl(){
@@ -8772,12 +8692,12 @@ function create_md_enter_inspection_for_few_cars(p_obj_type){
 
                     '<div>'+
                         '<label for="md_ins_inspection_place">Место осмотра вагона</label>'+
-                        get_select_places('md_ins_inspection_place')+
+                        await get_select_places('md_ins_inspection_place')+
                     '</div>'+
 
                     '<div>'+
                         '<label for="md_ins_inspection_person">Осмотр произвел ФИО</label>'+
-                        get_inspection_persons('md_ins_inspection_person')+
+                        await get_inspection_persons('md_ins_inspection_person')+
                     '</div>'+
 
                     '<div>'+
@@ -8787,12 +8707,12 @@ function create_md_enter_inspection_for_few_cars(p_obj_type){
 
                     '<div>'+
                         '<label for="md_ins_master">Мастер смены ФИО</label>'+
-                        get_masters('md_ins_master')+
+                        await get_masters('md_ins_master')+
                     '</div>'+
 
                     '<div>'+
                         '<label for="md_ins_priority">Приоритет</label>'+
-                        get_priority('md_ins_priority') +
+                        await get_priority('md_ins_priority') +
                     '</div>'+
 
                     '<div>'+
@@ -8803,7 +8723,7 @@ function create_md_enter_inspection_for_few_cars(p_obj_type){
 
                     '<div>'+
                         '<label for="md_ins_status_kurs">Статус курсирования</label>'+
-                        get_status_kurs('md_ins_status_kurs') +
+                        await get_status_kurs('md_ins_status_kurs') +
                     '</div>'+
 
                     '<div>'+
@@ -8875,8 +8795,8 @@ function create_md_enter_inspection_for_few_cars(p_obj_type){
     $('#md_ins_result').combobox();
     $('#md_ins_status_kurs').combobox();
     
-    $('#md_inspection_add_car_btn').on('click',function(){
-        add_car_in_inspection_table(p_obj_type);
+    $('#md_inspection_add_car_btn').on('click',async function(){
+        await add_car_in_inspection_table(p_obj_type);
     });
     
     $('#md_ins_inspection_person').on('select',function(){
@@ -8899,12 +8819,12 @@ function create_md_enter_inspection_for_few_cars(p_obj_type){
         buttons:{
             'Сохранить':{text: "Сохранить",
                            id: "md_btn_save_inspection",
-                        click: function(){
+                        click: async function(){
                             $('#md_btn_save_inspection').prop( "disabled", true );
                             var l_car_numbers = get_cars_from_inspection_tbl();
 							var l_car_nsi = get_cars_nsi_inspection_tbl(); // add 26/10/2022 BekmansurovRR
 
-                            var res = md_enter_inspection_for_few_cars_ajax(
+                            var res = await md_enter_inspection_for_few_cars_ajax(
                                          p_obj_type,l_car_numbers,l_car_nsi,$('#md_ins_inspection_date').val(),$('#md_ins_inspection_place').val(),$('#md_ins_inspection_person').val()
                                         ,$('#md_ins_inspection_person_appoint').val(),$('#md_ins_master').val(),$('#md_ins_priority').val(),$('#md_ins_result').val()
                                         ,$('#md_ins_status_kurs').val(),$('#md_ins_comment').val()
@@ -8940,18 +8860,18 @@ function md_disable_btn_save_inspection_few_cars(){
     }
 }
 /*Возврат вагонов с ПСП*/
-function create_md_return_from_PSP(){
+async function create_md_return_from_PSP(){
     function md_return_from_PSP(){
           
         var self = this;
         
-        function return_from_PSP_ajax(p_car_numbers,p_return_time,p_return_reason,p_return_comment,p_return_correction_reason,p_station_operator) {
+        async function return_from_PSP_ajax(p_car_numbers,p_return_time,p_return_reason,p_return_comment,p_return_correction_reason,p_station_operator) {
             var res;
-            $.ajax({
+            try {
+                var data = await $.ajax({
                 url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async: false,
                 data: { car_numbers: p_car_numbers
                        ,return_time: p_return_time
                        ,return_reason: p_return_reason
@@ -8959,18 +8879,16 @@ function create_md_return_from_PSP(){
                        ,return_correction_reason: p_return_correction_reason
                        ,station_operator: p_station_operator
                        ,ajax_action: 'return_from_psp'
-                },
-                success: function (data) {
-                    res = data;
-                },
-                error: function (data) {
-                    res = 'fail';
                 }
             });
+                res = data;
+            } catch(e) {
+                res = 'fail';
+            };
             return res;
         }
         
-        this.show_window = function(){
+        this.show_window = async function(){
             $('.context-menu').remove();
             
             var md_div = $('<div/>')
@@ -8988,7 +8906,7 @@ function create_md_return_from_PSP(){
                                 '</div>'+
                             '</div>'+
                             '<div class="attr" style="margin-left:14px; text-align:right; float:right">'+
-                                '<input disabled type="text" size="14" class="text ui-widget-content ui-corner-all" value="'+get_server_current_time()+'"></input><br>'+
+                                '<input disabled type="text" size="14" class="text ui-widget-content ui-corner-all" value="'+await get_server_current_time()+'"></input><br>'+
                                 '<input disabled type="text" size="20" class="text ui-widget-content ui-corner-all" style="margin-top:5px;" value="'+user_name+'"></input>'+
                             '</div>'+
                         '</div>'
@@ -9068,7 +8986,7 @@ function create_md_return_from_PSP(){
  
             var railcar_table = new railcar_table_const();
             md_div.append(railcar_table.get_table());
-            railcar_table.add_cars_in_table(return_selected_cars(),false);
+            railcar_table.await add_cars_in_table(return_selected_cars(),false);
             
             railcar_table.spec_check_car_number = function(p_car_number){
                 var find_result = $('#comingCarsTree').find('li[data-id='+p_car_number+'][data-from_station_id=2]');
@@ -9085,28 +9003,28 @@ function create_md_return_from_PSP(){
                     $('#md_ok_btn').prop( "disabled", false );
                 }
             };
-            md_div.check_cars_train = function (){
-                $.ajax({
+            md_div.check_cars_train = async function (){
+                try {
+                    var result = await $.ajax({
                     url: 'data.php',
                     type: 'POST',
                     dataType: "text",
-                    async:false,
                     data: { cars_number: railcar_table.get_cars_in_table()
                            ,reason: md_div.return_reason.val()
                            ,ajax_action: 'get_last_cars_train_time'
-                          },
-                    success: function (result) {
-                        if (result!=''){
-                            md_div.return_time.val(result);
-                            if (md_div.return_reason.val()=='return'){
-                                md_div.return_time_last = result;
-                            }
-                        }else if (result==''&&md_div.return_reason.val()=='mistake'){
-                            alert('Ошибка! Вагоны в разных поездах!');
-                        }
-                    },
-                    error: function (m1,m2) {window.alert(m1+m2);}
+                          }
                 });
+                    if (result!=''){
+                                                md_div.return_time.val(result);
+                                                if (md_div.return_reason.val()=='return'){
+                                                    md_div.return_time_last = result;
+                                                }
+                                            }else if (result==''&&md_div.return_reason.val()=='mistake'){
+                                                alert('Ошибка! Вагоны в разных поездах!');
+                                            }
+                } catch(e) {
+                    window.alert(e);
+                };
             };
             
             railcar_table.action_change_table = function(){
@@ -9129,8 +9047,8 @@ function create_md_return_from_PSP(){
                     }
                 }
             });
-            md_div.return_reason.on('change', function(){
-                md_div.check_cars_train();
+            md_div.return_reason.on('change', async function(){
+                md_div.await check_cars_train();
                 md_div.disable_ok_btn();
             });
     
@@ -9154,10 +9072,10 @@ function create_md_return_from_PSP(){
                     'Вернуть':{
                         text: "Вернуть",
                           id: "md_ok_btn",
-                       click: function(){
+                       click: async function(){
                             var cars_in_table = railcar_table.get_cars_in_table();
                             
-                            if (return_from_PSP_ajax(cars_in_table,md_div.return_time.val(),md_div.return_reason.val(),md_div.return_comment.val(),
+                            if (await return_from_PSP_ajax(cars_in_table,md_div.return_time.val(),md_div.return_reason.val(),md_div.return_comment.val(),
                                                                    md_div.return_correction_reason.val(),md_div.station_operator.val())==='done') {
                                 
                                 var cars_in_table_mas = cars_in_table.split('|');
@@ -9190,10 +9108,10 @@ function create_md_return_from_PSP(){
     }
     
     var md_return_from_PSP = new md_return_from_PSP;
-    md_return_from_PSP.show_window();
+    md_return_from_PSP.await show_window();
 }
 
-function create_md_weigh_import(){
+async function create_md_weigh_import(){
     function railcar_table_for_weigh(){
         var self = this;
         this.cars_table_total_row;
@@ -9530,25 +9448,23 @@ function create_md_weigh_import(){
         };
     };
     
-    function load_weigh_import_ajax(p_train_id,p_general_com,p_cars){
+    async function load_weigh_import_ajax(p_train_id,p_general_com,p_cars){
         var res = 'done';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { train_id: p_train_id
                    ,general_com: p_general_com
                    ,cars: p_cars
                    ,ajax_action: 'load_car_scale_weights'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
@@ -9629,18 +9545,18 @@ function create_md_weigh_import(){
     });
     
     var l_cars_from_scale=[];
-    $.ajax({
+    try {
+        var data = await $.ajax({
         url: 'data.php',
         type: 'POST',
         dataType: "text",
-        async:false,
-        data: {ajax_action: 'get_car_scale_weights'},
-        success: function (data) {
-			//console.log(data);
-            l_cars_from_scale = JSON.parse(data);
-        },
-        error: function (m1,m2) {window.alert(m1+m2);}
+        data: {ajax_action: 'get_car_scale_weights'}
     });
+        //console.log(data);
+                    l_cars_from_scale = JSON.parse(data);
+    } catch(e) {
+        window.alert(e);
+    };
     
     var l_cars_from_scale_mas =[];
     var l_prev_id = 0;
@@ -9671,14 +9587,14 @@ function create_md_weigh_import(){
         /*$('#md_date_post').val(l_history.date_post);*/
         railcar_table.empty_table();
         if (l_scale != undefined) {
-            l_scale.cars.forEach(function(item,i){
-                railcar_table.add_cars_in_table(item.id,item.car_number,item.weight,item.date_w,'Динамика',item.speed,false);
+            l_scale.cars.forEach(async function(item,i){
+                railcar_table.await add_cars_in_table(item.id,item.car_number,item.weight,item.date_w,'Динамика',item.speed,false);
             });
         }
     });
     
-    md_div.add_car_btn.on('click', function(){
-        railcar_table.add_cars_in_table(0,null,null,md_div.train_date.val(),'Динамика',md_div.train_speed.val(),true);
+    md_div.add_car_btn.on('click', async function(){
+        railcar_table.await add_cars_in_table(0,null,null,md_div.train_date.val(),'Динамика',md_div.train_speed.val(),true);
     });
 
     md_div.manual_input.triggerHandler('change');
@@ -9693,7 +9609,7 @@ function create_md_weigh_import(){
             'Загрузить':{
                 text: "Загрузить",
                   id: "md_ok_btn",
-               click: function(){
+               click: async function(){
                     start_loading_animation();
                     var l_check_period = '1';
                     var l_dates = railcar_table.get_cars_date_in_table();
@@ -9715,7 +9631,7 @@ function create_md_weigh_import(){
                             var l_general_com = md_div.general_comment.val();
                             var l_cars = railcar_table.get_cars_in_table();
 							
-                            var l_ajax_result = load_weigh_import_ajax(l_train_id,l_general_com,l_cars);
+                            var l_ajax_result = await load_weigh_import_ajax(l_train_id,l_general_com,l_cars);
 
                             if (l_ajax_result === 'done') {
                                 md_div.train.children('option:selected').remove();
@@ -9745,7 +9661,7 @@ function create_md_weigh_import(){
 }
 function trallert(p_al) { alert(p_al); }
 /*Результаты взвешиваний*/
-function create_md_weight_result(p_clicked_li){
+async function create_md_weight_result(p_clicked_li){
     function railcar_table_for_weigh(){
         var self = this;
         this.cars_table_total_row;
@@ -9933,7 +9849,7 @@ function create_md_weight_result(p_clicked_li){
 		// add 01.02.2021 Редактирование "Результаты взвешивания"
 		function change_weight_car(p_weight_car){
 			
-			function save_change_weight_car (){
+			async function save_change_weight_car (){
 				var l_param = {};
 					var x_id = md_rep_div.weight_date.attr('id_weight_car');
 					if (typeof x_id !== typeof undefined && x_id !== false) {
@@ -9951,19 +9867,19 @@ function create_md_weight_result(p_clicked_li){
 					
 					//console.log(JSON.stringify(l_param));
 					var res = null;
-					$.ajax({
+					try {
+					    var data = await $.ajax({
 						url: '../data.php',
 						type: 'POST',
 						dataType: "text",
-						async:false,
 						data: { add_data: JSON.stringify(l_param)
-							   ,ajax_action: 'save_change_weight_car'},
-						success: function (data) {
-							res = data;
-							//console.log(res);
-						},
-						error: function (m1,m2) {window.alert(m1+m2);}
+							   ,ajax_action: 'save_change_weight_car'}
 					});
+					    res = data;
+					    							//console.log(res);
+					} catch(e) {
+					    window.alert(e);
+					};
 					return res; 
 			}
 			
@@ -10051,8 +9967,8 @@ function create_md_weight_result(p_clicked_li){
 				position: { my: 'top', at: 'top+150' },
 				draggable: false,
 				buttons:{
-					'Сохранить': function(){
-						var f_res = save_change_weight_car();
+					'Сохранить': async function(){
+						var f_res = await save_change_weight_car();
 						//console.log(f_res);
 						//return;
 						var f_res_mas = f_res.split('$');
@@ -10096,7 +10012,7 @@ function create_md_weight_result(p_clicked_li){
         };
     };
 	
-    function add_report_window (){
+    async function add_report_window (){
 		function run_report_disl_007(p_from_date,p_to_date,p_owner){
 			var win = window.open('xx_etw_disl_007/xx_etw_disl_007.php?'+
 								  'p_from_date='+p_from_date+'&'+
@@ -10149,7 +10065,7 @@ function create_md_weight_result(p_clicked_li){
 
 		//md_rep_div.org_name.val('none');
 		// Период
-		var l_date = get_server_current_time();
+		var l_date = await get_server_current_time();
 		var l_date_from = add_day_to_date_trunc(l_date,-1);
 		var l_date_to = add_date_set_hh_mm(l_date,1,23,59);
 		
@@ -10222,24 +10138,24 @@ function create_md_weight_result(p_clicked_li){
     var railcar_table = new railcar_table_for_weigh();
     md_div.append(railcar_table.get_table());
     
-    l_refresh_btn.on('click', function(){
+    l_refresh_btn.on('click', async function(){
         railcar_table.empty_table();
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: {car_number:l_car_input.val()
-                  ,ajax_action: 'get_car_scale_weights_add'},
-            success: function (data) {
-                var l_cars_from_scale = JSON.parse(data);
-                l_cars_from_scale.forEach(function(item){
-                    railcar_table.add_cars_in_table(item.ID,item.TRAIN_ID,item.DATE_W,/*'Динамика'*/item.WEIGHING_TYPE,item.SPEED,item.WEIGHT,item.WEIGHT_COR,item.DESCR,item.PREV_MAX_DATE_W,item.FOR_AKT,item.PK_ID,item.SCALE_TYPE);
-                });
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
-        }); 
+                  ,ajax_action: 'get_car_scale_weights_add'}
+        });
+            var l_cars_from_scale = JSON.parse(data);
+                            l_cars_from_scale.forEach(async function(item){
+                                railcar_table.await add_cars_in_table(item.ID,item.TRAIN_ID,item.DATE_W,/*'Динамика'*/item.WEIGHING_TYPE,item.SPEED,item.WEIGHT,item.WEIGHT_COR,item.DESCR,item.PREV_MAX_DATE_W,item.FOR_AKT,item.PK_ID,item.SCALE_TYPE);
+                            });
+        } catch(e) {
+            window.alert(e);
+        }; 
     });
     
     /*Если вызываем с параметром, значит вызываем по клику из дерева*/
@@ -10250,22 +10166,22 @@ function create_md_weight_result(p_clicked_li){
         l_car_input.prop('disabled', true);
         l_refresh_btn.hide();
     } else {
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
-            data: { ajax_action: 'get_all_cars'},
-            success: function (data) {
-                var l_cars_json = JSON.parse(data);
-                var l_cars = [];
-                l_cars_json.forEach(function (item){
-                    l_cars.push(item.ID);
-                });
-                l_car_input.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '50em',menuWidth: 80});
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+            data: { ajax_action: 'get_all_cars'}
         });
+            var l_cars_json = JSON.parse(data);
+                            var l_cars = [];
+                            l_cars_json.forEach(function (item){
+                                l_cars.push(item.ID);
+                            });
+                            l_car_input.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '50em',menuWidth: 80});
+        } catch(e) {
+            window.alert(e);
+        };
         
         l_car_input.on('keyup', function (e){        
             if (check_car_number($(this).val())){                
@@ -10306,52 +10222,49 @@ function create_md_weight_result(p_clicked_li){
     });
 }
 /*Переместить контейнера*/
-function create_md_move_cont(p_clicked_li) {
+async function create_md_move_cont(p_clicked_li) {
     $('.context-menu').remove();
-    function create_md_move_cont_ajax(p_conts,p_place_type,p_place_id,p_oper_date,p_comment){
+    async function create_md_move_cont_ajax(p_conts,p_place_type,p_place_id,p_oper_date,p_comment){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { conts: p_conts
                    ,place_type: p_place_type
                    ,place_id: p_place_id
                    ,oper_date: p_oper_date
                    ,comment: p_comment
-                   ,ajax_action: 'move_conts'},
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
-            }
+                   ,ajax_action: 'move_conts'}
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
-    function fill_select_with_places(p_select,p_station_id,p_area_type){
+    async function fill_select_with_places(p_select,p_station_id,p_area_type){
         p_select.empty();
         
         p_select.append($('<option>'));
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {station_id: p_station_id 
                     ,area_type: p_area_type
                     ,ajax_action: 'get_places_for_cont'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').attr('data-id',item.ID).attr('data-type',item.TYPE).text(item.NAME).val(item.ID);
-                        p_select.append(l_option);
-                    }); 
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').attr('data-id',item.ID).attr('data-type',item.TYPE).text(item.NAME).val(item.ID);
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
     function disable_save_btn(){
         if (md_div.operation_date.hasClass('red_bckg_color')||md_div.operation_date.val()==''||md_div.new_place.val()==''){
@@ -10374,7 +10287,7 @@ function create_md_move_cont(p_clicked_li) {
                     '</div>'+
                 '</div>'+
                 '<div class="attr" style="margin-left:14px; text-align:right; float:right">'+
-                    '<input disabled type="text" size="14" class="text ui-widget-content ui-corner-all" value="'+get_server_current_time()+'"></input><br>'+
+                    '<input disabled type="text" size="14" class="text ui-widget-content ui-corner-all" value="'+await get_server_current_time()+'"></input><br>'+
                     '<input disabled type="text" size="20" class="text ui-widget-content ui-corner-all" style="margin-top:5px;" value="'+user_name+'"></input>'+
                 '</div>'+
             '</div>'
@@ -10427,8 +10340,8 @@ function create_md_move_cont(p_clicked_li) {
             )
         );
     
-    md_div.new_place_type.select(function(){
-        fill_select_with_places(md_div.new_place,md_div.new_place_station.val(),md_div.new_place_type.val());
+    md_div.new_place_type.select(async function(){
+        await fill_select_with_places(md_div.new_place,md_div.new_place_station.val(),md_div.new_place_type.val());
         md_div.new_place.combobox('clear');
         disable_save_btn();
         
@@ -10438,14 +10351,14 @@ function create_md_move_cont(p_clicked_li) {
             md_div.new_place_station.parent().hide();
         }
     });
-    md_div.new_place_station.select(function(){
-        fill_select_with_places(md_div.new_place,md_div.new_place_station.val(),md_div.new_place_type.val());
+    md_div.new_place_station.select(async function(){
+        await fill_select_with_places(md_div.new_place,md_div.new_place_station.val(),md_div.new_place_type.val());
         md_div.new_place.combobox('clear');
     });
     
-    fill_select_with_places(md_div.new_place,md_div.new_place_station.val(),md_div.new_place_type.val());
+    await fill_select_with_places(md_div.new_place,md_div.new_place_station.val(),md_div.new_place_type.val());
     
-    var l_compare_date = get_server_current_time();
+    var l_compare_date = await get_server_current_time();
     var l_compare_date_from = add_day_to_date(l_compare_date,-30);
     var l_compare_date_to = add_day_to_date(l_compare_date,1);
     
@@ -10464,7 +10377,7 @@ function create_md_move_cont(p_clicked_li) {
     var l_conts_mas = [];
     if (l_clicked_elem_type === 'railcar'){
         var l_car_number = p_clicked_li.attr('data-id');
-        l_conts_mas = get_car_containers(l_car_number);
+        l_conts_mas = await get_car_containers(l_car_number);
         
         
         l_conts_mas.forEach(function(cont){
@@ -10476,7 +10389,7 @@ function create_md_move_cont(p_clicked_li) {
             l_conts += cont.obj_number+'|';
         });
     };
-    cont_table.add_in_table(l_conts,false);
+    cont_table.await add_in_table(l_conts,false);
     
     md_div.operation_date.on('blur',function(){disable_save_btn();});
     md_div.new_place.select(function(){
@@ -10492,10 +10405,10 @@ function create_md_move_cont(p_clicked_li) {
             'Принять':{
                 text: "Переместить",
                   id: "md_ok_btn",
-               click: function(){
+               click: async function(){
                     var l_conts_in_table = cont_table.get_cont_in_table();
                     var l_conts_in_table_str = l_conts_in_table.join('|');
-                    var l_res = create_md_move_cont_ajax(l_conts_in_table_str,md_div.new_place_type.val(),md_div.new_place.val(),md_div.operation_date.val(),md_div.comment.val());
+                    var l_res = await create_md_move_cont_ajax(l_conts_in_table_str,md_div.new_place_type.val(),md_div.new_place.val(),md_div.operation_date.val(),md_div.comment.val());
                     if (l_res=='done'){
                         if (md_div.new_place_type.val()==='area'){
                             if (l_clicked_elem_type === 'railcar' && md_div.new_place_station.val()==$('#currentCarstree li[data-type="station"]').attr('data-id')){
@@ -10563,78 +10476,78 @@ function create_md_move_cont(p_clicked_li) {
 /*
 	Создание пробы и результата в OeBS
 */
-function create_md_export_samples(){
+async function create_md_export_samples(){
 	//alert('create_md_export_samples');
 	
-	function fill_loadind_type_for_select (p_select){
+	async function fill_loadind_type_for_select (p_select){
 		p_select.empty();
 		var l_option = $('<option>').text('').val('');
 		p_select.append(l_option);
-		$.ajax({
+		try {
+		    var data = await $.ajax({
 			url: 'data.php',
 			type: 'POST',
 			dataType: "text",
-			async:false,
 			data: { ajax_action: 'get_loadind_type_oebs_list'
-				  },
-			success: function (data) {
-				//console.log(data);
-				var records = JSON.parse(data);
-					$.each(records, function( i, item ) {
-                    var l_option = $('<option>').text(item.TYPE_NAME).val(item.TYPE_CODE);
-						p_select.append(l_option);
-                    }); 
-				},
-				error: function (m1,m2) {window.alert(m1+m2);}
+				  }
 			});
+		    //console.log(data);
+		    				var records = JSON.parse(data);
+		    					$.each(records, function( i, item ) {
+		                        var l_option = $('<option>').text(item.TYPE_NAME).val(item.TYPE_CODE);
+		    						p_select.append(l_option);
+		                        });
+		} catch(e) {
+		    window.alert(e);
+		};
 	}
 	 
-	function fill_loadind_status_for_select (p_select){
+	async function fill_loadind_status_for_select (p_select){
 		p_select.empty();
 		
-		$.ajax({
+		try {
+		    var data = await $.ajax({
 			url: 'data.php',
 			type: 'POST',
 			dataType: "text",
-			async:false,
 			data: { ajax_action: 'get_loadind_status_oebs_list'
-				  },
-			success: function (data) {
-				//console.log(data);
-				var records = JSON.parse(data);
-					$.each(records, function( i, item ) {
-                    var l_option = $('<option>').text(item.STATUS_NAME).val(item.ID);
-						p_select.append(l_option);
-                    }); 
-				},
-				error: function (m1,m2) {window.alert(m1+m2);}
+				  }
 			});
+		    //console.log(data);
+		    				var records = JSON.parse(data);
+		    					$.each(records, function( i, item ) {
+		                        var l_option = $('<option>').text(item.STATUS_NAME).val(item.ID);
+		    						p_select.append(l_option);
+		                        });
+		} catch(e) {
+		    window.alert(e);
+		};
 	}
-	function fill_product_for_freight (p_select, p_freight){
+	async function fill_product_for_freight (p_select, p_freight){
 			p_select.empty();
 			var v_params = {};
 					v_params.freight = p_freight;
 			//console.log(JSON.stringify(v_params));
 			
 			var l_data=[];
-			$.ajax({
+			try {
+			    var data = await $.ajax({
 				url: 'data.php',
 				type: 'POST',
 				dataType: "text",
-				async:false,
 				data: { add_data: JSON.stringify(v_params)
 					   ,ajax_action: 'get_product_for_freight'
-					  },
-				success: function (data) {
-					//console.log(data);
-					var records = JSON.parse(data);
-					$.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.NAME).val(item.CODE);
-                        p_select.append(l_option);
-                    }); 
-				},
-				error: function (m1,m2) {window.alert(m1+m2);}
+					  }
 			});
+			    //console.log(data);
+			    					var records = JSON.parse(data);
+			    					$.each(records, function( i, item ) {
+			                            var l_option = $('<option>').text(item.NAME).val(item.CODE);
+			                            p_select.append(l_option);
+			                        });
+			} catch(e) {
+			    window.alert(e);
+			};
 		}
 	function table_for_weigh_from_shop_samples(){
         var self = this;
@@ -10650,47 +10563,47 @@ function create_md_export_samples(){
 			
 		return_table.append(table_samples);
         return_table.cars_table = $('<table>',{class:'table_for_weigh_from_shop_samples cars_table'}).append($('<tbody>'));
-        function get_sample_tbl_header (p_params){
+        async function get_sample_tbl_header (p_params){
 			//console.log(JSON.stringify(p_params));
 			var l_data=[];
-			$.ajax({
+			try {
+			    var data = await $.ajax({
 				url: 'data.php',
 				type: 'POST',
 				dataType: "text",
-				async:false,
 				data: { add_data: JSON.stringify(p_params)
 					   ,ajax_action: 'get_sample_tbl_header'
-					  },
-				success: function (data) {
-					//console.log(data);
-					l_data = JSON.parse(data);
-				},
-				error: function (m1,m2) {window.alert(m1+m2);}
+					  }
 			});
+			    //console.log(data);
+			    					l_data = JSON.parse(data);
+			} catch(e) {
+			    window.alert(e);
+			};
 			return l_data;
 		}
 		
-		function get_disl_samples_info (p_params){
+		async function get_disl_samples_info (p_params){
 			var l_data=[];
 			
-			$.ajax({
+			try {
+			    var data = await $.ajax({
 				url: 'data.php',
 				type: 'POST',
 				dataType: "text",
-				async:false,
 				data: { add_data: JSON.stringify(p_params)
 					   ,ajax_action: 'get_disl_samples_info'
-					  },
-				success: function (data) {
-					//console.log(data);
-					l_data = JSON.parse(data);
-				},
-				error: function (m1,m2) {window.alert(m1+m2);}
+					  }
 			});
+			    //console.log(data);
+			    					l_data = JSON.parse(data);
+			} catch(e) {
+			    window.alert(e);
+			};
 			return l_data;
 		}
 		// Загружаем таблицу
-		this.load_table = function(p_product, p_item_code_oebs){
+		this.load_table = async function(p_product, p_item_code_oebs){
 			function getObjForHeader (p_array, p_value,p_car_overload){
 				//console.log(p_array);
 				var objHeader;
@@ -10776,8 +10689,8 @@ function create_md_export_samples(){
 					
 				//console.log('v_params='+JSON.stringify(v_params));
 				// Возвращаем шапку таблицы
-				table_h = get_sample_tbl_header(v_params);
-				dataInfo = get_disl_samples_info(v_params);
+				table_h = await get_sample_tbl_header(v_params);
+				dataInfo = await get_disl_samples_info(v_params);
 				
 				
 				for (var ii = 0; ii < 2; ii++) {
@@ -11027,23 +10940,21 @@ function create_md_export_samples(){
 	function export_table(){
 		export_table.export_samples();
 	};
-	function export_samples_info(p_add_data){
+	async function export_samples_info(p_add_data){
 			var res='';
-			$.ajax({
+			try {
+			    var data = await $.ajax({
 				url: 'data.php',
 				type: 'POST',
 				dataType: "text",
-				async: false,
 				data: { add_data: p_add_data
 					   ,ajax_action: 'export_samples_info'
-				},
-				success: function (data) {
-					res = data;
-				},
-				error: function (data) {
-					res = 'fail';
 				}
 			});
+			    res = data;
+			} catch(e) {
+			    res = 'fail';
+			};
 			return res;
 	}
 	
@@ -11052,7 +10963,7 @@ function create_md_export_samples(){
         .attr('title','Экспорт пробы в OEBS')
         .appendTo('body');
     
-    var l_date_to_str = get_server_current_time();
+    var l_date_to_str = await get_server_current_time();
     
     var l_date_from_str = add_day_to_date(l_date_to_str,-3);
 	
@@ -11088,13 +10999,13 @@ function create_md_export_samples(){
     md_div.type.append('<option value="'+'cont'+'">'+'Контейнерная'+'</option>');
     md_div.type.append('<option value="'+'railcar'+'">'+'Повагонно'+'</option>');
 	*/
-	md_div.freight.on('change', function (e) {
+	md_div.freight.on('change', async function (e) {
 		//console.log('md_div.freight'+md_div.freight.val());
-		fill_product_for_freight(md_div.product, md_div.freight.val());
+		await fill_product_for_freight(md_div.product, md_div.freight.val());
 	});
 	
-	fill_loadind_status_for_select(md_div.status);
-	fill_loadind_type_for_select(md_div.type);
+	await fill_loadind_status_for_select(md_div.status);
+	await fill_loadind_type_for_select(md_div.type);
 	init_date_time_input(md_div.date_from);
     init_date_time_input(md_div.date_to);
 	
@@ -11178,7 +11089,7 @@ function create_md_export_samples(){
             'Экспортировать в OEBS':{
                 text: "Экспортировать в OEBS",
                   id: "md_export_samples_btn",
-               click: function(){
+               click: async function(){
 				   
 					var l_result = export_table.verify_check_elements();
 					if (l_result.done == false){
@@ -11192,7 +11103,7 @@ function create_md_export_samples(){
 						var l_oebs_json = JSON.stringify(export_table.export_data());
 						//console.log(l_oebs_json);
 						//return;
-						var result = export_samples_info (l_oebs_json).split('$');
+						var result = await export_samples_info (l_oebs_json).split('$');
 						if (result[0]=='done') {
 							create_info_modal_dialog_new('Оповещение','Процедура завершилась успешно!'+'<br>'+result[1]);
 							$('#md_export_samples_btn').prop('disabled',false);
@@ -11227,7 +11138,7 @@ function create_md_export_samples(){
 
 
 /* Экспорт в OEBS */
-function create_md_export_shop_info(){
+async function create_md_export_shop_info(){
     
 	function run_report(){
 		var l_freight = md_div.freight.val();
@@ -11246,73 +11157,73 @@ function create_md_export_shop_info(){
 							  'type='+l_type
                              ,'_blank');
     }
-	function fill_product_for_select (p_select){
+	async function fill_product_for_select (p_select){
 		p_select.empty();
 		var l_option = $('<option>').text('').val('');
 		p_select.append(l_option);
-		$.ajax({
+		try {
+		    var data = await $.ajax({
 			url: 'data.php',
 			type: 'POST',
 			dataType: "text",
-			async:false,
 			data: { ajax_action: 'get_product_name_list'
-				  },
-			success: function (data) {
-				//console.log(data);
-				var records = JSON.parse(data);
-					$.each(records, function( i, item ) {
-                    var l_option = $('<option>').text(item.ITEM_NAME).val(item.ITEM_NAME);
-						p_select.append(l_option);
-                    }); 
-				},
-				error: function (m1,m2) {window.alert(m1+m2);}
+				  }
 			});
+		    //console.log(data);
+		    				var records = JSON.parse(data);
+		    					$.each(records, function( i, item ) {
+		                        var l_option = $('<option>').text(item.ITEM_NAME).val(item.ITEM_NAME);
+		    						p_select.append(l_option);
+		                        });
+		} catch(e) {
+		    window.alert(e);
+		};
 	}
 	
-	function fill_loadind_status_for_select (p_select){
+	async function fill_loadind_status_for_select (p_select){
 		p_select.empty();
 		var l_option = $('<option>').text('').val('');
 		p_select.append(l_option);
-		$.ajax({
+		try {
+		    var data = await $.ajax({
 			url: 'data.php',
 			type: 'POST',
 			dataType: "text",
-			async:false,
 			data: { ajax_action: 'get_loadind_status_oebs_list'
-				  },
-			success: function (data) {
-				//console.log(data);
-				var records = JSON.parse(data);
-					$.each(records, function( i, item ) {
-                    var l_option = $('<option>').text(item.STATUS_NAME).val(item.ID);
-						p_select.append(l_option);
-                    }); 
-				},
-				error: function (m1,m2) {window.alert(m1+m2);}
+				  }
 			});
+		    //console.log(data);
+		    				var records = JSON.parse(data);
+		    					$.each(records, function( i, item ) {
+		                        var l_option = $('<option>').text(item.STATUS_NAME).val(item.ID);
+		    						p_select.append(l_option);
+		                        });
+		} catch(e) {
+		    window.alert(e);
+		};
 	}
 	
-	function fill_loadind_type_for_select (p_select){
+	async function fill_loadind_type_for_select (p_select){
 		p_select.empty();
 		var l_option = $('<option>').text('').val('');
 		p_select.append(l_option);
-		$.ajax({
+		try {
+		    var data = await $.ajax({
 			url: 'data.php',
 			type: 'POST',
 			dataType: "text",
-			async:false,
 			data: { ajax_action: 'get_loadind_type_oebs_list'
-				  },
-			success: function (data) {
-				//console.log(data);
-				var records = JSON.parse(data);
-					$.each(records, function( i, item ) {
-                    var l_option = $('<option>').text(item.TYPE_NAME).val(item.TYPE_CODE);
-						p_select.append(l_option);
-                    }); 
-				},
-				error: function (m1,m2) {window.alert(m1+m2);}
+				  }
 			});
+		    //console.log(data);
+		    				var records = JSON.parse(data);
+		    					$.each(records, function( i, item ) {
+		                        var l_option = $('<option>').text(item.TYPE_NAME).val(item.TYPE_CODE);
+		    						p_select.append(l_option);
+		                        });
+		} catch(e) {
+		    window.alert(e);
+		};
 	}
 	
 	
@@ -11359,23 +11270,21 @@ function create_md_export_shop_info(){
 		
         return result_select;
     };
-    function export_shop_info_ajax(p_shop_info){
+    async function export_shop_info_ajax(p_shop_info){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { shop_info: p_shop_info
                    ,ajax_action: 'export_shop_info'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
@@ -11654,7 +11563,7 @@ function create_md_export_shop_info(){
         .attr('title','Экспорт в OEBS')
         .appendTo('body');
     
-    var l_date_to_str = get_server_current_time();
+    var l_date_to_str = await get_server_current_time();
     
     var l_date_from_str = add_day_to_date(l_date_to_str,-3);
 
@@ -11686,9 +11595,9 @@ function create_md_export_shop_info(){
     md_div.type.append('<option value="'+'railcar'+'">'+'Повагонно'+'</option>');
     */
 	
-	fill_loadind_status_for_select(md_div.status);
-	fill_loadind_type_for_select(md_div.type);
-	fill_product_for_select(md_div.freight);
+	await fill_loadind_status_for_select(md_div.status);
+	await fill_loadind_type_for_select(md_div.type);
+	await fill_product_for_select(md_div.freight);
     init_date_time_input(md_div.date_from);
     init_date_time_input(md_div.date_to);
    
@@ -11725,29 +11634,29 @@ function create_md_export_shop_info(){
     var export_table = new table_for_weigh_from_shop_info();
     md_div.append(export_table.get_table());    
     
-    md_div.refresh_btn.on('click', function(){
+    md_div.refresh_btn.on('click', async function(){
         if (md_div.date_from.hasClass('red_bckg_color')||md_div.date_from.val()==''||md_div.date_to.hasClass('red_bckg_color')||md_div.date_to.val()==''){
             create_info_modal_dialog_new('Предупреждение','Заполните все обязательные поля!');
         }else{
             start_loading_animation();
 
             var l_cars_from_shop=[];
-            $.ajax({
+            try {
+                var data = await $.ajax({
                 url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async:false,
                 data: { freight: md_div.freight.val()
                        ,date_from: md_div.date_from.val()
                        ,date_to: md_div.date_to.val()
                        ,status: md_div.status.val()
                        ,type: md_div.type.val()
-                       ,ajax_action: 'get_cars_from_shop_for_oebs'},
-                success: function (data) {
-                    l_cars_from_shop = JSON.parse(data);
-                },
-                error: function (m1,m2) {window.alert(m1+m2);}
+                       ,ajax_action: 'get_cars_from_shop_for_oebs'}
             });
+                l_cars_from_shop = JSON.parse(data);
+            } catch(e) {
+                window.alert(e);
+            };
 
             var l_cars_from_shop_mas =[];
             var l_prev_id = 0;
@@ -11776,7 +11685,7 @@ function create_md_export_shop_info(){
                 l_prev_id=item.ID;
             });  
             export_table.empty_table();
-            export_table.add_cars_in_table(l_cars_from_shop_mas);
+            export_table.await add_cars_in_table(l_cars_from_shop_mas);
 
             stop_loading_animation();
         }
@@ -11792,7 +11701,7 @@ function create_md_export_shop_info(){
             'Экспортировать в OEBS':{
                 text: "Экспортировать в OEBS",
                   id: "md_export_btn",
-               click: function(){
+               click: async function(){
                    $('#md_export_btn').prop('disabled',true);
                    var l_result = export_table.verify_check_elements();
                     if (l_result.done == false){
@@ -11804,7 +11713,7 @@ function create_md_export_shop_info(){
                     }else{
 						//console.log(export_table.get_check_elements());
 						//return;
-                        var l_result = export_shop_info_ajax(export_table.get_check_elements());
+                        var l_result = await export_shop_info_ajax(export_table.get_check_elements());
                         if(l_result.substr(0,4)=='done'){
                             create_info_modal_dialog_new('Оповещение','Процедура завершилась успешно!'+'<br>'+'Созданы задания: '+l_result.substr(5));
                         }else{
@@ -11835,37 +11744,35 @@ function create_md_export_shop_info(){
     } 
 }
 /*Форма Создать накладную на возврат*/
-function create_return_invoice(p_clicked_li){
+async function create_return_invoice(p_clicked_li){
     $('.context-menu').remove();
     start_loading_animation();
     
-    function table_for_cont_csl(){
+    async function table_for_cont_csl(){
         var self = this;
         var conts_obj = {};
         var l_seal_types_mas;
         var l_seal_owner_types;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {ajax_action: 'get_seal_types'
-                    },
-            success: function (data) {
-                    l_seal_types_mas = JSON.parse(data);
-                }
+                    }
         });
-        $.ajax({
+            l_seal_types_mas = JSON.parse(data);
+        } catch(e) { window.alert(e); };
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {ajax_action: 'get_seal_owner_types'
-                    },
-            success: function (data) {
-                    l_seal_owner_types = JSON.parse(data);
-                }
+                    }
         });
+            l_seal_owner_types = JSON.parse(data);
+        } catch(e) { window.alert(e); };
         
         function fill_select_with_options(p_select,p_type){
             var l_mas = [];
@@ -12111,236 +12018,220 @@ function create_return_invoice(p_clicked_li){
         };
     };
     
-    function enter_claim_ajax(p_car_number,p_claim_number){
+    async function enter_claim_ajax(p_car_number,p_claim_number){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,claim_number: p_claim_number
                    ,ajax_action: 'enter_claim'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;  
     }
-    function get_car_conts(p_car_number){
+    async function get_car_conts(p_car_number){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {car_number: p_car_number 
                     ,ajax_action: 'get_car_containers'
-                    },
-            success: function (data) {
-                    res = JSON.parse(data);
-                }
+                    }
         });
+            res = JSON.parse(data);
+        } catch(e) { window.alert(e); };
         return res;  
     }
-    function get_claim_ajax(p_car_number){
+    async function get_claim_ajax(p_car_number){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,ajax_action: 'get_claim'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;  
     }
-    function fill_select_with_graph(p_select,p_claim_number){
+    async function fill_select_with_graph(p_select,p_claim_number){
         p_select.empty();
         p_select.append($('<option>'));
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {claim_number: p_claim_number 
                     ,ajax_action: 'get_graph_pod'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.DESCR).val(item.ROW_ID).attr('add_descr',item.ADD_DESCR);
-                        if (records.length == 1){
-                            l_option.attr('selected',true);
-                        }
-                        p_select.append(l_option);
-                    }); 
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.DESCR).val(item.ROW_ID).attr('add_descr',item.ADD_DESCR);
+                                    if (records.length == 1){
+                                        l_option.attr('selected',true);
+                                    }
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
-    function fill_select_with_otpr(p_select,p_claim_number){
+    async function fill_select_with_otpr(p_select,p_claim_number){
         p_select.empty();
         p_select.append($('<option>'));
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {claim_number: p_claim_number 
                     ,ajax_action: 'get_claim_otpr'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.DESCR+' своб. ваг = '+item.FREE_CAR_COUNT).val(item.OTPR_NOM).attr('telefon',item.TELEFON);
-                        if (records.length == 1){
-                            l_option.attr('selected',true);
-                        }
-                        p_select.append(l_option);
-                    }); 
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.DESCR+' своб. ваг = '+item.FREE_CAR_COUNT).val(item.OTPR_NOM).attr('telefon',item.TELEFON);
+                                    if (records.length == 1){
+                                        l_option.attr('selected',true);
+                                    }
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
-    function fill_select_with_recip_address(p_select,p_claim_number){
+    async function fill_select_with_recip_address(p_select,p_claim_number){
         p_select.empty();
         p_select.append($('<option>'));
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {claim_number: p_claim_number 
                     ,ajax_action: 'get_recip_address'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.ADDRESS).val(item.ADDRESS_ID);
-                        if (records.length == 1){
-                            l_option.attr('selected',true);
-                        }
-                        p_select.append(l_option);
-                    }); 
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.ADDRESS).val(item.ADDRESS_ID);
+                                    if (records.length == 1){
+                                        l_option.attr('selected',true);
+                                    }
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
-    function fill_select_with_depl_person(p_select){
+    async function fill_select_with_depl_person(p_select){
         p_select.empty();
         p_select.append($('<option>'));
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {ajax_action: 'get_depl_person'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.NAME).val(item.ID);
-                        if (records.length == 1){
-                            l_option.attr('selected',true);
-                        }
-                        p_select.append(l_option);
-                    }); 
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.NAME).val(item.ID);
+                                    if (records.length == 1){
+                                        l_option.attr('selected',true);
+                                    }
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
-    function get_front_end_id_ajax(p_car_number){
+    async function get_front_end_id_ajax(p_car_number){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,ajax_action: 'get_front_end_id'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;  
     }
-    function get_send_inv_number_ajax(p_car_number){
+    async function get_send_inv_number_ajax(p_car_number){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,ajax_action: 'get_send_inv_number'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;  
     }
-    function get_claim_info_ajax(p_car_number){
+    async function get_claim_info_ajax(p_car_number){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,ajax_action: 'get_claim_info'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;  
     }
-    function get_inv_cont_csl_ajax(p_front_end_id){
+    async function get_inv_cont_csl_ajax(p_front_end_id){
         var l_res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {front_end_id: p_front_end_id 
                     ,ajax_action: 'get_inv_cont_csl'
-                    },
-            success: function (data) {
-                    l_res =  JSON.parse(data);
-                }
+                    }
         });
+            l_res =  JSON.parse(data);
+        } catch(e) { window.alert(e); };
         return l_res;
     }
-    function create_return_invoice_ajax(p_car_number,p_otpr,p_graph,p_recip_address,p_recip_telefon,p_depl_person,p_cont_csl){
+    async function create_return_invoice_ajax(p_car_number,p_otpr,p_graph,p_recip_address,p_recip_telefon,p_depl_person,p_cont_csl){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,otpr: p_otpr
                    ,graph: p_graph
@@ -12349,54 +12240,48 @@ function create_return_invoice(p_clicked_li){
                    ,depl_person: p_depl_person
                    ,cont_csl: p_cont_csl
                    ,ajax_action: 'create_return_invoice_adapter'
-            },
-            success: function (data) {
-                //alert(data);
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            //alert(data);
+                            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;  
     }
-    function send_invoice_to_etran_ajax(p_car_number){
+    async function send_invoice_to_etran_ajax(p_car_number){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,ajax_action: 'send_invoice_to_etran'
-            },
-            success: function (data) {
-                //alert(data);
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            //alert(data);
+                            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;  
     }
-    function close_return_invoice_ajax(p_car_number){
+    async function close_return_invoice_ajax(p_car_number){
         var res='';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { car_number: p_car_number
                    ,ajax_action: 'close_return_invoice'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;  
     }
     
@@ -12468,19 +12353,19 @@ function create_return_invoice(p_clicked_li){
         minLength: 6
     });
     
-    md_div.client_inv_number.val(get_front_end_id_ajax(l_car_number));
-    md_div.inv_number.val(get_send_inv_number_ajax(l_car_number));
-    md_div.claim.val(get_claim_ajax(l_car_number));
+    md_div.client_inv_number.val(await get_front_end_id_ajax(l_car_number));
+    md_div.inv_number.val(await get_send_inv_number_ajax(l_car_number));
+    md_div.claim.val(await get_claim_ajax(l_car_number));
     
-    fill_select_with_depl_person(md_div.depl_person);
+    await fill_select_with_depl_person(md_div.depl_person);
     
     if (md_div.claim.val() != ''){
-        fill_select_with_otpr(md_div.claim_otpr,md_div.claim.val());
-        fill_select_with_graph(md_div.graph_pod,md_div.claim.val());
-        fill_select_with_recip_address(md_div.recip_address,md_div.claim.val());
+        await fill_select_with_otpr(md_div.claim_otpr,md_div.claim.val());
+        await fill_select_with_graph(md_div.graph_pod,md_div.claim.val());
+        await fill_select_with_recip_address(md_div.recip_address,md_div.claim.val());
     }
     
-    var l_claim_info = JSON.parse(get_claim_info_ajax(l_car_number));
+    var l_claim_info = JSON.parse(await get_claim_info_ajax(l_car_number));
     if (l_claim_info.length == 1){
         md_div.graph_pod.val(l_claim_info[0].GRAPH);
         md_div.recip_address.val(l_claim_info[0].RECIP_ADDRESS_ID);
@@ -12493,14 +12378,14 @@ function create_return_invoice(p_clicked_li){
         }
     }
     
-    md_div.enter_claim_btn.on('click', function(){
+    md_div.enter_claim_btn.on('click', async function(){
         start_loading_animation();
-        var l_res = enter_claim_ajax(l_car_number,md_div.claim.val());
+        var l_res = await enter_claim_ajax(l_car_number,md_div.claim.val());
         if(l_res.substr(0,4)=='done'){
-            fill_select_with_otpr(md_div.claim_otpr,md_div.claim.val());
+            await fill_select_with_otpr(md_div.claim_otpr,md_div.claim.val());
             md_div.claim_otpr.trigger('change');
-            fill_select_with_graph(md_div.graph_pod,md_div.claim.val());
-            fill_select_with_recip_address(md_div.recip_address,md_div.claim.val());
+            await fill_select_with_graph(md_div.graph_pod,md_div.claim.val());
+            await fill_select_with_recip_address(md_div.recip_address,md_div.claim.val());
             create_info_modal_dialog_new('Оповещение','Процедура завершилась успешно!');
             
             md_div.disable_inputs(false);
@@ -12562,15 +12447,15 @@ function create_return_invoice(p_clicked_li){
         )    
     );
     
-    var l_car_conts = get_car_conts(l_car_number);
+    var l_car_conts = await get_car_conts(l_car_number);
     var cont_csl_table;
     if (l_car_conts.length != 0) {
-        var cont_csl_table = new table_for_cont_csl();
+        var cont_csl_table = new await table_for_cont_csl();
         cont_csl_table.set_conts(l_car_conts);
         md_div.append(cont_csl_table.get_table()); 
 
-        var l_cont_csl = get_inv_cont_csl_ajax(md_div.client_inv_number.val());
-        cont_csl_table.add_cars_in_table(l_cont_csl);
+        var l_cont_csl = await get_inv_cont_csl_ajax(md_div.client_inv_number.val());
+        cont_csl_table.await add_cars_in_table(l_cont_csl);
         cont_csl_table.trigger_event_cont_change();
     }
     
@@ -12625,7 +12510,7 @@ function create_return_invoice(p_clicked_li){
             'Создать накладную':{
                 text: "Создать накладную",
                   id: "md_create_invoice_btn",
-               click: function(){
+               click: async function(){
                     var l_exists_same_elements;
 					//l_exists_same_elements =  cont_csl_table.get_flag_same_elements(); // rem 16.01.2023 BekmansurovRR
 					// add 16.01.2023 BekmansurovRR из-за TypeError: cont_csl_table is undefined
@@ -12641,7 +12526,7 @@ function create_return_invoice(p_clicked_li){
 		
 						var l_car_number = p_clicked_li.attr('data-id');
 
-						var l_result = create_return_invoice_ajax(l_car_number,md_div.claim_otpr.val(),md_div.graph_pod.val(),md_div.recip_address.val(),md_div.recip_telefon.val(),md_div.depl_person.val(),l_cont_csl);
+						var l_result = await create_return_invoice_ajax(l_car_number,md_div.claim_otpr.val(),md_div.graph_pod.val(),md_div.recip_address.val(),md_div.recip_telefon.val(),md_div.depl_person.val(),l_cont_csl);
 
 						if(l_result.substr(0,4)=='done'){
 							md_div.client_inv_number.val(l_result.substr(5));
@@ -12662,11 +12547,11 @@ function create_return_invoice(p_clicked_li){
             'Отправить в ЭТРАН':{
                 text: "Отправить в ЭТРАН",
                   id: "md_send_to_etran_btn",
-               click: function(){                    
+               click: async function(){                    
                     start_loading_animation();
                     
                     var l_car_number = p_clicked_li.attr('data-id');
-                    var l_result = send_invoice_to_etran_ajax(l_car_number);
+                    var l_result = await send_invoice_to_etran_ajax(l_car_number);
                     
                     if(l_result.substr(0,4)=='done'){
                         md_div.client_inv_number.val(l_result.substr(5));
@@ -12681,12 +12566,12 @@ function create_return_invoice(p_clicked_li){
             'Очистить клиентский номер':{
                 text: "Очистить клиентский номер",
                   id: "md_close_invoice_btn",
-               click: function(){                    
+               click: async function(){                    
                     start_loading_animation();
     
                     var l_car_number = p_clicked_li.attr('data-id');
 
-                    var l_result = close_return_invoice_ajax(l_car_number);
+                    var l_result = await close_return_invoice_ajax(l_car_number);
 
                     if(l_result.substr(0,4)=='done'){
                         $('#md_close_invoice_btn').attr( "disabled", true );
@@ -12721,29 +12606,28 @@ function create_return_invoice(p_clicked_li){
     stop_loading_animation();
 }
 /* Уведомление ГУ */
-function create_modal_dialog_list_notification_gu(){
+async function create_modal_dialog_list_notification_gu(){
     $('.context-menu').remove();
     start_loading_animation();    
     
-    function fill_select_notification(p_select){
+    async function fill_select_notification(p_select){
         p_select.empty();
         
         p_select.append($('<option>'));
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
-            data:   {ajax_action: 'get_notifications_gu'},
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.NAME).val(item.ID);
-                        p_select.append(l_option);
-                    }); 
-                }
+            data:   {ajax_action: 'get_notifications_gu'}
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.NAME).val(item.ID);
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
     
     var md_div = $('<div/>')
@@ -12751,7 +12635,7 @@ function create_modal_dialog_list_notification_gu(){
         .appendTo('body');
 
     md_div.notification = $('<select>',{class:'required'});
-    fill_select_notification(md_div.notification);
+    await fill_select_notification(md_div.notification);
     
     md_div
         .append(
@@ -12776,13 +12660,13 @@ function create_modal_dialog_list_notification_gu(){
             'Открыть':{
                 text: "Открыть",
                   id: "md_ok_btn",
-               click: function(){
+               click: async function(){
                     var l_not_id = md_div.notification.val();
                     if (l_not_id == '') {
                         create_info_modal_dialog_new('Предупреждение','Выберите уведомление!');
                     }else{
                         md_div.dialog("close");
-                        create_modal_dialog_notification_gu(l_not_id);
+                        await create_modal_dialog_notification_gu(l_not_id);
                     }
                }   
             }, 
@@ -12798,13 +12682,13 @@ function create_modal_dialog_list_notification_gu(){
     stop_loading_animation();
 }
 /* Регистрация уведомлений ГУ */
-function create_modal_dialog_notification_gu(p_not_id){
+async function create_modal_dialog_notification_gu(p_not_id){
     $('.context-menu').remove();
     start_loading_animation();
     
 	
 	
-    function notification_gu_ajax(p_not_id,
+    async function notification_gu_ajax(p_not_id,
 							p_cars,
 							p_num,
 							p_notification_time,
@@ -12815,11 +12699,11 @@ function create_modal_dialog_notification_gu(p_not_id){
 							p_crg_pcalid
 							) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { not_id: p_not_id
                    ,cars: p_cars
                    ,num:p_num
@@ -12830,81 +12714,75 @@ function create_modal_dialog_notification_gu(p_not_id){
                    ,notification_person_to:p_notification_person_to
 				   ,crg_pcalid:p_crg_pcalid
                    ,ajax_action: 'register_notification_gu'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
-    function export_notif_etran_ajax(p_not_id, p_pcalid) {
+    async function export_notif_etran_ajax(p_not_id, p_pcalid) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { not_id: p_not_id
 				   ,pcalid: p_pcalid
                    ,ajax_action: 'export_notif_etran'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function () {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     
-    function fill_select_users(p_select){
+    async function fill_select_users(p_select){
         p_select.empty();
         
         p_select.append($('<option>'));
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
-            data:   {ajax_action: 'get_users_for_notification'},
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.NAME).val(item.ID);
-                        p_select.append(l_option);
-                    }); 
-                }
+            data:   {ajax_action: 'get_users_for_notification'}
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.NAME).val(item.ID);
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
 	
-	function fill_select_pcalid_num(p_select){
+	async function fill_select_pcalid_num(p_select){
         p_select.empty();
         
         p_select.append($('<option>'));
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
-            data:   {ajax_action: 'get_contract_default_for_gu'},
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.NAME).val(item.ID);
-							if (item.SELECTED === 'Y') {
-                                l_option.attr('selected', true);
-                            }
-							p_select.append(l_option);
-                    }); 
-                }
+            data:   {ajax_action: 'get_contract_default_for_gu'}
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.NAME).val(item.ID);
+            							if (item.SELECTED === 'Y') {
+                                            l_option.attr('selected', true);
+                                        }
+            							p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
     
     function disable_save_btn(){
@@ -12954,12 +12832,12 @@ function create_modal_dialog_notification_gu(p_not_id){
         this.car_number_input = return_table.add_carnumber_input;
 
         return_table.add_carnumber_btn = $('<input>',{type:'button',css:{'font-size':'11px','height':'17px'}, class:'btnAdd'}).val('Добавить');
-        return_table.add_carnumber_btn.on('click', function(){
-            self.add_cars_in_table(null,true);
+        return_table.add_carnumber_btn.on('click', async function(){
+            self.await add_cars_in_table(null,true);
         });
-        return_table.add_carnumber_input.on('keypress', function(e){
+        return_table.add_carnumber_input.on('keypress', async function(e){
             if(e.keyCode===13){
-                self.add_cars_in_table(null,true);
+                self.await add_cars_in_table(null,true);
             }
         });
         
@@ -13097,7 +12975,7 @@ function create_modal_dialog_notification_gu(p_not_id){
             return true;
         };
 
-        this.add_cars_in_table = function(p_car_number,p_need_check){
+        this.add_cars_in_table = async function(p_car_number,p_need_check){
             var add_car_number;
             if (p_car_number === null || p_car_number === '') {
                 add_car_number = return_table.add_carnumber_input.val();
@@ -13111,77 +12989,77 @@ function create_modal_dialog_notification_gu(p_not_id){
             }
 
             if (check_car_number_result && add_car_number !== null && add_car_number !== '') {
-                $.ajax({
+                try {
+                    var data = await $.ajax({
                     url: 'data.php',
                     type: 'POST',
                     dataType: "text",
-                    async: false,
                     data: { cars: add_car_number
                            ,ajax_action: 'get_add_info_for_cars_with_round'
-                          },
-                    success: function (data) {
-                        var records = JSON.parse(data);
-
-                        for(var i=0; i<records.length; i++) {
-                            self.cars_count++;
-                            var child = records[i];
-
-                            var tr = $('<tr/>');
-                            tr.pos = self.cars_mas.length;
-
-                            tr.up_image_div = $('<div>',{class:'up_image'}).on('click', function(){up_down_cars_table_tr('up',$(this).parent().parent());});
-                            $('<td>').append(tr.up_image_div).appendTo(tr);
-
-                            tr.down_image_div = $('<div>',{class:'down_image'}).on('click', function(){up_down_cars_table_tr('down',$(this).parent().parent());});
-                            $('<td>').append(tr.down_image_div).appendTo(tr);
-
-                            tr.append('<td>'+self.cars_count+'</td>');
-                            tr.append('<td>'+child.ID+'</td>');
-                            tr.append('<td>'+((child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '')+'</td>');
-                            tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
-                            tr.append('<td>'+((child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '')+'</td>');
-                            tr.append('<td>'+((child.WEIGHT_GROSS !== null) ? child.WEIGHT_GROSS.replace(',','.') : '')+'</td>');
-                            tr.append('<td>'+((child.CAR_LENGTH !== null) ? child.CAR_LENGTH.replace(',','.') : '')+'</td>');
-							tr.append('<td>'+((child.COND_LENGTH_TRAIN !== null) ? child.COND_LENGTH_TRAIN.replace(',','.') : '')+'</td>');
-                            
-                            tr.cont_td = $('<td>').appendTo(tr);
-                            if (child.CONT_FROM_INV !== null) {
-                                var l_conts = child.CONT_FROM_INV.split('|');
-                                l_conts.forEach(function(cont_num){
-                                    var l_cont_descr = $('<div>',{'class':'gu-item-cont-div'}).appendTo(tr.cont_td);
-                                    $('<input>',{'class':'gu-item-cont-input text ui-widget-content ui-corner-all','readonly':'true','css':{'background':'#DCDCDC'}/*,'disabled':true*/}).val(cont_num).appendTo(l_cont_descr);
-                                });
-                            }
-                            
-                            tr.csl_td = $('<td>').appendTo(tr);
-                            if (child.CSL !== null) {
-                            var l_csl_td = child.CSL.split('|');
-                                l_csl_td.forEach(function(csl){
-                                    var l_csl = csl.split('#');
-                                    var l_csl_descr = $('<div>',{'class':'gu-item-cont-div'}).appendTo(tr.csl_td);
-                                    $('<input>',{'class':'gu-item-cont-input text ui-widget-content ui-corner-all','readonly':'true','css':{'background':'#DCDCDC'}/*,'disabled':true*/}).val(l_csl[0]).appendTo(l_csl_descr);
-                                    $('<input>',{'class':'gu-item-csl-type-input text ui-widget-content ui-corner-all','readonly':'true','css':{'background':'#DCDCDC'}/*,'disabled':true*/}).val(l_csl[1]).appendTo(l_csl_descr);
-                                    $('<input>',{'class':'gu-item-csl-mark-input text ui-widget-content ui-corner-all','readonly':'true','css':{'background':'#DCDCDC'}/*,'disabled':true*/}).val(l_csl[2]).appendTo(l_csl_descr);
-                                });
-                            }
-                            
-                            tr.del_image_div = $('<div>',{class:'deleteImage deleteImage13px'})
-                                .on('click', function(){
-									var l_tr = $(this).parent().parent();
-									var l_pos = $(l_tr).index();
-									del_cars_table_tr(l_tr);
-									delete self.cars_mas.splice(l_pos,1);
-									self.cars_count--;
-                                    change_cars_table_total_tr();
-                                });
-                            $('<td>').append(tr.del_image_div).appendTo(tr);
-                            tr.appendTo(return_table.cars_table); 
-                            
-                            self.cars_mas[tr.pos] = tr;
-                        }
-                    },
-                    error: function (m1,m2) {window.alert(m1+m2);}
+                          }
                 });
+                    var records = JSON.parse(data);
+
+                                            for(var i=0; i<records.length; i++) {
+                                                self.cars_count++;
+                                                var child = records[i];
+
+                                                var tr = $('<tr/>');
+                                                tr.pos = self.cars_mas.length;
+
+                                                tr.up_image_div = $('<div>',{class:'up_image'}).on('click', function(){up_down_cars_table_tr('up',$(this).parent().parent());});
+                                                $('<td>').append(tr.up_image_div).appendTo(tr);
+
+                                                tr.down_image_div = $('<div>',{class:'down_image'}).on('click', function(){up_down_cars_table_tr('down',$(this).parent().parent());});
+                                                $('<td>').append(tr.down_image_div).appendTo(tr);
+
+                                                tr.append('<td>'+self.cars_count+'</td>');
+                                                tr.append('<td>'+child.ID+'</td>');
+                                                tr.append('<td>'+((child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '')+'</td>');
+                                                tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
+                                                tr.append('<td>'+((child.WEIGHT_DEP !== null) ? child.WEIGHT_DEP.replace(',','.') : '')+'</td>');
+                                                tr.append('<td>'+((child.WEIGHT_GROSS !== null) ? child.WEIGHT_GROSS.replace(',','.') : '')+'</td>');
+                                                tr.append('<td>'+((child.CAR_LENGTH !== null) ? child.CAR_LENGTH.replace(',','.') : '')+'</td>');
+                    							tr.append('<td>'+((child.COND_LENGTH_TRAIN !== null) ? child.COND_LENGTH_TRAIN.replace(',','.') : '')+'</td>');
+
+                                                tr.cont_td = $('<td>').appendTo(tr);
+                                                if (child.CONT_FROM_INV !== null) {
+                                                    var l_conts = child.CONT_FROM_INV.split('|');
+                                                    l_conts.forEach(function(cont_num){
+                                                        var l_cont_descr = $('<div>',{'class':'gu-item-cont-div'}).appendTo(tr.cont_td);
+                                                        $('<input>',{'class':'gu-item-cont-input text ui-widget-content ui-corner-all','readonly':'true','css':{'background':'#DCDCDC'}/*,'disabled':true*/}).val(cont_num).appendTo(l_cont_descr);
+                                                    });
+                                                }
+
+                                                tr.csl_td = $('<td>').appendTo(tr);
+                                                if (child.CSL !== null) {
+                                                var l_csl_td = child.CSL.split('|');
+                                                    l_csl_td.forEach(function(csl){
+                                                        var l_csl = csl.split('#');
+                                                        var l_csl_descr = $('<div>',{'class':'gu-item-cont-div'}).appendTo(tr.csl_td);
+                                                        $('<input>',{'class':'gu-item-cont-input text ui-widget-content ui-corner-all','readonly':'true','css':{'background':'#DCDCDC'}/*,'disabled':true*/}).val(l_csl[0]).appendTo(l_csl_descr);
+                                                        $('<input>',{'class':'gu-item-csl-type-input text ui-widget-content ui-corner-all','readonly':'true','css':{'background':'#DCDCDC'}/*,'disabled':true*/}).val(l_csl[1]).appendTo(l_csl_descr);
+                                                        $('<input>',{'class':'gu-item-csl-mark-input text ui-widget-content ui-corner-all','readonly':'true','css':{'background':'#DCDCDC'}/*,'disabled':true*/}).val(l_csl[2]).appendTo(l_csl_descr);
+                                                    });
+                                                }
+
+                                                tr.del_image_div = $('<div>',{class:'deleteImage deleteImage13px'})
+                                                    .on('click', function(){
+                    									var l_tr = $(this).parent().parent();
+                    									var l_pos = $(l_tr).index();
+                    									del_cars_table_tr(l_tr);
+                    									delete self.cars_mas.splice(l_pos,1);
+                    									self.cars_count--;
+                                                        change_cars_table_total_tr();
+                                                    });
+                                                $('<td>').append(tr.del_image_div).appendTo(tr);
+                                                tr.appendTo(return_table.cars_table); 
+
+                                                self.cars_mas[tr.pos] = tr;
+                                            }
+                } catch(e) {
+                    window.alert(e);
+                };
             }
             change_cars_table_total_tr();
         };
@@ -13241,7 +13119,7 @@ function create_modal_dialog_notification_gu(p_not_id){
                         '</div>'+
                     '</div>'+
                     '<div class="attr" style="margin-left:14px; text-align:right; float:right">'+
-                        '<input disabled type="text" size="14" class="text ui-widget-content ui-corner-all" value="'+get_server_current_time()+'"></input><br>'+
+                        '<input disabled type="text" size="14" class="text ui-widget-content ui-corner-all" value="'+await get_server_current_time()+'"></input><br>'+
                         '<input disabled type="text" size="20" class="text ui-widget-content ui-corner-all" style="margin-top:5px;" value="'+user_name+'"></input>'+
                     '</div>'+
                 '</div>'
@@ -13348,13 +13226,13 @@ function create_modal_dialog_notification_gu(p_not_id){
     	
     init_date_time_input(md_div.notification_time);
     init_date_time_input(md_div.notification_time_fact);
-    fill_select_users(md_div.notification_person_from);
-	fill_select_pcalid_num(md_div.crg_pcalid_num);
+    await fill_select_users(md_div.notification_person_from);
+	await fill_select_pcalid_num(md_div.crg_pcalid_num);
     
     var railcar_table = new railcar_table_const_for_not_gu();
     md_div.append(railcar_table.get_table());
     if (return_selected_cars() !== '' && p_not_id == null){
-        railcar_table.add_cars_in_table(return_selected_cars(),false);
+        railcar_table.await add_cars_in_table(return_selected_cars(),false);
     }
 	railcar_table.add_error_msg = 'Регистрировать уведомление можно только для вагонов на станции Водороздельная!';
     // rem 31.01.2024 временно
@@ -13374,38 +13252,37 @@ function create_modal_dialog_notification_gu(p_not_id){
   
     if (p_not_id != null){
         //md_content.request_id = p_request_item.request_id;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { not_id: p_not_id
-                   ,ajax_action: 'get_notification_gu'},
-            success: function (data) {
-                var l_not = JSON.parse(data);
-				md_div.crg_pcalid_num.val(l_not[0].CRG_PCALID);
-                md_div.notification_num.val(l_not[0].NOT_NUMBER);
-                md_div.not_number_etran.val(l_not[0].NOT_NUMBER_ETRAN);
-                md_div.not_state_etran.val(l_not[0].NOT_STATE_ETRAN);
-                md_div.notification_time.val(l_not[0].NOT_TIME);
-                md_div.notification_person_from.val(l_not[0].NOT_PERSON_FROM);
-                md_div.comment.val(l_not[0].NOT_COMMENT);
-                md_div.notification_time_fact.val(l_not[0].NOT_TIME_FACT);
-                md_div.notification_person_to.val(l_not[0].NOT_PERSON_TO);
-                railcar_table.change_rows = false;
-                railcar_table.add_cars_in_table(l_not[0].CARS,false);
-                
-                md_div.notification_num.prop( "disabled", true );
-                md_div.notification_time.prop( "disabled", true );
-                md_div.notification_person_from.prop( "disabled", true );
-                md_div.comment.prop( "disabled", true );
-                md_div.notification_time_fact.prop( "disabled", true );
-                md_div.notification_person_to.prop( "disabled", true );
-                railcar_table.edit_table(false);
-                
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'get_notification_gu'}
         });
+            var l_not = JSON.parse(data);
+            				md_div.crg_pcalid_num.val(l_not[0].CRG_PCALID);
+                            md_div.notification_num.val(l_not[0].NOT_NUMBER);
+                            md_div.not_number_etran.val(l_not[0].NOT_NUMBER_ETRAN);
+                            md_div.not_state_etran.val(l_not[0].NOT_STATE_ETRAN);
+                            md_div.notification_time.val(l_not[0].NOT_TIME);
+                            md_div.notification_person_from.val(l_not[0].NOT_PERSON_FROM);
+                            md_div.comment.val(l_not[0].NOT_COMMENT);
+                            md_div.notification_time_fact.val(l_not[0].NOT_TIME_FACT);
+                            md_div.notification_person_to.val(l_not[0].NOT_PERSON_TO);
+                            railcar_table.change_rows = false;
+                            railcar_table.await add_cars_in_table(l_not[0].CARS,false);
+
+                            md_div.notification_num.prop( "disabled", true );
+                            md_div.notification_time.prop( "disabled", true );
+                            md_div.notification_person_from.prop( "disabled", true );
+                            md_div.comment.prop( "disabled", true );
+                            md_div.notification_time_fact.prop( "disabled", true );
+                            md_div.notification_person_to.prop( "disabled", true );
+                            railcar_table.edit_table(false);
+        } catch(e) {
+            window.alert(e);
+        };
     }
     
     md_div.dialog({
@@ -13423,10 +13300,10 @@ function create_modal_dialog_notification_gu(p_not_id){
             'Экспорт в ЭТРАН':{
                 text: "Экспорт в ЭТРАН",
                   id: "md_export_etran_btn",
-               click: function(){
+               click: async function(){
                     start_loading_animation();
                     var l_pcalid = md_div.crg_pcalid_num.val();
-                    var l_result = export_notif_etran_ajax(p_not_id, l_pcalid);
+                    var l_result = await export_notif_etran_ajax(p_not_id, l_pcalid);
 					//console.log(l_result);
                     if(l_result.substr(0,4)=='done'){
                         create_info_modal_dialog_new('Оповещение','Процедура завершилась успешно!');
@@ -13454,7 +13331,7 @@ function create_modal_dialog_notification_gu(p_not_id){
             'Сохранить':{
                 text: "Сохранить",
                   id: "md_save_btn",
-               click: function(){
+               click: async function(){
                     start_loading_animation();
                     
                     if (check_open_period('1',md_div.notification_time.val())=='0') {
@@ -13465,7 +13342,7 @@ function create_modal_dialog_notification_gu(p_not_id){
 						
 						//console.log(cars_in_table);
 						//return;
-                        var l_result = notification_gu_ajax(p_not_id,
+                        var l_result = await notification_gu_ajax(p_not_id,
 															cars_in_table,
 															md_div.notification_num.val(),
 															md_div.notification_time.val(),
@@ -13530,25 +13407,23 @@ function create_modal_dialog_notification_gu(p_not_id){
 }
 /*Вывод. Вагон разобран*/
 function create_md_output_cars(){
-    function output_cars_ajax(p_cars,p_oper_date,p_comment) {
+    async function output_cars_ajax(p_cars,p_oper_date,p_comment) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { cars: p_cars
                    ,oper_date: p_oper_date
                    ,comment: p_comment
                    ,ajax_action: 'output_cars'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     function disable_save_btn(){
@@ -13601,8 +13476,8 @@ function create_md_output_cars(){
             'Отправить':{
                 text: "Сохранить",
                   id: "md_ok_btn",
-               click: function(){
-                if (output_cars_ajax(l_cars,md_div.custom_time.val(),md_div.comment.val())==='done') {
+               click: async function(){
+                if (await output_cars_ajax(l_cars,md_div.custom_time.val(),md_div.comment.val())==='done') {
                     var l_cars_mas = l_cars.split('$'); //создаем массив
                     l_cars_mas.pop(); //убираем последний элемент массива, т.к. он пустой
                     l_cars_mas.forEach(function(item, i, arr) {
@@ -13634,24 +13509,22 @@ function create_md_output_cars(){
     stop_loading_animation();
 }
 /*Форма: Паспорт вагонов*/
-function create_md_cars_passport(p_feel_table){
-    function get_cars_passport_ajax(p_cars) {
+async function create_md_cars_passport(p_feel_table){
+    async function get_cars_passport_ajax(p_cars) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { cars: p_cars
                    ,ajax_action: 'get_cars_passport'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
     function run_report(p_car_number,p_user_name){
@@ -13869,15 +13742,15 @@ function create_md_cars_passport(p_feel_table){
     };
     
     if (p_feel_table) {
-        var l_cars_ajax = get_cars_passport_ajax(l_cars);
+        var l_cars_ajax = await get_cars_passport_ajax(l_cars);
         var l_cars_mas = JSON.parse(l_cars_ajax); 
         l_cars_mas.forEach(function(item){
             r_table.add_car(item);
         });
     }
-    l_add_btn.on('click', function(){
+    l_add_btn.on('click', async function(){
         start_loading_animation();
-        var l_cars_ajax = get_cars_passport_ajax(l_car_input.val());
+        var l_cars_ajax = await get_cars_passport_ajax(l_car_input.val());
         var l_cars_mas = JSON.parse(l_cars_ajax); 
         l_cars_mas.forEach(function(item){
             r_table.add_car(item);
@@ -13922,136 +13795,133 @@ function create_md_cars_passport(p_feel_table){
     stop_loading_animation();
 }
 /* Назначить ЗУ */
-function create_contect_menu_2lvl_add_fix_device(p_railway_id,p_x,p_y) {
+async function create_contect_menu_2lvl_add_fix_device(p_railway_id,p_x,p_y) {
     if ($('#context_menu_2lvl_send_to_station').length===0) {
         var l_params = {};
         l_params.railway_id = p_railway_id;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {params: JSON.stringify(l_params)
-                    ,ajax_action: 'get_railway_parts'},
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    var ul = $('<ul/>');
-                    $.each(records, function( i, item ) {
-                        ul.append(
-                            $('<li/>')
-                            .css({'margin-left': (item.LVL-1)*10 + 'px'})
-                            .text(item.NAME)
-                            .attr('data-id',item.ID)
-                        );
-                    });
-                    $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
-                    .attr('id','context_menu_2lvl_send_to_station')
-                    .css({                 
-                            left: p_x+'px', // Задаем позицию меню на X                 
-                            top: p_y+'px' // Задаем позицию меню по Y             
-                    })
-                    .appendTo('body') // Присоединяем наше меню к body документа: 
-                    .append(ul)
-                    .on('click',function(event){
-                        $('.context-menu').remove();
-                        create_window_add_fix_device(p_railway_id,$(event.target).attr('data-id'));
-                    })
-                    .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню     
-                }
+                    ,ajax_action: 'get_railway_parts'}
 
         });
+            var records = JSON.parse(data);
+                                var ul = $('<ul/>');
+                                $.each(records, function( i, item ) {
+                                    ul.append(
+                                        $('<li/>')
+                                        .css({'margin-left': (item.LVL-1)*10 + 'px'})
+                                        .text(item.NAME)
+                                        .attr('data-id',item.ID)
+                                    );
+                                });
+                                $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
+                                .attr('id','context_menu_2lvl_send_to_station')
+                                .css({                 
+                                        left: p_x+'px', // Задаем позицию меню на X                 
+                                        top: p_y+'px' // Задаем позицию меню по Y             
+                                })
+                                .appendTo('body') // Присоединяем наше меню к body документа: 
+                                .append(ul)
+                                .on('click',function(event){
+                                    $('.context-menu').remove();
+                                    create_window_add_fix_device(p_railway_id,$(event.target).attr('data-id'));
+                                })
+                                .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню
+        } catch(e) { window.alert(e); };
     }
 }
 
 /* Снятие ЗУ */
-function create_contect_menu_2lvl_undock_fix_device(p_railway_id,p_x,p_y) {
+async function create_contect_menu_2lvl_undock_fix_device(p_railway_id,p_x,p_y) {
     if ($('#context_menu_2lvl_send_to_station').length===0) {
         var l_params = {};
         l_params.railway_id = p_railway_id;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {params: JSON.stringify(l_params)
-                    ,ajax_action: 'get_railway_parts'},
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    var ul = $('<ul/>');
-                    $.each(records, function( i, item ) {
-                        ul.append(
-                            $('<li/>')
-                            .css({'margin-left': (item.LVL-1)*10 + 'px'})
-                            .text(item.NAME)
-                            .attr('data-id',item.ID)
-                        );
-                    });
-                    $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
-                    .attr('id','context_menu_2lvl_send_to_station')
-                    .css({                 
-                            left: p_x+'px', // Задаем позицию меню на X                 
-                            top: p_y+'px' // Задаем позицию меню по Y             
-                    })
-                    .appendTo('body') // Присоединяем наше меню к body документа: 
-                    .append(ul)
-                    .on('click',function(event){
-                        $('.context-menu').remove();
-						//alert('Форма в разработке');
-						
-                        create_window_undock_fix_device(p_railway_id,$(event.target).attr('data-id'));
-                    })
-                    .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню     
-                }
+                    ,ajax_action: 'get_railway_parts'}
 
         });
+            var records = JSON.parse(data);
+                                var ul = $('<ul/>');
+                                $.each(records, function( i, item ) {
+                                    ul.append(
+                                        $('<li/>')
+                                        .css({'margin-left': (item.LVL-1)*10 + 'px'})
+                                        .text(item.NAME)
+                                        .attr('data-id',item.ID)
+                                    );
+                                });
+                                $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
+                                .attr('id','context_menu_2lvl_send_to_station')
+                                .css({                 
+                                        left: p_x+'px', // Задаем позицию меню на X                 
+                                        top: p_y+'px' // Задаем позицию меню по Y             
+                                })
+                                .appendTo('body') // Присоединяем наше меню к body документа: 
+                                .append(ul)
+                                .on('click',function(event){
+                                    $('.context-menu').remove();
+            						//alert('Форма в разработке');
+
+                                    create_window_undock_fix_device(p_railway_id,$(event.target).attr('data-id'));
+                                })
+                                .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню
+        } catch(e) { window.alert(e); };
     }
 }
 
 /* Корректировка ЗУ */
-function create_contect_menu_2lvl_update_fix_device(p_railway_id,p_x,p_y) {
+async function create_contect_menu_2lvl_update_fix_device(p_railway_id,p_x,p_y) {
     if ($('#context_menu_2lvl_send_to_station').length===0) {
         var l_params = {};
         l_params.railway_id = p_railway_id;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {params: JSON.stringify(l_params)
-                    ,ajax_action: 'get_railway_parts'},
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    var ul = $('<ul/>');
-                    $.each(records, function( i, item ) {
-                        ul.append(
-                            $('<li/>')
-                            .css({'margin-left': (item.LVL-1)*10 + 'px'})
-                            .text(item.NAME)
-                            .attr('data-id',item.ID)
-                        );
-                    });
-                    $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
-                    .attr('id','context_menu_2lvl_send_to_station')
-                    .css({                 
-                            left: p_x+'px', // Задаем позицию меню на X                 
-                            top: p_y+'px' // Задаем позицию меню по Y             
-                    })
-                    .appendTo('body') // Присоединяем наше меню к body документа: 
-                    .append(ul)
-                    .on('click',function(event){
-                        $('.context-menu').remove();
-						//alert('Форма в разработке');
-						
-                        create_window_update_fix_device(p_railway_id,$(event.target).attr('data-id'));
-                    })
-                    .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню     
-                }
+                    ,ajax_action: 'get_railway_parts'}
 
         });
+            var records = JSON.parse(data);
+                                var ul = $('<ul/>');
+                                $.each(records, function( i, item ) {
+                                    ul.append(
+                                        $('<li/>')
+                                        .css({'margin-left': (item.LVL-1)*10 + 'px'})
+                                        .text(item.NAME)
+                                        .attr('data-id',item.ID)
+                                    );
+                                });
+                                $('<div/>',{class: 'context-menu context-menu-2lvl'})  // Присваиваем блоку наш css класс контекстного меню:
+                                .attr('id','context_menu_2lvl_send_to_station')
+                                .css({                 
+                                        left: p_x+'px', // Задаем позицию меню на X                 
+                                        top: p_y+'px' // Задаем позицию меню по Y             
+                                })
+                                .appendTo('body') // Присоединяем наше меню к body документа: 
+                                .append(ul)
+                                .on('click',function(event){
+                                    $('.context-menu').remove();
+            						//alert('Форма в разработке');
+
+                                    create_window_update_fix_device(p_railway_id,$(event.target).attr('data-id'));
+                                })
+                                .show('fast'); // Показываем меню с небольшим стандартным эффектом jQuery. Как раз очень хорошо подходит для меню
+        } catch(e) { window.alert(e); };
     }
 }
 /* Назначить ЗУ */
-function create_window_add_fix_device(p_railway_id,p_part_id){
+async function create_window_add_fix_device(p_railway_id,p_part_id){
 	var l_params = {};
         l_params.station_id = user_station_id,
 		l_params.railway_id = p_railway_id;
@@ -14068,19 +13938,19 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
 		
 	
 	// Часть пути
-	var railway_parts = get_railway_parts(p_railway_id,p_part_id);
+	var railway_parts = await get_railway_parts(p_railway_id,p_part_id);
 	var railway_parts_name;
 	$.each(railway_parts, function( i, item ) {
 		railway_parts_name = item.NAME;
 	});
 	/* Название пути */
-	var disl_railway = get_railway_add_info(p_railway_id);
+	var disl_railway = await get_railway_add_info(p_railway_id);
 	var railway_name;
 	$.each(disl_railway, function( i, item ) {
 		railway_name = item.RAILWAY_NUMBER;
 	});
 	
-    function railcar_table_for_fix_device(){
+    async function railcar_table_for_fix_device(){
         var self = this;
         this.add_error_msg = null;
         this.cars_table_total_row;
@@ -14109,7 +13979,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
         this.car_number_input = return_table.add_carnumber_input;
 
         return_table.add_carnumber_btn = $('<input>',{type:'button',css:{'font-size':'11px','height':'17px'}, class:'btnAdd'}).val('Добавить'); // Назначение ЗУ (добавить)
-        return_table.add_carnumber_btn.on('click', function(){
+        return_table.add_carnumber_btn.on('click', async function(){
 			//alert(1);
 			l_car_number = return_table.add_carnumber_input.val();
 			if (l_car_number.length==0 || l_car_number == null && l_car_number !== ''){
@@ -14117,9 +13987,9 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
                 alert('Вагон не введен!');
                 return false;
 			}
-			self.add_cars_in_table(null,null,true);
+			self.await add_cars_in_table(null,null,true);
         });
-        return_table.add_carnumber_input.on('keypress', function(e){
+        return_table.add_carnumber_input.on('keypress', async function(e){
             if(e.keyCode===13){
                 l_car_number = return_table.add_carnumber_input.val();
 				if (l_car_number.length==0 || l_car_number == null && l_car_number !== ''){
@@ -14127,7 +13997,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
 					alert('Вагон не введен!');
 					return false;
 				}
-				self.add_cars_in_table(null,null,true);
+				self.await add_cars_in_table(null,null,true);
             }
         });
         
@@ -14198,7 +14068,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
             return true;
         };
 
-        this.add_cars_in_table = function(p_railwai_id,p_car_number,p_need_check){
+        this.add_cars_in_table = async function(p_railwai_id,p_car_number,p_need_check){
             var add_car_number;
             if (p_car_number === null || p_car_number === '') {
                 add_car_number = return_table.add_carnumber_input.val();
@@ -14216,52 +14086,52 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
                 params.railway_id = p_railwai_id;
 				params.car_number = add_car_number;
 				//console.log(JSON.stringify(params));
-                $.ajax({
+                try {
+                    var data = await $.ajax({
                     url: 'data.php',
                     type: 'POST',
                     dataType: "text",
-                    async: false,
                     data: { params: JSON.stringify(params)
                            ,ajax_action: 'get_railway_cars'
-                          },
-                    success: function (data) {
-                        var records = JSON.parse(data);
-
-                        for(var i=0; i<records.length; i++) {
-                            self.cars_count++;
-                            var child = records[i];
-
-                            var tr = $('<tr/>');
-                            tr.pos = self.cars_mas.length;
-                            
-                            tr.round_id = child.ROUND_ID;
-							tr.car_number = child.CAR_NUMBER;
-                            tr.add_info_id = child.ADD_INFO_ID;
-                            tr.weight_net = ((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '');
-                            tr.count_of_axles = child.COUNT_OF_AXLES;
-
-                            tr.append('<td>'+self.cars_count+'</td>');
-                            tr.append('<td>'+child.CAR_NUMBER+'</td>');
-                            tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
-                            tr.append('<td>'+((child.COUNT_OF_AXLES !== null) ? child.COUNT_OF_AXLES.replace(',','.') : '')+'</td>');
-                            
-                            tr.del_image_div = $('<div>',{class:'deleteImage deleteImage13px'})
-                                .on('click', function(){
-									var l_tr = $(this).parent().parent();
-									var l_pos = $(l_tr).index();
-									del_cars_table_tr(l_tr);
-									delete self.cars_mas.splice(l_pos,1);
-									self.cars_count--;
-                                    change_cars_table_total_tr(); 
-                                });
-                            $('<td>').append(tr.del_image_div).appendTo(tr);
-                            tr.appendTo(return_table.cars_table); 
-                            
-                            self.cars_mas[tr.pos] = tr;
-                        }
-                    },
-                    error: function (m1,m2) {window.alert(m1+m2);}
+                          }
                 });
+                    var records = JSON.parse(data);
+
+                                            for(var i=0; i<records.length; i++) {
+                                                self.cars_count++;
+                                                var child = records[i];
+
+                                                var tr = $('<tr/>');
+                                                tr.pos = self.cars_mas.length;
+
+                                                tr.round_id = child.ROUND_ID;
+                    							tr.car_number = child.CAR_NUMBER;
+                                                tr.add_info_id = child.ADD_INFO_ID;
+                                                tr.weight_net = ((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '');
+                                                tr.count_of_axles = child.COUNT_OF_AXLES;
+
+                                                tr.append('<td>'+self.cars_count+'</td>');
+                                                tr.append('<td>'+child.CAR_NUMBER+'</td>');
+                                                tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
+                                                tr.append('<td>'+((child.COUNT_OF_AXLES !== null) ? child.COUNT_OF_AXLES.replace(',','.') : '')+'</td>');
+
+                                                tr.del_image_div = $('<div>',{class:'deleteImage deleteImage13px'})
+                                                    .on('click', function(){
+                    									var l_tr = $(this).parent().parent();
+                    									var l_pos = $(l_tr).index();
+                    									del_cars_table_tr(l_tr);
+                    									delete self.cars_mas.splice(l_pos,1);
+                    									self.cars_count--;
+                                                        change_cars_table_total_tr(); 
+                                                    });
+                                                $('<td>').append(tr.del_image_div).appendTo(tr);
+                                                tr.appendTo(return_table.cars_table); 
+
+                                                self.cars_mas[tr.pos] = tr;
+                                            }
+                } catch(e) {
+                    window.alert(e);
+                };
             }
             change_cars_table_total_tr();
         };
@@ -14468,7 +14338,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
 		
     };
 	/* Подобрать норму */
-	function table_norma_list(p_params){
+	async function table_norma_list(p_params){
 		var self = this;
 		var return_table = $('<div id="div_select">');
 			$(return_table).hide();
@@ -14479,7 +14349,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
             v_params.part_id = p_part_id;
             v_params.cars = railcar_table.get_cars_in_table();;
             //console.log('l_result='+JSON.stringify(v_params));
-            var l_result =  get_suitable_device_rules(JSON.stringify(v_params));
+            var l_result =  await get_suitable_device_rules(JSON.stringify(v_params));
 			//console.log('l_result='+l_result);
             var l_device_rules = JSON.parse(l_result);
                 $(l_div_rules).empty();
@@ -14543,99 +14413,97 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
         p_tr.remove();
     }
 	
-    function get_suitable_device_rules(p_params){            
+    async function get_suitable_device_rules(p_params){            
         var res = null;
 		//console.log(p_params);
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: '../data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { params: p_params
-                   ,ajax_action: 'get_suitable_device_rules'},
-            success: function (data) {
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'get_suitable_device_rules'}
         });
+            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
     }
-	function fill_users_for_cond_train(p_select,p_params,p_type){
+	async function fill_users_for_cond_train(p_select,p_params,p_type){
 		p_select.empty();
         p_select.append($('<option>'));
 		
 		var l_params = p_params;
 			l_params.type = p_type;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   { params: JSON.stringify(l_params)
-					 ,ajax_action: 'get_users_for_cond_train'},
-            success: function (data) {
-					var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.NAME).val(item.ID);
-                        p_select.append(l_option);
-                    }); 
-                }
+					 ,ajax_action: 'get_users_for_cond_train'}
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.NAME).val(item.ID);
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
 	// Список сторон закрепления
-	function get_side_for_device(p_params){
+	async function get_side_for_device(p_params){
         var result = [];
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   { params: JSON.stringify(l_params)
-					 ,ajax_action: 'get_side_for_device'},
-            success: function (data) {
-				//console.log(data);
-				result = data;
-            }
+					 ,ajax_action: 'get_side_for_device'}
         });
+            //console.log(data);
+            				result = data;
+        } catch(e) { window.alert(e); };
 		return result;
     }
 
 	/* Сохранить данные */
-    function save_transaction_fix_ajax(p_add_data){
+    async function save_transaction_fix_ajax(p_add_data){
 		//console.log('l_result='+(p_add_data));
 		
         var res = null;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { add_data: p_add_data
-                   ,ajax_action: 'save_transaction_fix_device'},
-            success: function (data) {
-				//console.log(data);
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'save_transaction_fix_device'}
         });
+            //console.log(data);
+                            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
     }
 	/* Проверка, чтобы на путях не были назначены ЗУ */
-	function validation_fix (p_params){
+	async function validation_fix (p_params){
 		//console.log('p_params='+JSON.stringify(l_params));
 		var res = null;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: '../data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { params: JSON.stringify(l_params)
-                   ,ajax_action: 'validation_fix'},
-            success: function (data) {
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'validation_fix'}
         });
+            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
 	}
 	/* Проверка перед сохранением */
@@ -14848,7 +14716,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
 		//console.log(JSON.stringify(l_params));
 	}
 	var l_valid_fix; 
-		l_valid_fix = validation_fix(l_params);
+		l_valid_fix = await validation_fix(l_params);
 		//console.log(JSON.stringify(l_params)+' '+l_valid_ondock);
 	var f_res_mas = l_valid_fix.split('$');
         if (f_res_mas[0]=='done') {
@@ -14878,7 +14746,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
     md_content.railway_input = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(railway_name);
     md_content.part_input = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(railway_parts_name);
 	md_content.users = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(user_name);
-	md_content.server_time = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(get_server_current_time());
+	md_content.server_time = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(await get_server_current_time());
     
 	md_content.choose_norm = $('<input>',{type:'button', id:'md_choose_norm_btn', value:'Подобрать норму', class:'md_save_load'});
 	
@@ -14892,7 +14760,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
 	md_content.note = $('<input>',{type:'text', 'requir':'N',class:'text ui-widget-content ui-corner-all',css:{'width':'300px'}});
 	
 	/*Список сторон закрепления*/
-	l_side_mas = JSON.parse(get_side_for_device(l_params));
+	l_side_mas = JSON.parse(await get_side_for_device(l_params));
 	l_side_length = l_side_mas.length;
 	l_params.side_length = l_side_length;
 	l_side_name_even = l_side_mas[0]['NAME'];
@@ -15056,11 +14924,11 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
 	}
 	init_date_time_input(md_content.time_fixing_even);
 	init_date_time_input(md_content.time_fixing_odd);
-	fill_users_for_cond_train(md_content.who_fixing_even,l_params,'prc_fc');
-	fill_users_for_cond_train(md_content.who_fixing_odd,l_params,'prc_fc');
+	await fill_users_for_cond_train(md_content.who_fixing_even,l_params,'prc_fc');
+	await fill_users_for_cond_train(md_content.who_fixing_odd,l_params,'prc_fc');
 	
-	fill_users_for_cond_train(md_content.who_report_even,l_params,'prr_fc'); // Кому докладывает
-	fill_users_for_cond_train(md_content.who_report_odd,l_params,'prr_fc'); // Кому докладывает
+	await fill_users_for_cond_train(md_content.who_report_even,l_params,'prr_fc'); // Кому докладывает
+	await fill_users_for_cond_train(md_content.who_report_odd,l_params,'prr_fc'); // Кому докладывает
 	
 	var norma_table;
 	
@@ -15080,7 +14948,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
     
     md_content.append(railcar_table.get_table());
     
-    railcar_table.add_cars_in_table(p_railway_id,null,true);
+    railcar_table.await add_cars_in_table(p_railway_id,null,true);
 
     md_content.dialog({
         resizable:false,
@@ -15109,7 +14977,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
             'Сохранить норму':{
                 text: "Сохранить",
                 id: "md_save_route_btn",
-                click: function(){  
+                click: async function(){  
 					
 					
 					var v_params = {};
@@ -15143,7 +15011,7 @@ function create_window_add_fix_device(p_railway_id,p_part_id){
 					 }
 					 //console.log(l_params_json);
 					 //return;
-					 var f_res = save_transaction_fix_ajax(l_params_json);
+					 var f_res = await save_transaction_fix_ajax(l_params_json);
 					 var f_res_mas = f_res.split('$');
                      if (f_res_mas[0]=='done') {
                         var l_mes = '';
@@ -15190,13 +15058,13 @@ function create_window_undock_fix_device(p_railway_id,p_part_id){
 		l_params.norma_odd = '0';
 		l_params.date_fix_even = '';
 		l_params.date_fix_odd = '';
-	var railway_parts = get_railway_parts(p_railway_id,p_part_id);
+	var railway_parts = await get_railway_parts(p_railway_id,p_part_id);
 	var railway_parts_name;
 	$.each(railway_parts, function( i, item ) {
 		railway_parts_name = item.NAME;
 	});
 	/* Название пути */
-	var disl_railway = get_railway_add_info(p_railway_id);
+	var disl_railway = await get_railway_add_info(p_railway_id);
 	var railway_name;
 	$.each(disl_railway, function( i, item ) {
 		railway_name = item.RAILWAY_NUMBER;
@@ -15370,120 +15238,118 @@ function create_window_undock_fix_device(p_railway_id,p_part_id){
         p_tr.remove();
     }
 	
-    function get_suitable_device_rules(p_params){            
+    async function get_suitable_device_rules(p_params){            
         var res = null;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: '../data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { params: p_params
-                   ,ajax_action: 'get_suitable_device_rules'},
-            success: function (data) {
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'get_suitable_device_rules'}
         });
+            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
     }
-	function fill_users_for_cond_train(p_select,p_params,p_type){
+	async function fill_users_for_cond_train(p_select,p_params,p_type){
 		p_select.empty();
         p_select.append($('<option>'));
 		
 		var l_params = p_params;
 			l_params.type = p_type;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   { params: JSON.stringify(l_params)
-					 ,ajax_action: 'get_users_for_cond_train'},
-            success: function (data) {
-					var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.NAME).val(item.ID);
-                        p_select.append(l_option);
-                    }); 
-                }
+					 ,ajax_action: 'get_users_for_cond_train'}
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.NAME).val(item.ID);
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
 	// Список сторон закрепления
-	function get_side_for_device(p_params){
+	async function get_side_for_device(p_params){
         var result = [];
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   { params: JSON.stringify(l_params)
-					 ,ajax_action: 'get_side_for_device'},
-            success: function (data) {
-				//console.log(data);
-				result = data;
-            }
+					 ,ajax_action: 'get_side_for_device'}
         });
+            //console.log(data);
+            				result = data;
+        } catch(e) { window.alert(e); };
 		return result;
     }
 
 	/* Сохранить данные */
-    function save_transaction_ondock(p_add_data){
+    async function save_transaction_ondock(p_add_data){
 		//console.log('l_result='+(p_add_data));
 		
         var res = null;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { add_data: p_add_data
-                   ,ajax_action: 'save_transaction_ondock'},
-            success: function (data) {
-				//console.log(data);
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'save_transaction_ondock'}
         });
+            //console.log(data);
+                            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
     }
 	
-	function validation_ondock (p_params){
+	async function validation_ondock (p_params){
 		//console.log('p_params='+JSON.stringify(l_params));
 		var res = null;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: '../data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { params: JSON.stringify(l_params)
-                   ,ajax_action: 'validation_ondock'},
-            success: function (data) {
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'validation_ondock'}
         });
+            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
 	}
-	function get_data_fix(p_params){
+	async function get_data_fix(p_params){
 		//console.log('p_params='+JSON.stringify(l_params));
 		var res = p_params;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: '../data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { params: JSON.stringify(p_params)
-                   ,ajax_action: 'set_header_value_fix'},
-            success: function (data) {
-                //res = data;
-				var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                       res.date_fix_even = item.DATE_FIX_EVEN;
-					   res.date_fix_odd = item.DATE_FIX_ODD;
-                    }); 
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'set_header_value_fix'}
         });
+            //res = data;
+            				var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                   res.date_fix_even = item.DATE_FIX_EVEN;
+            					   res.date_fix_odd = item.DATE_FIX_ODD;
+                                });
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
 	}
 	// Сравнение двух дат
@@ -15585,8 +15451,8 @@ function create_window_undock_fix_device(p_railway_id,p_part_id){
 	}
 	var l_transactions_id = 0;
 	var l_valid_ondock; 
-		l_valid_ondock = validation_ondock(l_params);
-	l_params = get_data_fix(l_params);	
+		l_valid_ondock = await validation_ondock(l_params);
+	l_params = await get_data_fix(l_params);	
 	console.log('l_params='+JSON.stringify(l_params));
 	var f_res_mas = l_valid_ondock.split('$');
         if (f_res_mas[0]=='done') {
@@ -15620,7 +15486,7 @@ function create_window_undock_fix_device(p_railway_id,p_part_id){
     md_content.railway_input = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(railway_name);
     md_content.part_input = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(railway_parts_name);
 	md_content.users = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(user_name);
-	md_content.server_time = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(get_server_current_time());
+	md_content.server_time = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(await get_server_current_time());
     
 	md_content.choose_norm = $('<input>',{type:'button', id:'md_choose_norm_btn', value:'Подобрать норму', class:'md_save_load'});
 	
@@ -15636,7 +15502,7 @@ function create_window_undock_fix_device(p_railway_id,p_part_id){
 	
 	
 	/*Список сторон закрепления*/
-	l_side_mas = JSON.parse(get_side_for_device(l_params));
+	l_side_mas = JSON.parse(await get_side_for_device(l_params));
 	l_side_length = l_side_mas.length;
 	l_side_name_even = l_side_mas[0]['NAME'];
 	l_side_name_odd = 'Нечетная сторона'
@@ -15799,11 +15665,11 @@ function create_window_undock_fix_device(p_railway_id,p_part_id){
 	}
 	init_date_time_input(md_content.time_fixing_even);
 	init_date_time_input(md_content.time_fixing_odd);
-	fill_users_for_cond_train(md_content.who_fixing_even,l_params,'prc_fc');
-	fill_users_for_cond_train(md_content.who_fixing_odd,l_params,'prc_fc');
+	await fill_users_for_cond_train(md_content.who_fixing_even,l_params,'prc_fc');
+	await fill_users_for_cond_train(md_content.who_fixing_odd,l_params,'prc_fc');
 	
-	fill_users_for_cond_train(md_content.who_report_even,l_params,'prr_fc'); // Кому докладывает
-	fill_users_for_cond_train(md_content.who_report_odd,l_params,'prr_fc'); // Кому докладывает
+	await fill_users_for_cond_train(md_content.who_report_even,l_params,'prr_fc'); // Кому докладывает
+	await fill_users_for_cond_train(md_content.who_report_odd,l_params,'prr_fc'); // Кому докладывает
 	$('<div>')
         .addClass('route-window-attr')
        /*  .append(l_div_railway)
@@ -15826,7 +15692,7 @@ function create_window_undock_fix_device(p_railway_id,p_part_id){
             'Сохранить':{
                 text: "Сохранить",
                 id: "md_save_route_btn",
-                click: function(){
+                click: async function(){
 					//fixing_device_even_list.get_checked_length();
 					var v_params = {};
 						v_params.transactions_id = l_transactions_id;
@@ -15853,7 +15719,7 @@ function create_window_undock_fix_device(p_railway_id,p_part_id){
 					 }
 					 //alert('Форма в разработке');
 					 //return;
-					 var f_res = save_transaction_ondock(l_params_json);
+					 var f_res = await save_transaction_ondock(l_params_json);
 					 var f_res_mas = f_res.split('$');
                      if (f_res_mas[0]=='done') {
                         var l_mes = '';
@@ -15885,7 +15751,7 @@ function create_window_undock_fix_device(p_railway_id,p_part_id){
 }
 
 /* Корректировка ЗУ */
-function create_window_update_fix_device(p_railway_id,p_part_id){
+async function create_window_update_fix_device(p_railway_id,p_part_id){
 	var l_params = {};
         l_params.railway_id = p_railway_id;
         l_params.part_id = p_part_id;
@@ -15899,19 +15765,19 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 		
 	
 	// Часть пути
-	var railway_parts = get_railway_parts(p_railway_id,p_part_id);
+	var railway_parts = await get_railway_parts(p_railway_id,p_part_id);
 	var railway_parts_name;
 	$.each(railway_parts, function( i, item ) {
 		railway_parts_name = item.NAME;
 	});
 	/* Название пути */
-	var disl_railway = get_railway_add_info(p_railway_id);
+	var disl_railway = await get_railway_add_info(p_railway_id);
 	var railway_name;
 	$.each(disl_railway, function( i, item ) {
 		railway_name = item.RAILWAY_NUMBER;
 	});
 	
-    function railcar_table_for_fix_device(){
+    async function railcar_table_for_fix_device(){
         var self = this;
         this.add_error_msg = null;
         this.cars_table_total_row;
@@ -15940,7 +15806,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
         this.car_number_input = return_table.add_carnumber_input;
 
         return_table.add_carnumber_btn = $('<input>',{type:'button',css:{'font-size':'11px','height':'17px'}, class:'btnAdd'}).val('Добавить'); // Назначение ЗУ (добавить)
-        return_table.add_carnumber_btn.on('click', function(){
+        return_table.add_carnumber_btn.on('click', async function(){
 			//alert(1);
 			l_car_number = return_table.add_carnumber_input.val();
 			if (l_car_number.length==0 || l_car_number == null && l_car_number !== ''){
@@ -15949,9 +15815,9 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
                 return false;
 			}
 			//console.log('==add_cars_in_table');
-			self.add_cars_in_table(null,null,null,true);
+			self.await add_cars_in_table(null,null,null,true);
         });
-        return_table.add_carnumber_input.on('keypress', function(e){
+        return_table.add_carnumber_input.on('keypress', async function(e){
             if(e.keyCode===13){
                 l_car_number = return_table.add_carnumber_input.val();
 				if (l_car_number.length==0 || l_car_number == null && l_car_number !== ''){
@@ -15959,7 +15825,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 					alert('Вагон не введен!');
 					return false;
 				}
-				self.add_cars_in_table(null,null,null,true);
+				self.await add_cars_in_table(null,null,null,true);
             }
         });
         
@@ -16034,7 +15900,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
             return true;
         };
 
-        this.add_cars_in_table = function(p_railwai_id,p_part_id,p_car_number,p_need_check){
+        this.add_cars_in_table = async function(p_railwai_id,p_part_id,p_car_number,p_need_check){
 			
             var add_car_number;
             if (p_car_number === null || p_car_number === '') {
@@ -16055,56 +15921,56 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 				params.part_id = p_part_id;
 				params.car_number = add_car_number;
 				//console.log(JSON.stringify(params));
-                $.ajax({
+                try {
+                    var data = await $.ajax({
                     url: 'data.php',
                     type: 'POST',
                     dataType: "text",
-                    async: false,
                     data: { params: JSON.stringify(params)
                            ,ajax_action: 'get_railway_cars_for_upd'
-                          },
-                    success: function (data) {
-						//console.log('data='+data);
-                        var records = JSON.parse(data);
-
-                        for(var i=0; i<records.length; i++) {
-                            self.cars_count++;
-                            var child = records[i];
-							//console.log(child);
-                            var tr = $('<tr/>');
-                            tr.pos = self.cars_mas.length;
-                            
-                            tr.round_id = child.ROUND_ID;
-							tr.car_number = child.CAR_NUMBER;
-                            tr.add_info_id = child.ADD_INFO_ID;
-                            tr.weight_net = ((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '');
-                            tr.count_of_axles = child.COUNT_OF_AXLES;
-							tr.transactions_cars_id = child.TRANSACTIONS_CARS_ID;
-							tr.deleted = 'N';
-
-                            tr.append('<td>'+self.cars_count+'</td>');
-                            tr.append('<td>'+child.CAR_NUMBER+'</td>');
-                            tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
-                            tr.append('<td>'+((child.COUNT_OF_AXLES !== null) ? child.COUNT_OF_AXLES.replace(',','.') : '')+'</td>');
-                            
-                            tr.del_image_div = $('<div>',{class:'deleteImage deleteImage13px'})
-                                .on('click', function(){
-									var l_tr = $(this).parent().parent();
-									var l_pos = $(l_tr).index();
-									del_cars_table_tr(l_tr);
-									self.cars_mas[l_pos]['deleted'] = 'Y';
-									//console.log(self.cars_mas);
-									self.cars_count--;
-                                    change_cars_table_total_tr(); 
-                                });
-                            $('<td>').append(tr.del_image_div).appendTo(tr);
-                            tr.appendTo(return_table.cars_table); 
-                            
-                            self.cars_mas[tr.pos] = tr;
-                        }
-                    },
-                    error: function (m1,m2) {window.alert(m1+m2);}
+                          }
                 });
+                    //console.log('data='+data);
+                                            var records = JSON.parse(data);
+
+                                            for(var i=0; i<records.length; i++) {
+                                                self.cars_count++;
+                                                var child = records[i];
+                    							//console.log(child);
+                                                var tr = $('<tr/>');
+                                                tr.pos = self.cars_mas.length;
+
+                                                tr.round_id = child.ROUND_ID;
+                    							tr.car_number = child.CAR_NUMBER;
+                                                tr.add_info_id = child.ADD_INFO_ID;
+                                                tr.weight_net = ((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '');
+                                                tr.count_of_axles = child.COUNT_OF_AXLES;
+                    							tr.transactions_cars_id = child.TRANSACTIONS_CARS_ID;
+                    							tr.deleted = 'N';
+
+                                                tr.append('<td>'+self.cars_count+'</td>');
+                                                tr.append('<td>'+child.CAR_NUMBER+'</td>');
+                                                tr.append('<td>'+((child.WEIGHT_NET !== null) ? child.WEIGHT_NET.replace(',','.') : '')+'</td>');
+                                                tr.append('<td>'+((child.COUNT_OF_AXLES !== null) ? child.COUNT_OF_AXLES.replace(',','.') : '')+'</td>');
+
+                                                tr.del_image_div = $('<div>',{class:'deleteImage deleteImage13px'})
+                                                    .on('click', function(){
+                    									var l_tr = $(this).parent().parent();
+                    									var l_pos = $(l_tr).index();
+                    									del_cars_table_tr(l_tr);
+                    									self.cars_mas[l_pos]['deleted'] = 'Y';
+                    									//console.log(self.cars_mas);
+                    									self.cars_count--;
+                                                        change_cars_table_total_tr(); 
+                                                    });
+                                                $('<td>').append(tr.del_image_div).appendTo(tr);
+                                                tr.appendTo(return_table.cars_table); 
+
+                                                self.cars_mas[tr.pos] = tr;
+                                            }
+                } catch(e) {
+                    window.alert(e);
+                };
             }
             change_cars_table_total_tr();
         };
@@ -16384,7 +16250,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 		}
 		
     };
-	function table_norma_list(p_params,p_cars){
+	async function table_norma_list(p_params,p_cars){
 		var self = this;
 		var return_table = $('<div id="div_select">');
 			$(return_table).hide();
@@ -16395,7 +16261,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
             v_params.part_id = p_part_id;
             v_params.cars = railcar_table.get_cars_in_table();
             //console.log('l_result='+JSON.stringify(l_params));
-            var l_result =  get_suitable_device_rules(JSON.stringify(v_params));
+            var l_result =  await get_suitable_device_rules(JSON.stringify(v_params));
             var l_device_rules = JSON.parse(l_result);
                 $(l_div_rules).empty();
                 l_device_rules.side_mas.forEach(function (item,index){
@@ -16458,23 +16324,23 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
         p_tr.remove();
     }
 	
-    function get_suitable_device_rules(p_params){            
+    async function get_suitable_device_rules(p_params){            
         var res = null;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: '../data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { params: p_params
-                   ,ajax_action: 'get_suitable_device_rules'},
-            success: function (data) {
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'get_suitable_device_rules'}
         });
+            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
     }
-	function set_users_for_cond_train(p_select,p_params,p_type,p_user_type){
+	async function set_users_for_cond_train(p_select,p_params,p_type,p_user_type){
 		p_select.empty();
         p_select.append($('<option>'));
 		
@@ -16483,77 +16349,75 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 			v_params.user_type = p_user_type;
 			
 			//console.log('l_result='+(JSON.stringify(v_params)));
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   { params: JSON.stringify(v_params)
-					 ,ajax_action: 'set_users_for_cond_train'},
-            success: function (data) {
-					//console.log('data='+data);
-					var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.NAME).val(item.ID).attr('selected',item.SELECTED);;
-                        p_select.append(l_option);
-                    }); 
-                }
+					 ,ajax_action: 'set_users_for_cond_train'}
         });
+            //console.log('data='+data);
+            					var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').text(item.NAME).val(item.ID).attr('selected',item.SELECTED);;
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
 	// Список сторон закрепления
-	function get_side_for_device(p_params){
+	async function get_side_for_device(p_params){
         var result = [];
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   { params: JSON.stringify(l_params)
-					 ,ajax_action: 'get_side_for_device'},
-            success: function (data) {
-				//console.log(data);
-				result = data;
-            }
+					 ,ajax_action: 'get_side_for_device'}
         });
+            //console.log(data);
+            				result = data;
+        } catch(e) { window.alert(e); };
 		return result;
     }
 
 	/* Update данные */
-    function update_transaction_fix_ajax(p_add_data){
+    async function update_transaction_fix_ajax(p_add_data){
 		//console.log('l_result='+(p_add_data));
 		
         var res = null;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { add_data: p_add_data
-                   ,ajax_action: 'update_transaction_fix_device'},
-            success: function (data) {
-				//console.log(data);
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'update_transaction_fix_device'}
         });
+            //console.log(data);
+                            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
     }
 	/* Проверка, чтобы на путях не были назначены ЗУ */
-	function validation_fix (p_params){
+	async function validation_fix (p_params){
 		//console.log('p_params='+JSON.stringify(l_params));
 		var res = null;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: '../data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { params: JSON.stringify(l_params)
-                   ,ajax_action: 'validation_fix'},
-            success: function (data) {
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'validation_fix'}
         });
+            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
 	}
 	/* Проверка перед сохранением */
@@ -16745,60 +16609,60 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 		//console.log(JSON.stringify(l_params));
 	}
 	
-	function set_header_value_fix(p_params,p_obj,p_type){
+	async function set_header_value_fix(p_params,p_obj,p_type){
 		//var res = null;
 		//console.log('p_params='+JSON.stringify(p_params));
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: '../data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { params: JSON.stringify(p_params)
-                   ,ajax_action: 'set_header_value_fix'},
-            success: function (data) {
-                var res = data;
-				//console.log('res='+res);
-				var records = JSON.parse(res);
-                    $.each(records, function( i, item ) {
-						l_params.calculation_type = item.CALCULATION_TYPE;
-						l_params.norma_even = item.NORMA_EVEN;
-						l_params.norma_odd = item.NORMA_ODD;
-						//if (l_params.norma_even == '0' )
-                        if (p_type =='time_fixing_even'){
-							$(p_obj).val(item.DATE_FIX_EVEN);
-							//console.log('res='+item.DATE_FIX_EVEN);
-						}
-						if (p_type =='time_fixing_odd'){
-							$(p_obj).val(item.DATE_FIX_ODD);
-						}
-						if (p_type =='note'){
-							$(p_obj).val(item.NOTE_FIX);
-						}
-                    }); 
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'set_header_value_fix'}
         });
+            var res = data;
+            				//console.log('res='+res);
+            				var records = JSON.parse(res);
+                                $.each(records, function( i, item ) {
+            						l_params.calculation_type = item.CALCULATION_TYPE;
+            						l_params.norma_even = item.NORMA_EVEN;
+            						l_params.norma_odd = item.NORMA_ODD;
+            						//if (l_params.norma_even == '0' )
+                                    if (p_type =='time_fixing_even'){
+            							$(p_obj).val(item.DATE_FIX_EVEN);
+            							//console.log('res='+item.DATE_FIX_EVEN);
+            						}
+            						if (p_type =='time_fixing_odd'){
+            							$(p_obj).val(item.DATE_FIX_ODD);
+            						}
+            						if (p_type =='note'){
+            							$(p_obj).val(item.NOTE_FIX);
+            						}
+                                });
+        } catch(e) {
+            window.alert(e);
+        };
         //return res;
 	}
-	function delete_fix (p_params){
+	async function delete_fix (p_params){
 		var res = null;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: '../data.php',
             type: 'POST',
             dataType: "text",
-            async:false,
             data: { params: p_params
-                   ,ajax_action: 'delete_fix'},
-            success: function (data) {
-                res = data;
-            },
-            error: function (m1,m2) {window.alert(m1+m2);}
+                   ,ajax_action: 'delete_fix'}
         });
+            res = data;
+        } catch(e) {
+            window.alert(e);
+        };
         return res;
 	}
 	
 	var l_valid_fix; 
-		l_valid_fix = validation_fix(l_params);
+		l_valid_fix = await validation_fix(l_params);
 	var f_res_mas = l_valid_fix.split('$');
 			if (f_res_mas[0]=='done') {
 				if (f_res_mas[1] =='true'){
@@ -16826,7 +16690,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
     md_content.railway_input = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(railway_name);
     md_content.part_input = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(railway_parts_name);
 	md_content.users = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(user_name);
-	md_content.server_time = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(get_server_current_time());
+	md_content.server_time = $('<input>',{disabled:'',type:'text', class:'text ui-widget-content ui-corner-all',css:{'width':'auto'}}).val(await get_server_current_time());
     
 	md_content.choose_norm = $('<input>',{type:'button', id:'md_choose_norm_btn', value:'Подобрать норму', class:'md_save_load'});
 	
@@ -16840,7 +16704,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 	md_content.note = $('<input>',{type:'text', 'requir':'N',class:'text ui-widget-content ui-corner-all',css:{'width':'300px'}});
 	
 	/*Список сторон закрепления*/
-	l_side_mas = JSON.parse(get_side_for_device(l_params));
+	l_side_mas = JSON.parse(await get_side_for_device(l_params));
 	l_side_length = l_side_mas.length;
 	l_params.side_length = l_side_length;
 	l_side_name_even = l_side_mas[0]['NAME'];
@@ -17002,16 +16866,16 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 	}
 	
 	init_date_time_input(md_content.time_fixing_even);
-	set_header_value_fix(l_params,md_content.time_fixing_even,'time_fixing_even');
+	await set_header_value_fix(l_params,md_content.time_fixing_even,'time_fixing_even');
 	init_date_time_input(md_content.time_fixing_odd);
-	set_header_value_fix(l_params,md_content.time_fixing_odd,'time_fixing_odd');
+	await set_header_value_fix(l_params,md_content.time_fixing_odd,'time_fixing_odd');
 	
-	set_users_for_cond_train(md_content.who_fixing_even,l_params,'prc_fc','USER_FIX_EVEN');
-	set_users_for_cond_train(md_content.who_fixing_odd,l_params,'prc_fc','USER_FIX_ODD');
+	await set_users_for_cond_train(md_content.who_fixing_even,l_params,'prc_fc','USER_FIX_EVEN');
+	await set_users_for_cond_train(md_content.who_fixing_odd,l_params,'prc_fc','USER_FIX_ODD');
 	
-	set_users_for_cond_train(md_content.who_report_even,l_params,'prr_fc','USER_FIX_REP_EVEN'); // Кому докладывает
-	set_users_for_cond_train(md_content.who_report_odd,l_params,'prr_fc','USER_FIX_REP_ODD'); // Кому докладывает
-	set_header_value_fix(l_params,md_content.note,'note');
+	await set_users_for_cond_train(md_content.who_report_even,l_params,'prr_fc','USER_FIX_REP_EVEN'); // Кому докладывает
+	await set_users_for_cond_train(md_content.who_report_odd,l_params,'prr_fc','USER_FIX_REP_ODD'); // Кому докладывает
+	await set_header_value_fix(l_params,md_content.note,'note');
 	var norma_table;
 	change_select();
 	//var norma_table = new table_norma_list();
@@ -17032,7 +16896,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
     
     md_content.append(railcar_table.get_table());
     
-    railcar_table.add_cars_in_table(p_railway_id,p_part_id,null,true);	
+    railcar_table.await add_cars_in_table(p_railway_id,p_part_id,null,true);	
     md_content.dialog({
         resizable:false,
         modal:true,
@@ -17060,7 +16924,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
             'Обновить данные':{
                 text: "Обновить данные",
                 id: "md_save_route_btn",
-                click: function(){
+                click: async function(){
 					
 					var v_params = {};
 						v_params.railway_id = p_railway_id; // Путь
@@ -17089,7 +16953,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 					 }
 					 //console.log(l_params_json);
 					 //return;
-					 var f_res = update_transaction_fix_ajax(l_params_json);
+					 var f_res = await update_transaction_fix_ajax(l_params_json);
 					 var f_res_mas = f_res.split('$');
                      if (f_res_mas[0]=='done') {
                         var l_mes = '';
@@ -17140,7 +17004,7 @@ function create_window_update_fix_device(p_railway_id,p_part_id){
 									var l_params_json = JSON.stringify(v_params);
 									
 									
-									var f_res = delete_fix(l_params_json);
+									var f_res = await delete_fix(l_params_json);
 									var f_res_mas = f_res.split('$');
 									if (f_res_mas[0]=='done') {
 										var l_mes = '';
@@ -17193,33 +17057,33 @@ function create_md_processing_of_wagons(){
     $('#modalDialog').remove();
     $('.context-menu').remove();
 	
-	function fill_for_freigth(p_select, p_freight_name){
+	async function fill_for_freigth(p_select, p_freight_name){
 		
 		var l_params = {};
 			l_params.freight_name = p_freight_name;
 			
 		p_select.empty();
 		p_select.append($('<option value="0"></option>'));
-			$.ajax({
+			try {
+			    var data = await $.ajax({
 				 url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async: false,
 				data:   { params: JSON.stringify(l_params),
-						  ajax_action: 'get_disl_freight_oebs'},
-					success: function (data) {
-					var records = JSON.parse(data);
-					$.each(records, function( i, item ) {
-						var l_option = $('<option>').text(item.ITEM_NAME).val(item.INVENTORY_ITEM_ID);
-							// Если груз удалось сопоставить, то выбираем его.
-							if (item.FREIGHT_SELECTED == 1){
-								l_option.prop("selected", true);
-							}
-							p_select.append(l_option);
-					}); 					
-					},
-					error: function (m1,m2) {window.alert(m1+m2);}
+						  ajax_action: 'get_disl_freight_oebs'}
 				});
+			    var records = JSON.parse(data);
+			    					$.each(records, function( i, item ) {
+			    						var l_option = $('<option>').text(item.ITEM_NAME).val(item.INVENTORY_ITEM_ID);
+			    							// Если груз удалось сопоставить, то выбираем его.
+			    							if (item.FREIGHT_SELECTED == 1){
+			    								l_option.prop("selected", true);
+			    							}
+			    							p_select.append(l_option);
+			    					});
+			} catch(e) {
+			    window.alert(e);
+			};
 	}
 	
     /* Создание модального окна для обработки вагонов */
@@ -17245,8 +17109,8 @@ function create_md_processing_of_wagons(){
 	//Добавить вагон
 	m_win_div.processing_add_wagon = $('<input>',{type:'text',css:{'font-size':'11px'}, class:'text ui-widget-content ui-corner-all'}).attr('size', '11').attr('maxlength', '11');
 	m_win_div.processing_add_wagon_btn = $('<input>',{type:'button',css:{'font-size':'11px','height':'17px'}, class:'btnAdd'}).val('Добавить');
-	m_win_div.processing_add_wagon_btn.on('click',function(){
-        add_wagon_in_processing_table();
+	m_win_div.processing_add_wagon_btn.on('click',async function(){
+        await add_wagon_in_processing_table();
     });
 	//Таблица с данными
 	m_win_div.TableProcessingWagons = $('<table>')
@@ -17315,10 +17179,10 @@ function create_md_processing_of_wagons(){
         var l_cars = get_selected_objects();
         var l_obj_car = {};
 		var index = 1;
-		l_cars.forEach(function(p_car){
+		l_cars.forEach(async function(p_car){
 			//console.log('='+p_car.obj_number);
 			l_obj_car.car_number = p_car.obj_number;
-			add_wagon_in_processing_table(l_obj_car);
+			await add_wagon_in_processing_table(l_obj_car);
 		});
         /*l_cars.forEach(function(p_car){
             var conts = p_car.cont.split(' ');
@@ -17347,7 +17211,7 @@ function create_md_processing_of_wagons(){
         });*/
     }
     /* Формирование конкретной позиции в таблице обработки */
-    function get_tr_for_processing_table(/*p_number,p_obj_number,p_freight,p_cont*/p_obj_car){
+    async function get_tr_for_processing_table(/*p_number,p_obj_number,p_freight,p_cont*/p_obj_car){
 		//console.log(p_obj_car.cont_num +' '+ p_obj_car.freight_name);
         var tr = $('<tr>');
         var div = $('<div>',{'class':'deleteImage deleteImage13px'});
@@ -17359,7 +17223,7 @@ function create_md_processing_of_wagons(){
         });
 		// Select cо списком позиций
         var select_freight = jQuery('<select>');
-			fill_for_freigth(select_freight,p_obj_car.freight_name);
+			await fill_for_freigth(select_freight,p_obj_car.freight_name);
 		
 		if (p_obj_car.inventory_item_id!==null){
 			select_freight.val(p_obj_car.inventory_item_id);
@@ -17416,7 +17280,7 @@ function create_md_processing_of_wagons(){
     init_date_time_input(m_win_div.end_processing_date);
 	
     /* Добавление введённого вагона в таблицу обработки */
-    function add_wagon_in_processing_table(p_type_obj){
+    async function add_wagon_in_processing_table(p_type_obj){
 		var l_obj_car = {};
         //var proc_tbl = $('table#processing_wagons_table');
 		var proc_tbl = $(m_win_div.TableProcessingWagons);
@@ -17446,70 +17310,70 @@ function create_md_processing_of_wagons(){
         }
 		else{
 			
-            $.ajax({
+            try {
+                var data = await $.ajax({
                 url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async: false,
                 data: { car_number: obj_number
                        ,ajax_action: 'add_car_for_process_of_wagons'
-                      },
-                success: function (data) {
-					//console.log(data);
-                    var records = JSON.parse(data);
-					$.each(records, function( i, item ) {
-						
-						l_obj_car.count = ++count;
-						l_obj_car.car_number = item.CAR_NUMBER;
-						l_obj_car.cont_num = item.CONT_NUMBER;
-						l_obj_car.freight_name = item.FREIGHT_NAME;
-						l_obj_car.disl_lines_id = item.DISL_LINES_ID;
-						l_obj_car.batch_num = item.BATCH_NUM;
-						l_obj_car.inventory_item_id = item.INVENTORY_ITEM_ID;
-						l_obj_car.interface_status = item.INTERFACE_STATUS;
-						l_obj_car.trx_date_begin_text = item.TRX_DATE_BEGIN_TEXT;
-						l_obj_car.trx_date_end_text = item.TRX_DATE_END_TEXT;
-						
-						proc_tbl.append(get_tr_for_processing_table(l_obj_car));
-					});
-	
-                    /*for(var i=0; i<records.length; i++) {
-                        var child = records[i];
-                        
-                        var freight = (child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '';
-                        var cont = null;
-                        cont = (child.CONT !== null) ? child.CONT : '';
-                        var conts = cont.split(' ');
-
-                        if (conts.length <= 1) {
-							l_obj_car.count = ++count;
-							l_obj_car.car_number = obj_number;
-							l_obj_car.cont_num = conts;
-							l_obj_car.freight_name = freight;
-							l_obj_car.disl_lines_id = 0;
-							
-                            //proc_tbl.append(get_tr_for_processing_table(++count,obj_number,freight,contsl_obj_car));
-							proc_tbl.append(get_tr_for_processing_table(l_obj_car));
-                        }
-                        else {
-                            for (var i = 0; i < conts.length - 1; i++) {
-								l_obj_car.count = ++count;
-								l_obj_car.car_number = obj_number;
-								l_obj_car.cont_num = conts[i];
-								l_obj_car.freight_name = freight;
-								l_obj_car.disl_lines_id = 0;
-                                //proc_tbl.append(get_tr_for_processing_table(++count,obj_number,freight,contsl_obj_car));
-							proc_tbl.append(get_tr_for_processing_table(l_obj_car));
-                            }
-                        }
-                    }*/
-
-                    md_disable_notification_btn();
-                    wagon_number_input.removeClass('red_bckg_color');
-                    wagon_number_input.val('');
-                },
-                error: function (m1,m2) {window.alert(m1+m2);}
+                      }
             });
+                //console.log(data);
+                                    var records = JSON.parse(data);
+                					$.each(records, function( i, item ) {
+
+                						l_obj_car.count = ++count;
+                						l_obj_car.car_number = item.CAR_NUMBER;
+                						l_obj_car.cont_num = item.CONT_NUMBER;
+                						l_obj_car.freight_name = item.FREIGHT_NAME;
+                						l_obj_car.disl_lines_id = item.DISL_LINES_ID;
+                						l_obj_car.batch_num = item.BATCH_NUM;
+                						l_obj_car.inventory_item_id = item.INVENTORY_ITEM_ID;
+                						l_obj_car.interface_status = item.INTERFACE_STATUS;
+                						l_obj_car.trx_date_begin_text = item.TRX_DATE_BEGIN_TEXT;
+                						l_obj_car.trx_date_end_text = item.TRX_DATE_END_TEXT;
+
+                						proc_tbl.append(get_tr_for_processing_table(l_obj_car));
+                					});
+
+                                    /*for(var i=0; i<records.length; i++) {
+                                        var child = records[i];
+
+                                        var freight = (child.FREIGHT_NAME !== null) ? child.FREIGHT_NAME : '';
+                                        var cont = null;
+                                        cont = (child.CONT !== null) ? child.CONT : '';
+                                        var conts = cont.split(' ');
+
+                                        if (conts.length <= 1) {
+                							l_obj_car.count = ++count;
+                							l_obj_car.car_number = obj_number;
+                							l_obj_car.cont_num = conts;
+                							l_obj_car.freight_name = freight;
+                							l_obj_car.disl_lines_id = 0;
+
+                                            //proc_tbl.append(get_tr_for_processing_table(++count,obj_number,freight,contsl_obj_car));
+                							proc_tbl.append(get_tr_for_processing_table(l_obj_car));
+                                        }
+                                        else {
+                                            for (var i = 0; i < conts.length - 1; i++) {
+                								l_obj_car.count = ++count;
+                								l_obj_car.car_number = obj_number;
+                								l_obj_car.cont_num = conts[i];
+                								l_obj_car.freight_name = freight;
+                								l_obj_car.disl_lines_id = 0;
+                                                //proc_tbl.append(get_tr_for_processing_table(++count,obj_number,freight,contsl_obj_car));
+                							proc_tbl.append(get_tr_for_processing_table(l_obj_car));
+                                            }
+                                        }
+                                    }*/
+
+                                    md_disable_notification_btn();
+                                    wagon_number_input.removeClass('red_bckg_color');
+                                    wagon_number_input.val('');
+            } catch(e) {
+                window.alert(e);
+            };
         } 
     }
 	// Кол-во выбранных чекбоксов
@@ -17547,24 +17411,22 @@ function create_md_processing_of_wagons(){
         return obj;
     }
     /* Сохранение данных */
-    function md_enter_processing_ajax(data_obj){
+    async function md_enter_processing_ajax(data_obj){
         var res;
 		//console.log(data_obj);
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { params: JSON.stringify(data_obj)
-                   ,ajax_action: 'run_process_of_wagons' },
-            success: function (data) {
-				//console.log(data);
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
-            }
+                   ,ajax_action: 'run_process_of_wagons' }
         });
+            //console.log(data);
+                            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
 	function ValidatingRequiredValues (ObjArray){
@@ -17618,7 +17480,7 @@ function create_md_processing_of_wagons(){
             'Запустить интерфейс':{
 				text: "Запустить интерфейс",
                 id: "btn_save_processing",
-                click: function(){			
+                click: async function(){			
                     //$('#btn_save_processing').prop( "disabled", true );
 					//console.log(create_object_of_processing());
 					var f_obj = create_object_of_processing();
@@ -17629,7 +17491,7 @@ function create_md_processing_of_wagons(){
 					start_loading_animation();
 					//console.log(f_obj);
 					//return;
-                    var res = md_enter_processing_ajax(f_obj);
+                    var res = await md_enter_processing_ajax(f_obj);
 					var f_res_mas = res.split('$'); // add  20.06.2022 
 						stop_loading_animation();
                     if (f_res_mas[0] === 'done') { // upd 20.06.2022 add f_res_mas[0]
@@ -17757,7 +17619,7 @@ function create_md_manual_upd_wagon(){
 }
 
 /* Получение списка обработок */
-function get_processings_of_wagons(){
+async function get_processings_of_wagons(){
 
     start_loading_animation();
     
@@ -17786,7 +17648,7 @@ function get_processings_of_wagons(){
 
     //Список позиций
 	m_win_div.position = $('<select>');
-    fill_for_freight(m_win_div.position, '');
+    await fill_for_freight(m_win_div.position, '');
     var position = $('<div>')
         .addClass('processing-wagons-window-attr-item helper-clearfix')
         .append($('<label>',{text:'Позиция',class:'processing-wagons-window-attr-item-text processing-wagons-window-attr-item-text-left'}))
@@ -17837,8 +17699,8 @@ function get_processings_of_wagons(){
         width: 'auto',
         draggable: false,
         buttons:{
-            'Загрузить': function(){
-                get_processing_list();
+            'Загрузить': async function(){
+                await get_processing_list();
             },
             'Закрыть': function(){
                 $(this).remove();
@@ -17847,7 +17709,7 @@ function get_processings_of_wagons(){
     });
 
     /* Получаем данные для таблицы */
-    function get_processing_list() {
+    async function get_processing_list() {
         var processing_tbl = $(m_win_div.TableProcessingWagons);
         processing_tbl.find('tr').remove();
 
@@ -17865,31 +17727,31 @@ function get_processings_of_wagons(){
         data_obj.inventory_item_id = item_id;
         data_obj.trx_date_begin = date_begin;
         data_obj.trx_date_end = date_end;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: {  params: JSON.stringify(data_obj)
                     ,ajax_action: 'get_process_of_wagons_history'
-                  },
-            success: function (data) {
-                var records = JSON.parse(data);
-                $.each(records, function( i, item ) {
-                    
-                    obj_car.count = ++count;
-                    obj_car.product = item.PRODUCT;
-                    obj_car.lot_number = item.LOT_NUMBER;
-                    obj_car.begin_transaction_date = item.BEGIN_TRANSACTION_DATE;
-                    obj_car.end_transaction_date = item.END_TRANSACTION_DATE;
-                    obj_car.qty_production = item.QTY_PRODUCTION;
-                    obj_car.qty_write_off = item.QTY_WRITE_OFF;
-                    
-                    processing_tbl.append(get_tr_processing(obj_car));
-                });
-            },
-            error: function (m1,m2) {window.alert(m1+m2); }
+                  }
         });
+            var records = JSON.parse(data);
+                            $.each(records, function( i, item ) {
+
+                                obj_car.count = ++count;
+                                obj_car.product = item.PRODUCT;
+                                obj_car.lot_number = item.LOT_NUMBER;
+                                obj_car.begin_transaction_date = item.BEGIN_TRANSACTION_DATE;
+                                obj_car.end_transaction_date = item.END_TRANSACTION_DATE;
+                                obj_car.qty_production = item.QTY_PRODUCTION;
+                                obj_car.qty_write_off = item.QTY_WRITE_OFF;
+
+                                processing_tbl.append(get_tr_processing(obj_car));
+                            });
+        } catch(e) {
+            window.alert(e);
+        };
     }
 
     /* Формируем конкретную строчку для таблицы */
@@ -17925,33 +17787,33 @@ function get_processings_of_wagons(){
     }
 	
     /* Получаем список позиций */
-    function fill_for_freight(p_select, p_freight_name){
+    async function fill_for_freight(p_select, p_freight_name){
 		
         var l_params = {};
             l_params.freight_name = p_freight_name;
             
         p_select.empty();
         p_select.append($('<option value="0"></option>'));
-            $.ajax({
+            try {
+                var data = await $.ajax({
                  url: 'data.php',
                 type: 'POST',
                 dataType: "text",
-                async: false,
                 data:   { params: JSON.stringify(l_params),
-                          ajax_action: 'get_disl_freight_oebs'},
-                    success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').text(item.ITEM_NAME).val(item.INVENTORY_ITEM_ID);
-                            // Если груз удалось сопоставить, то выбираем его.
-                            if (item.FREIGHT_SELECTED == 1){
-                                l_option.prop("selected", true);
-                            }
-                            p_select.append(l_option);
-                    }); 					
-                    },
-                    error: function (m1,m2) {window.alert(m1+m2);}
+                          ajax_action: 'get_disl_freight_oebs'}
                 });
+                var records = JSON.parse(data);
+                                    $.each(records, function( i, item ) {
+                                        var l_option = $('<option>').text(item.ITEM_NAME).val(item.INVENTORY_ITEM_ID);
+                                            // Если груз удалось сопоставить, то выбираем его.
+                                            if (item.FREIGHT_SELECTED == 1){
+                                                l_option.prop("selected", true);
+                                            }
+                                            p_select.append(l_option);
+                                    });
+            } catch(e) {
+                window.alert(e);
+            };
     }
     stop_loading_animation();
 }
@@ -17960,7 +17822,7 @@ function get_processings_of_wagons(){
 	add 22.09.2023 BekmansurovRR
 	Ввод контйнеров
 */
-function entry_foreign_container(){
+async function entry_foreign_container(){
     function return_container_elem(){
         var l_obj = {};
 		l_obj.array_info = clEntryContainer.get_data_to_save();
@@ -18008,72 +17870,68 @@ function entry_foreign_container(){
 
         return result; 
     }
-	function get_select_with_station_child(p_id,p_station_id){
+	async function get_select_with_station_child(p_id,p_station_id){
         var result = '<select id="'+p_id+'" class="required">';
         result+='<option value=""></option>';
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {station_id: p_station_id 
                     ,ajax_action: 'get_all_station_child'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        result += '<option '+((item.DISABLED=='Y')?'disabled':'')+' style="'+('margin-left: '+(item.LVL-1)*10 + 'px')+'" data-id="'+item.ID
-                                 +'" data-type="'+item.TYPE+'" value="'+item.ID+'" '+'" data-cars_count="'+item.COUNT_RAILCARS+'" data-free_length="'+item.FREE_LENGTH+'">'+item.NAME+'</option>';
-                    }); 
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    result += '<option '+((item.DISABLED=='Y')?'disabled':'')+' style="'+('margin-left: '+(item.LVL-1)*10 + 'px')+'" data-id="'+item.ID
+                                             +'" data-type="'+item.TYPE+'" value="'+item.ID+'" '+'" data-cars_count="'+item.COUNT_RAILCARS+'" data-free_length="'+item.FREE_LENGTH+'">'+item.NAME+'</option>';
+                                });
+        } catch(e) { window.alert(e); };
         result += '</select>';
         return result;
     }
 
-    function entry_foreign_container_ajax(p_container) {
+    async function entry_foreign_container_ajax(p_container) {
         var res;
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data: { container: p_container
                    ,date_fact: $('#modalDialogDateFact').val()
                    ,ajax_action: 'entry_foreign_container'
-            },
-            success: function (data) {
-                res = data;
-            },
-            error: function (data) {
-                res = 'fail';
             }
         });
+            res = data;
+        } catch(e) {
+            res = 'fail';
+        };
         return res;
     }
 	
-	function fill_select_with_places(p_select,p_station_id,p_area_type){
+	async function fill_select_with_places(p_select,p_station_id,p_area_type){
         p_select.empty();
         
         p_select.append($('<option>'));
         
-        $.ajax({
+        try {
+            var data = await $.ajax({
             url: 'data.php',
             type: 'POST',
             dataType: "text",
-            async: false,
             data:   {station_id: p_station_id 
                     ,area_type: p_area_type
                     ,ajax_action: 'get_places_for_cont'
-                    },
-            success: function (data) {
-                    var records = JSON.parse(data);
-                    $.each(records, function( i, item ) {
-                        var l_option = $('<option>').attr('data-id',item.ID).attr('data-type',item.TYPE).text(item.NAME).val(item.ID);
-                        p_select.append(l_option);
-                    }); 
-                }
+                    }
         });
+            var records = JSON.parse(data);
+                                $.each(records, function( i, item ) {
+                                    var l_option = $('<option>').attr('data-id',item.ID).attr('data-type',item.TYPE).text(item.NAME).val(item.ID);
+                                    p_select.append(l_option);
+                                });
+        } catch(e) { window.alert(e); };
     }
 	function disable_save_btn(){
         if (m_win_div.new_place.val()==''){
@@ -18204,7 +18062,7 @@ function entry_foreign_container(){
 		}
 	}
 	
-    var server_current_time = get_server_current_time();
+    var server_current_time = await get_server_current_time();
     
     // создаем div для отображения модального окна
     var m_win_div = $('<div/>')
@@ -18249,18 +18107,18 @@ function entry_foreign_container(){
 				)
 		);
 	
-	m_win_div.new_place_type.on('change', function (e) {
-        fill_select_with_places(m_win_div.new_place,m_win_div.new_place_station.val(),m_win_div.new_place_type.val());
+	m_win_div.new_place_type.on('change', async function (e) {
+        await fill_select_with_places(m_win_div.new_place,m_win_div.new_place_station.val(),m_win_div.new_place_type.val());
         if (m_win_div.new_place_type.val()=='area'){
             m_win_div.new_place_station.parent().show();
         }else{
             m_win_div.new_place_station.parent().hide();
         }
     });
-    m_win_div.new_place_station.on('change', function (e) {
-		fill_select_with_places(m_win_div.new_place,m_win_div.new_place_station.val(),m_win_div.new_place_type.val());    
+    m_win_div.new_place_station.on('change', async function (e) {
+		await fill_select_with_places(m_win_div.new_place,m_win_div.new_place_station.val(),m_win_div.new_place_type.val());    
     });
-	fill_select_with_places(m_win_div.new_place,m_win_div.new_place_station.val(),m_win_div.new_place_type.val());
+	await fill_select_with_places(m_win_div.new_place,m_win_div.new_place_station.val(),m_win_div.new_place_type.val());
 	
 	//  Кнопка "Добавить"
 	m_win_div.btn_add = $('<input>')
@@ -18268,7 +18126,7 @@ function entry_foreign_container(){
 						.attr({'type':'button'})
 						.addClass('btnAdd')
 						.val('Добавить');
-	m_win_div.btn_add.on('click', function(){
+	m_win_div.btn_add.on('click', async function(){
 		
 		if ($('#modalDialogCont').val() === ''){
 			create_info_modal_dialog_new('Ошибка','Не заполнено поле "№ контейнера"!');
@@ -18283,7 +18141,7 @@ function entry_foreign_container(){
 			return;
 		}
 		if (clEntryContainer.check_container() === 1 ){
-			clEntryContainer.add_in_table();
+			clEntryContainer.await add_in_table();
 		}
 			
 	});
@@ -18406,10 +18264,10 @@ function entry_foreign_container(){
             'Сохранить': {
                 text:'Сохранить',
                 id:'md_entry_foreign_railcar_save_btn',
-                click: function(){
+                click: async function(){
                     var l_entry_json = JSON.stringify(return_container_elem()); //сохраняем выбранные элементы
 					
-                    var f_res = entry_foreign_container_ajax(l_entry_json);
+                    var f_res = await entry_foreign_container_ajax(l_entry_json);
 					
                     var f_res_mas = f_res.split('$');
 					//console.log(f_res_mas);
