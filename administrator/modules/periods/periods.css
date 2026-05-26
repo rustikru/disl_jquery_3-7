@@ -1,0 +1,13 @@
+.directory-period-table th:nth-child(1) {
+    width: 3em;
+}
+.directory-period-table th, td 
+{
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.directory-period-table th {
+    background-color: #f5f5f5;
+    color: #333;
+}

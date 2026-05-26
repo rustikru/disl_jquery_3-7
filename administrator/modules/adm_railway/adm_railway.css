@@ -1,0 +1,80 @@
+.railway-descr {
+    float: left;
+    border: 1px solid #7e7e7e;
+    border-radius: 5px;
+    padding: 5px;
+    /*margin-top: 5px;*/
+    /*margin-bottom: 5px;*/
+}
+.railway-descr > div{
+    clear:both; 
+    text-align:right;
+    /*line-height:25px;*/
+}
+.railway-descr > div:not(:first-child){
+    margin-top: 5px;
+}
+.railway-descr > div > label{
+    float:left;
+    padding-right:10px;
+    margin-top: 2px;
+}
+
+.railway_info_table tbody tr#addInfoTableTotalTr{
+    background: #EBEBEB;
+    font-weight: bold;
+}
+
+.railway_info_table {
+    background: #DCDCDC;
+    border-spacing: 1px;
+    text-align: center;
+    margin: auto;
+}
+
+.railway_info_table th {
+    height: 40px;
+    background: #EBEBEB;
+}
+
+.railway_info_table tbody tr:nth-child(odd) {
+    background: #F8F8F8;
+}
+
+.railway_info_table tbody tr:nth-child(even) {
+    background: #c1ffc9;
+}
+
+.railway_info_table th:nth-child(1) {
+    width: 70px;
+}
+.railway_info_table th:nth-child(2) {
+    width: 90px;
+}
+.railway_info_table th:nth-child(3) {
+    width: 85px;
+}
+.railway_info_table th:nth-child(4) {
+    width: 85px;
+}
+.railway_info_table th:nth-child(5) {
+    width: 85px;
+}
+.railway_info_table th:nth-child(6) {
+    width: 85px;
+}
+.railway_info_table th:nth-child(7) {
+    width: 85px;
+}
+.railway_info_table th:nth-child(8) {
+    width: 70px;
+}
+.railway_info_table th:nth-child(9) {
+    width: 70px;
+}
+.railway_info_table th:nth-child(10) {
+    width: 70px;
+}
+.railway_info_table th:nth-child(11) {
+    width: 70px;
+}

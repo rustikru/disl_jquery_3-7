@@ -1,0 +1,307 @@
+.ui-tabs-panel {
+    padding: 0px !important;
+}
+
+.section {
+    //margin-left: 280px;
+    //padding-bottom: 50px;
+    height: 100%;
+    width: 1030px;
+    border: 1px solid #7e7e7e;
+    overflow: auto;
+    float: right;
+}
+
+.route-table{
+    background: #DCDCDC none repeat scroll 0% 0%;
+    border-spacing: 1px;
+    text-align: center;
+    margin: 0.5em;
+}
+
+
+.route-table-th{
+    height: 40px;
+    background: #EBEBEB none repeat scroll 0% 0%;
+}
+
+.fuel-stand-table-th{
+    height: 30px;
+}
+
+.route-table tbody tr:nth-child(2n+1) {
+    background: #F8F8F8 none repeat scroll 0% 0%;
+}
+
+.route-table tbody tr:nth-child(2n) {
+    background: #C1FFC9 none repeat scroll 0% 0%;
+}
+
+.route-window-attr {
+    border: 1px solid #7E7E7E;
+    border-radius: 5px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.route-window-attr{
+    border: 1px solid #7E7E7E;
+    border-radius: 5px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.route-window-attr-item{
+    text-align: right;
+    position: relative;
+}
+.route-window-attr-item:not(:last-child){
+    margin-bottom: 0.3em;
+    text-align: right;
+}
+.route-window-attr-item-text{
+    padding-right: 10px;
+}
+.route-window-attr-item-text-left{
+    float: left;
+    top: 2px;
+    position: absolute;
+    left: 1px;
+}
+.route-window-attr-item-text-between{
+    padding-left: 10px;
+}
+.route-window-attr-item-elem{
+    float: right;
+}
+
+.helper-clearfix::before, .helper-clearfix::after {
+    content: "";
+    display: table;
+    border-collapse: collapse;
+    clear: both;
+}
+.helper-clearfix::after {
+    clear: both;
+}
+
+.route-filter-div{
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    margin-top: 0.5em;
+    border: 1px solid #7E7E7E;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.route-change-select{
+	width: 80px;
+}
+
+
+.storage-table{
+    background: #DCDCDC none repeat scroll 0% 0%;
+    border-spacing: 1px;
+    text-align: center;
+    margin: 0.5em;
+	table-layout: fixed;     
+	width:1000px;
+}
+
+.storage-table{
+    background: #DCDCDC none repeat scroll 0% 0%;
+    border-spacing: 1px;
+    text-align: center;
+    margin: 0.5em;
+}
+
+.storage-table-th{
+    height: 40px;
+    background: #EBEBEB none repeat scroll 0% 0%;
+}
+
+.fuel-stand-table-th{
+    height: 30px;
+}
+
+.storage-table tbody tr:nth-child(2n+1) {
+    background: #F8F8F8 none repeat scroll 0% 0%;
+}
+
+.storage-table tbody tr:nth-child(2n) {
+    background: #C1FFC9 none repeat scroll 0% 0%;
+}
+
+.storage-window-attr {
+    border: 1px solid #7E7E7E;
+    border-radius: 5px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.storage-window-attr{
+    border: 1px solid #7E7E7E;
+    border-radius: 5px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.storage-window-attr-item{
+    text-align: right;
+    position: relative;
+}
+.storage-window-attr-item:not(:last-child){
+    margin-bottom: 0.3em;
+    text-align: right;
+}
+.storage-window-attr-item-text{
+    padding-right: 10px;
+}
+.storage-window-attr-item-text-left{
+    float: left;
+    top: 2px;
+    position: absolute;
+    left: 1px;
+}
+.storage-window-attr-item-text-between{
+    padding-left: 10px;
+}
+.storage-window-attr-item-elem{
+    float: right;
+}
+
+.storage-filter-div{
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    margin-top: 0.5em;
+    border: 1px solid #7E7E7E;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.reference-text{
+    text-decoration: underline;
+    color: #007fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.route-act-table th:nth-child(1),.route-act-table td:nth-child(1) {
+    width: 20px;
+}
+.route-act-table th:nth-child(2),.route-act-table td:nth-child(2) {
+    width: 130px;
+}
+.route-act-table th:nth-child(3),.route-act-table td:nth-child(3) {
+    width: 90px;
+}
+.route-act-table th:nth-child(4),.route-act-table td:nth-child(4) {
+    width: 90px;
+}
+.route-act-table th:nth-child(5),.route-act-table td:nth-child(5) {
+    width: 250px;
+}
+.route-act-table th:nth-child(6),.route-act-table td:nth-child(6) {
+    width: 100px;
+}
+.route-act-table th:nth-child(7),.route-act-table td:nth-child(7) {
+    width: 50px;
+}
+.route-act-table th:nth-child(8),.route-act-table td:nth-child(8) {
+    width: 110px;
+}
+.route-act-table th:nth-child(9),.route-act-table td:nth-child(9) {
+    width: 250px;
+}
+
+.route-operation-descr-table th:nth-child(1),.route-operation-descr-table td:nth-child(1) {
+    width: 120px;
+}
+.route-operation-descr-table th:nth-child(2),.route-operation-descr-table td:nth-child(2) {
+    width: 120px;
+}
+.route-operation-descr-table th:nth-child(3),.route-operation-descr-table td:nth-child(3) {
+    width: 80px;
+}
+.route-operation-descr-table th:nth-child(4),.route-operation-descr-table td:nth-child(4) {
+    width: 130px;
+}
+.route-operation-descr-table th:nth-child(5),.route-operation-descr-table td:nth-child(5) {
+    width: 130px;
+}
+
+.part-titlebar-add-button{
+    left: 6.1em;
+}
+
+.route-table th:nth-child(1){
+    width: 240px;
+}
+.route-table th:nth-child(2){
+    width: 80px;
+}
+.route-table th:nth-child(3) {
+    width: 80px;
+}
+.route-table th:nth-child(4) {
+    width: 120px;
+}
+.route-table th:nth-child(5) {
+    width: 80px;
+}
+.route-table th:nth-child(6){
+    width: 70px;
+}
+.route-table th:nth-child(7){
+    width: 60px;
+}
+.route-table th:nth-child(8){
+    width: 60px;
+}
+.route-table th:nth-child(9){
+    width: 120px;
+}
+.route-table th:nth-child(10){
+    width: 120px;
+}
+.route-table th:nth-child(11) {
+    width: 120px;
+}
+.route-table th:nth-child(12){
+    width: 120px;
+}
+
+
+.storage-place-table th:nth-child(1){
+    width: 150px;
+}
+.storage-place-table th:nth-child(2){
+    width: 100px;
+}
+.storage-place-table th:nth-child(3) {
+    width: 130px;
+}
+.storage-place-table th:nth-child(4) {
+    width: 150px;
+}
+.storage-place-table th:nth-child(5) {
+    width: 300px;
+}
+.storage-place-table th:nth-child(6) {
+    width: 200px;
+}
+.storage-place-table th:nth-child(7) {
+    width: 200px;
+}
+.storage-place-table th:nth-child(8) {
+    width: 100px;
+}
+.storage-place-table th:nth-child(9) {
+    width: 200px;
+}
+.storage-place-table th:nth-child(10) {
+    width: 200px;
+}
+.received_cars_table{
+	
+}

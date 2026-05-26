@@ -1,0 +1,19 @@
+.ui-tabs-panel{
+    padding: 0px 0px !important;
+}
+.aside{
+    float: left;
+    width: 20%;
+    border: 1px solid #7e7e7e;
+    height: 100%;
+    overflow: auto;
+}
+.section {
+    //margin-left: 280px;
+    //padding-bottom: 50px;
+    height: 100%;
+    /* width: 1030px; */
+    border: 1px solid #7e7e7e;
+    overflow: auto;
+    /* float: right; */
+}

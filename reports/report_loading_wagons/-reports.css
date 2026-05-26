@@ -1,0 +1,132 @@
+.td_err_uvod{
+    background:lightpink;
+}
+.td_err_post{
+    background:#E7ff78;
+}
+
+.refresh_report_btn {
+    height: 19px;
+    background-color: #EBEBEB;
+    border: 1px solid;
+    border-radius: 3px;
+    color: #404040;
+    cursor: pointer;
+    line-height: 5px;
+    margin-left: 550px;
+    margin-bottom: 14px;
+}
+.report_table{
+    background: #DCDCDC;
+    border-spacing: 1px;
+    text-align: center;
+    margin: auto;
+	width: 100%;
+}
+
+.report_table th {
+    height: 40px;
+    background: #EBEBEB;
+}
+
+.report_table tbody tr:nth-child(odd) {
+    background: #F8F8F8;
+}
+
+.report_table tbody tr:nth-child(even) {
+    background: #c1ffc9;
+}
+
+.report_1_table th:nth-child(1) {
+    width: 80px;
+}
+.report_1_table th:nth-child(2) {
+    width: 130px;
+}
+.report_1_table th:nth-child(3) {
+    width: 120px;
+}
+.report_1_table th:nth-child(4) {
+    width: 350px;
+}
+.report_1_table th:nth-child(5) {
+    width: 100px;
+}
+.report_1_table th:nth-child(6) {
+    width: 40px;
+}
+.report_1_table th:nth-child(7) {
+    width: 160px;
+}
+.report_1_table th:nth-child(8) {
+    width: 50px;
+}
+.report_1_table th:nth-child(9) {
+    width: 80px;
+}
+.report_1_table th:nth-child(10) {
+    width: 80px;
+}
+
+.report_2_table th:nth-child(1) {
+    width: 90px;
+}
+.report_2_table th:nth-child(2) {
+    width: 80px;
+}
+.report_2_table th:nth-child(3) {
+    width: 130px;
+}
+.report_2_table th:nth-child(4) {
+    width: 120px;
+}
+.report_2_table th:nth-child(5) {
+    width: 350px;
+}
+.report_2_table th:nth-child(6) {
+    width: 110px;
+}
+.report_2_table th:nth-child(7) {
+    width: 40px;
+}
+.report_2_table th:nth-child(8) {
+    width: 160px;
+}
+.report_2_table th:nth-child(9) {
+    width: 50px;
+}
+.report_2_table th:nth-child(10) {
+    width: 80px;
+}
+
+
+.report_3_table th:nth-child(1) {
+    width: 80px;
+}
+.report_3_table th:nth-child(2) {
+    width: 130px;
+}
+.report_3_table th:nth-child(3) {
+    width: 120px;
+}
+.report_3_table th:nth-child(4) {
+    width: 350px;
+}
+.report_3_table th:nth-child(5) {
+    width: 100px;
+}
+.report_3_table th:nth-child(6) {
+    width: 40px;
+}
+.report_3_table th:nth-child(7) {
+    width: 160px;
+}
+.report_3_table th:nth-child(8) {
+    width: 50px;
+}
+.report_3_table th:nth-child(9) {
+    width: 80px;
+}
+.report_3_table th:nth-child(10) {
+    width: 80px;
+}
