@@ -2912,7 +2912,7 @@ function create_modal_dialog_move_inside_station(){
         in_station_cars_mas.push($(this).attr('data-id'));
     });
     
-    $("#md_moved_add_car").autocomplete({source: in_station_cars_mas,minLength: 2,menuMaxHeight: '15em'});
+    $("#md_moved_add_car").autocomplete({source: in_station_cars_mas,minLength: 2,menuMaxHeight: '15em',menuWidth: 120});
     
     $('#md_moved_add_car').on('keypress', function(e){
         if(e.keyCode===13){
@@ -3546,7 +3546,7 @@ function create_modal_dialog_send_to_station(event) {
         in_station_cars_mas.push($(this).attr('data-id'));
     });
     
-    $( "#md_send_to_station_add_car" ).autocomplete({source: in_station_cars_mas,minLength: 2,menuMaxHeight: '15em'});
+    $( "#md_send_to_station_add_car" ).autocomplete({source: in_station_cars_mas,minLength: 2,menuMaxHeight: '15em',menuWidth: 120});
     /*end заполняем input с автозаполнением вагонов*/
     
     // инициализируем input с датой
@@ -5212,7 +5212,7 @@ function create_md_received_into_station_new(){
                 coming_cars_mas.push(item.COLUMN_VALUE);
             });
 
-            railcar_table.car_number_input.autocomplete({source: coming_cars_mas,minLength: 2,menuMaxHeight: '15em'});
+            railcar_table.car_number_input.autocomplete({source: coming_cars_mas,minLength: 2,menuMaxHeight: '15em',menuWidth: 120});
             
             railcar_table.spec_check_car_number = function(p_car_number){
                 if (coming_cars_mas.indexOf(p_car_number)===-1){
@@ -6460,7 +6460,7 @@ function create_modal_dialog_notification(){
         g_cars_in_ugl_mas.push(item.COLUMN_VALUE);
     });
     
-    $( "#md_notification_add_car" ).autocomplete({source: g_cars_in_ugl_mas,minLength: 2,menuMaxHeight: '15em'});
+    $( "#md_notification_add_car" ).autocomplete({source: g_cars_in_ugl_mas,minLength: 2,menuMaxHeight: '15em',menuWidth: 120});
     /*end заполняем input с автозаполнением вагонов*/
     
     // инициализируем input с датой
@@ -7297,7 +7297,7 @@ function create_md_inspections(p_clicked_li){
                     l_cars.push(item.ID);
                 });
                 l_cars.push('ВЕСЫ-МОД-ЖД-7260SM');
-                md_ins_refresh_car_number.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '50em',menuWidth: 80});
+                md_ins_refresh_car_number.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '15em',menuWidth: 120});
             },
             error: function (m1,m2) {window.alert(m1+m2);}
         });
@@ -7325,7 +7325,7 @@ function create_md_inspections(p_clicked_li){
             in_station_cars_mas.push($(this).attr('data-id'));
         });
 
-        $( "#md_send_to_station_add_car" ).autocomplete({source: in_station_cars_mas,minLength: 2,menuMaxHeight: '15em'});
+        $( "#md_send_to_station_add_car" ).autocomplete({source: in_station_cars_mas,minLength: 2,menuMaxHeight: '15em',menuWidth: 120});
         */
     }
 	// 19.05.2025 по наряду 0000085955
@@ -7998,7 +7998,7 @@ function create_md_fix_device(p_clicked_li){
                 });
 				//console.log(l_cars)
                 //l_cars.push('ВЕСЫ-МОД-ЖД-7260SM');
-                md_ins_refresh_car_number.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '50em',menuWidth: 80});
+                md_ins_refresh_car_number.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '15em',menuWidth: 120});
             },
             error: function (m1,m2) {window.alert(m1+m2);}
         });
@@ -10319,7 +10319,7 @@ function create_md_weight_result(p_clicked_li){
                 l_cars_json.forEach(function (item){
                     l_cars.push(item.ID);
                 });
-                l_car_input.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '50em',menuWidth: 80});
+                l_car_input.autocomplete({source: l_cars,minLength: 2,menuMaxHeight: '15em',menuWidth: 120});
             },
             error: function (m1,m2) {window.alert(m1+m2);}
         });
