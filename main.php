@@ -29,7 +29,7 @@ if ($auth->isAuth()&&$auth->getStationId() !== null){
         <!-- <link rel="stylesheet" href="css/jquery.datetimepicker.css" type="text/css"> -->
         <link rel="stylesheet" href="css/jquery.select.css" type="text/css">
         <link rel="stylesheet" href="css/request_window.css?ver=0" type="text/css">
-        <link type="text/css" href="jquery/jquery-ui.min.css" rel="Stylesheet" />
+        <link type="text/css" href="jquery/3.7/jquery-ui.min.css" rel="Stylesheet" />
         <link type="text/css" href="css/tooltip.css" rel="Stylesheet" />
 		<script src="jquery/3.7/jquery-3.7.1.min.js" type="text/javascript"></script>
         <script src="jquery/3.7/jquery-migrate-3.4.1.js" type="text/javascript"></script>
