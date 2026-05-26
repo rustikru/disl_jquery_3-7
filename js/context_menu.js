@@ -13940,7 +13940,7 @@ function create_md_cars_passport(p_feel_table){
             r_table.add_car(item);
         });
         l_car_input.val('');
-        l_car_input.keyup();
+        l_car_input.trigger('keyup');
         stop_loading_animation();
     });
     md_div.dialog({

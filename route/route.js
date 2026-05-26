@@ -1909,7 +1909,7 @@ function create_add_other_oper_window(p_document,p_action,p_flag_add_car,p_cars)
                 });
             }
         }); 
-        l_descr.focus();
+        l_descr.trigger('focus');
         l_route1.val(p_document.tab3_route_select_filter.val());
     }else{
         l_date_from.val(p_action.data.GENERAL_DATE_FROM);
@@ -1925,7 +1925,7 @@ function create_add_other_oper_window(p_document,p_action,p_flag_add_car,p_cars)
             l_route2.val(p_action.data.ROUTE2_ID);
         }
 
-        l_descr.focus();
+        l_descr.trigger('focus');
         
         l_car_number.val(p_action.data.OBJ_NUMBER);
         l_car_number.addClass('true-car-number');

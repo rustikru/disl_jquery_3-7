@@ -177,7 +177,7 @@ function init_date_time_input(p_input){
                     p_input.addClass('red_bckg_color');
                     if (g_need_return_focus) {
                         g_need_return_focus = false;
-                        setTimeout(function(){p_input.focus();g_need_return_focus = true;},0);
+                        setTimeout(function(){p_input.trigger('focus');g_need_return_focus = true;},0);
                     }
                     //$('#'+p_id).focus();
                 }else{
@@ -189,7 +189,7 @@ function init_date_time_input(p_input){
                 p_input.addClass('red_bckg_color');
                 if (g_need_return_focus) {
                     g_need_return_focus = false;
-                    setTimeout(function(){p_input.focus();g_need_return_focus = true;},0);
+                    setTimeout(function(){p_input.trigger('focus');g_need_return_focus = true;},0);
                 }
             }
         }
@@ -223,7 +223,7 @@ function init_date_time_input_short(p_input){
                     p_input.addClass('red_bckg_color');
                     if (g_need_return_focus) {
                         g_need_return_focus = false;
-                        setTimeout(function(){p_input.focus();g_need_return_focus = true;},0);
+                        setTimeout(function(){p_input.trigger('focus');g_need_return_focus = true;},0);
                     }
                     //$('#'+p_id).focus();
                 }else{
@@ -235,7 +235,7 @@ function init_date_time_input_short(p_input){
                 p_input.addClass('red_bckg_color');
                 if (g_need_return_focus) {
                     g_need_return_focus = false;
-                    setTimeout(function(){p_input.focus();g_need_return_focus = true;},0);
+                    setTimeout(function(){p_input.trigger('focus');g_need_return_focus = true;},0);
                 }
             }
         }
@@ -272,7 +272,7 @@ function init_date_time_input_add(p_input,p_compare_date){
                     p_input.addClass('red_bckg_color');
                     if (g_need_return_focus) {
                         g_need_return_focus = false;
-                        setTimeout(function(){p_input.focus();g_need_return_focus = true;},0);
+                        setTimeout(function(){p_input.trigger('focus');g_need_return_focus = true;},0);
                     }
                     //$('#'+p_id).focus();
                 }else {
@@ -284,7 +284,7 @@ function init_date_time_input_add(p_input,p_compare_date){
                 p_input.addClass('red_bckg_color');
                 if (g_need_return_focus) {
                     g_need_return_focus = false;
-                    setTimeout(function(){p_input.focus();g_need_return_focus = true;},0);
+                    setTimeout(function(){p_input.trigger('focus');g_need_return_focus = true;},0);
                 }
             }
         }
@@ -322,7 +322,7 @@ function init_date_time_input_btw(p_input,p_compare_date_from,p_compare_date_to)
                     p_input.addClass('red_bckg_color');
                     if (g_need_return_focus) {
                         g_need_return_focus = false;
-                        setTimeout(function(){p_input.focus();g_need_return_focus = true;},0);
+                        setTimeout(function(){p_input.trigger('focus');g_need_return_focus = true;},0);
                     }
                     //$('#'+p_id).focus();
                 }else {
@@ -334,7 +334,7 @@ function init_date_time_input_btw(p_input,p_compare_date_from,p_compare_date_to)
                 p_input.addClass('red_bckg_color');
                 if (g_need_return_focus) {
                     g_need_return_focus = false;
-                    setTimeout(function(){p_input.focus();g_need_return_focus = true;},0);
+                    setTimeout(function(){p_input.trigger('focus');g_need_return_focus = true;},0);
                 }
             }
         }

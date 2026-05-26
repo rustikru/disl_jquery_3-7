@@ -82,7 +82,7 @@
                     wasOpen = input.autocomplete( "widget" ).is( ":visible" );
                 })
                 .on('click', function() {
-                    input.focus();
+                    input.trigger('focus');
 
                     // Close if already visible
                     if ( wasOpen ) {
