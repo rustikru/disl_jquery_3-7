@@ -169,6 +169,7 @@ if ($auth->isAuth()&&$auth->getStationId() !== null){
                             <th>Дата операций <br>на произв. площадке</th>
                         </tr>
                     </thead>
+                    <tbody></tbody>
                 </table>
             </section>
             <div class="loadImg">

@@ -4285,21 +4285,21 @@ function addInfo(data,ctrlKey) {
     //alert(data);
 	//console.log(data);
     var records = JSON.parse(data);
+    var tbody = $('table.addInfoTable > tbody');
     if (ctrlKey!==true){
-        $('table.addInfoTable tbody').empty();
+        tbody.empty();
     }
-    var table = $('table.addInfoTable');
 
     for(var i=0; i<records.length; i++) {
         var child = records[i];
-        if ($('table.addInfoTable tbody tr td:contains("'+child.ID+'")').length===0){
+        if (tbody.find('tr[data-wagon-id="'+child.ID+'"]').length===0){
 			var ClassFromUgl;
 			
 			if (child.INV_FROM_UGL === '1'){
 				ClassFromUgl = 'FromUgl';
 			}
 			
-            var tr = $('<tr/>');
+            var tr = $('<tr/>', {'data-wagon-id': child.ID});
             tr.append('<td>'+child.ID+'</td>');
             tr.append('<td>'+((child.CAR_TYPE !== null) ? child.CAR_TYPE : '')+'</td>'); 
             tr.append('<td>'+((child.STATUS !== null) ? child.STATUS : '')+'</td>'); 
@@ -4334,7 +4334,7 @@ function addInfo(data,ctrlKey) {
 				tr.addClass('blue_row');
 			}*/
 			tr.un_loading_subs = child.UN_LOADING_SUBS;
-            tr.appendTo(table);
+            tr.appendTo(tbody);
         }
     }
     changeTotalTr();
@@ -4342,13 +4342,13 @@ function addInfo(data,ctrlKey) {
 }
 
 function remAddInfo(clickedElem){
+    var tbody = $('table.addInfoTable > tbody');
     if (clickedElem.attr('data-type') === 'railcar'||clickedElem.attr('data-type') === 'cont') {
-        $('table.addInfoTable tbody tr td:contains("'+clickedElem.attr('data-id')+'")').parent('tr').remove();
+        tbody.find('tr[data-wagon-id="'+clickedElem.attr('data-id')+'"]').remove();
     }
-    
+
     clickedElem.find('li.tree_Node').each(function(){
-        $('table.addInfoTable tbody tr td:contains("'+$(this).attr('data-id')+'")').parent('tr').remove();
-        
+        tbody.find('tr[data-wagon-id="'+$(this).attr('data-id')+'"]').remove();
     });
     changeTotalTr();
 }
@@ -4359,8 +4359,8 @@ function clear_add_info(){
 }
 
 function changeTotalTr(){
-    var table = $('table.addInfoTable');
-    $('table.addInfoTable tbody tr#addInfoTableTotalTr').remove();
+    var tbody = $('table.addInfoTable > tbody');
+    $('table.addInfoTable > tbody tr#addInfoTableTotalTr').remove();
     if ($('table.addInfoTable tbody tr').length!==0) {
         var sum_weight_net = 0;
         var t = (($(this).text() !== '') ? $(this).text() : '0');
@@ -4392,7 +4392,7 @@ function changeTotalTr(){
         tr.append('<td></td>');
         tr.append('<td></td>');
         tr.append('<td></td>');
-        tr.appendTo(table);
+        tr.appendTo(tbody);
     }
 }
 
