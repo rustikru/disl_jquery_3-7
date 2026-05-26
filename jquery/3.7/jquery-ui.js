@@ -5784,6 +5784,7 @@ $.widget( "ui.autocomplete", {
 
 				this.close( event );
 				this.selectedItem = item;
+				this.element.triggerHandler( "keyup" ); // add KuchukbaevRF
 			}
 		} );
 
@@ -6053,8 +6054,15 @@ $.widget( "ui.autocomplete", {
 	},
 
 	_renderItem: function( ul, item ) {
+		/*add title KuchukbaevRF*/
 		return $( "<li>" )
-			.append( $( "<div>" ).text( item.label ) )
+			.attr( "title", item.title || "" )
+			.toggleClass( "disabled", !!item.disabled )
+			.append(
+				$( "<div>" )
+					.attr( "style", item.style || "" )
+					.text( item.label )
+			)
 			.appendTo( ul );
 	},
 
@@ -12429,9 +12437,10 @@ $.widget( "ui.dialog", {
 				}
 			},
 			mousedown: function( event ) {
-				if ( this._moveToTop( event ) ) {
-					this._focusTabbable();
-				}
+				//comment KuchukbaevRF 20.02.2016
+				//if ( this._moveToTop( event ) ) {
+				//	this._focusTabbable();
+				//}
 			}
 		} );
 
