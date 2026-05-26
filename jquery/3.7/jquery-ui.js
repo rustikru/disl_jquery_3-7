@@ -6032,6 +6032,9 @@ $.widget( "ui.autocomplete", {
 
 	_resizeMenu: function() {
 		var ul = this.menu.element;
+		if ( this.options.menuMaxHeight ) { /*add KuchukbaevRF*/
+			ul.css( { "max-height": this.options.menuMaxHeight, "overflow-y": "auto" } );
+		}
 		ul.outerWidth( Math.max(
 
 			// Firefox wraps long text (possibly a rounding bug)
