@@ -1387,7 +1387,8 @@ async function create_request_window(p_document,p_request_item,p_task,p_cars_req
                 }
               });
             },
-            minLength: 4
+            minLength: 4,
+            menuMaxHeight: '15em'
         });
 
         l_cars_item.list_of_cars_mas = [];

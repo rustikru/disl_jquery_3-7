@@ -2912,7 +2912,7 @@ function create_modal_dialog_move_inside_station(){
         in_station_cars_mas.push($(this).attr('data-id'));
     });
     
-    $("#md_moved_add_car").autocomplete({source: in_station_cars_mas,minLength: 2});
+    $("#md_moved_add_car").autocomplete({source: in_station_cars_mas,minLength: 2,menuMaxHeight: '15em'});
     
     $('#md_moved_add_car').on('keypress', function(e){
         if(e.keyCode===13){
@@ -3546,7 +3546,7 @@ function create_modal_dialog_send_to_station(event) {
         in_station_cars_mas.push($(this).attr('data-id'));
     });
     
-    $( "#md_send_to_station_add_car" ).autocomplete({source: in_station_cars_mas,minLength: 2});
+    $( "#md_send_to_station_add_car" ).autocomplete({source: in_station_cars_mas,minLength: 2,menuMaxHeight: '15em'});
     /*end заполняем input с автозаполнением вагонов*/
     
     // инициализируем input с датой
@@ -5212,7 +5212,7 @@ function create_md_received_into_station_new(){
                 coming_cars_mas.push(item.COLUMN_VALUE);
             });
 
-            railcar_table.car_number_input.autocomplete({source: coming_cars_mas,minLength: 2});
+            railcar_table.car_number_input.autocomplete({source: coming_cars_mas,minLength: 2,menuMaxHeight: '15em'});
             
             railcar_table.spec_check_car_number = function(p_car_number){
                 if (coming_cars_mas.indexOf(p_car_number)===-1){
@@ -6460,7 +6460,7 @@ function create_modal_dialog_notification(){
         g_cars_in_ugl_mas.push(item.COLUMN_VALUE);
     });
     
-    $( "#md_notification_add_car" ).autocomplete({source: g_cars_in_ugl_mas,minLength: 2});
+    $( "#md_notification_add_car" ).autocomplete({source: g_cars_in_ugl_mas,minLength: 2,menuMaxHeight: '15em'});
     /*end заполняем input с автозаполнением вагонов*/
     
     // инициализируем input с датой
@@ -7325,7 +7325,7 @@ function create_md_inspections(p_clicked_li){
             in_station_cars_mas.push($(this).attr('data-id'));
         });
 
-        $( "#md_send_to_station_add_car" ).autocomplete({source: in_station_cars_mas,minLength: 2});
+        $( "#md_send_to_station_add_car" ).autocomplete({source: in_station_cars_mas,minLength: 2,menuMaxHeight: '15em'});
         */
     }
 	// 19.05.2025 по наряду 0000085955
@@ -12522,9 +12522,10 @@ function create_return_invoice(p_clicked_li){
             }
           });
         },
-        minLength: 6
+        minLength: 6,
+        menuMaxHeight: '15em'
     });
-    
+
     md_div.client_inv_number.val(get_front_end_id_ajax(l_car_number));
     md_div.inv_number.val(get_send_inv_number_ajax(l_car_number));
     md_div.claim.val(get_claim_ajax(l_car_number));
