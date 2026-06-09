@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>context_menu.js — Документация форм</title>
+<style>
+  :root {
+    --bg: #f5f6fa;
+    --card: #ffffff;
+    --border: #d0d4de;
+    --accent: #3a7bd5;
+    --accent2: #00b894;
+    --warn: #e17055;
+    --muted: #636e72;
+    --code-bg: #f0f2f8;
+    --tag-bg: #dfe6e9;
+    --tag-text: #2d3436;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 13px;
+    background: var(--bg);
+    color: #2d3436;
+    line-height: 1.5;
+  }
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 18px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  header h1 { font-size: 18px; font-weight: bold; }
+  header p  { font-size: 12px; opacity: 0.85; margin-top: 3px; }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 20px 32px;
+    columns: 3;
+    column-gap: 24px;
+  }
+  .toc h2 { font-size: 13px; color: var(--accent); margin-bottom: 8px; column-span: all; }
+  .toc a  { display: block; color: var(--accent); text-decoration: none; padding: 2px 0; font-size: 12px; }
+  .toc a:hover { text-decoration: underline; }
+  .toc .toc-group { font-weight: bold; color: var(--muted); font-size: 11px; text-transform: uppercase; margin-top: 8px; }
+  .container { padding: 8px 32px 40px; max-width: 1400px; }
+  .group-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 28px 0 8px;
+    padding-left: 4px;
+    border-left: 4px solid var(--accent);
+    padding-left: 8px;
+  }
+  details {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  details[open] { border-color: var(--accent); }
+  summary {
+    cursor: pointer;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    list-style: none;
+    background: #fafbfe;
+  }
+  summary::-webkit-details-marker { display: none; }
+  details[open] summary { background: #eef2fb; border-bottom: 1px solid var(--border); }
+  .toggle-icon { font-size: 10px; color: var(--muted); transition: transform 0.15s; min-width: 12px; }
+  details[open] .toggle-icon { transform: rotate(90deg); }
+  .fn-name {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--accent);
+    background: var(--code-bg);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+  .fn-title { font-size: 13px; font-weight: bold; flex: 1; }
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    white-space: nowrap;
+  }
+  .tag.modal    { background: #dfe6ff; color: #2c3e8c; }
+  .tag.ajax     { background: #d5f5e3; color: #1a7a4a; }
+  .tag.report   { background: #fdebd0; color: #9c4a00; }
+  .tag.station  { background: #fce4ec; color: #880e4f; }
+  .body { padding: 16px 20px; }
+  .section-title {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: 0.8px;
+    margin: 14px 0 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-title:first-child { margin-top: 0; }
+  .info-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .info-label { color: var(--muted); min-width: 130px; font-size: 12px; }
+  .info-val   { font-size: 12px; }
+  code {
+    font-family: 'Courier New', monospace;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  th {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    text-align: left;
+    font-weight: bold;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+  td {
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #fafbfe; }
+  .req { color: var(--warn); font-weight: bold; font-size: 11px; }
+  .opt { color: var(--accent2); font-size: 11px; }
+  .ajax-block {
+    background: #f0faf5;
+    border: 1px solid #b2dfdb;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .ajax-block .action { font-family: monospace; font-weight: bold; color: #1a7a4a; }
+  .ajax-params { margin: 4px 0 0 12px; }
+  .ajax-params li { margin-bottom: 2px; color: #2d3436; }
+  .ajax-params li code { background: #e8f5e9; }
+  .trigger-block {
+    background: #fff8e1;
+    border-left: 3px solid #f9a825;
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .calls-block {
+    background: #e8eaf6;
+    border-left: 3px solid var(--accent);
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .calls-block code { background: #d5d9f7; }
+  .note {
+    background: #fff3e0;
+    border: 1px solid #ffe082;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+    margin-top: 6px;
+    color: #6d4c00;
+  }
+  @media (max-width: 900px) {
+    .toc { columns: 2; }
+    .container { padding: 8px 16px 40px; }
+    header { padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>context_menu.js — Документация форм и диалогов</h1>
+  <p>Все модальные окна, поля ввода, AJAX-запросы и взаимодействия | Последнее обновление: июнь 2026</p>
+</header>
+
+<nav class="toc">
+  <h2>Содержание</h2>
+  <div class="toc-group">Утилиты</div>
+  <a href="#dlg-info">create_info_modal_dialog — Информационный диалог</a>
+  <div class="toc-group">Перемещения вагонов</div>
+  <a href="#dlg-move-inside">create_modal_dialog_move_inside_station — Перемещение внутри станции</a>
+  <a href="#dlg-send-station">create_modal_dialog_send_to_station — Отправка на станцию</a>
+  <a href="#dlg-received">create_md_received_into_station_new — Принятие вагонов</a>
+  <a href="#dlg-return-psp">create_md_return_from_PSP — Возврат с ПСП</a>
+  <div class="toc-group">Атрибуты вагонов</div>
+  <a href="#dlg-fill-attr">create_modal_dialog_fill_railcar_attr — Заполнение атрибутов</a>
+  <a href="#dlg-change-attr">create_md_change_attr — Изменение атрибутов</a>
+  <a href="#dlg-cont-attr">create_md_change_cont_attr — Атрибуты контейнера</a>
+  <a href="#dlg-passport">create_md_cars_passport — Паспорт вагона</a>
+  <div class="toc-group">Ввод / Вывод</div>
+  <a href="#dlg-entry-foreign">entry_foreign_railcar — Ввод чужих вагонов</a>
+  <a href="#dlg-entry-cont">entry_foreign_container — Ввод чужих контейнеров</a>
+  <a href="#dlg-send-ugl">create_md_send_from_ugl — Вывод из системы</a>
+  <a href="#dlg-output-cars">create_md_output_cars — Вывод (вагон разобран)</a>
+  <a href="#dlg-bandwagon-add">createModalDialogAddBandwagon — Добавить группу</a>
+  <a href="#dlg-bandwagon-del">createModalDialogDeleteBandwagon — Удалить группу</a>
+  <div class="toc-group">Уведомления</div>
+  <a href="#dlg-notif-psp">create_modal_dialog_notification — Уведомление ПСП</a>
+  <a href="#dlg-notif-gu-list">create_modal_dialog_list_notification_gu — Список ГУ</a>
+  <a href="#dlg-notif-gu">create_modal_dialog_notification_gu — Уведомление ГУ 26-2б</a>
+  <div class="toc-group">Осмотры</div>
+  <a href="#dlg-inspections">create_md_inspections — Осмотры вагонов</a>
+  <a href="#dlg-fix-device-ins">create_md_fix_device — Осмотры ЗУ</a>
+  <a href="#dlg-few-ins">create_md_enter_inspection_for_few_cars — Осмотры нескольких</a>
+  <div class="toc-group">Запорные устройства (ЗУ)</div>
+  <a href="#dlg-add-zu">create_window_add_fix_device — Назначение ЗУ</a>
+  <a href="#dlg-undock-zu">create_window_undock_fix_device — Снятие ЗУ</a>
+  <a href="#dlg-update-zu">create_window_update_fix_device — Корректировка ЗУ</a>
+  <div class="toc-group">Взвешивание</div>
+  <a href="#dlg-weigh-import">create_md_weigh_import — Импорт взвешивания</a>
+  <a href="#dlg-weigh-result">create_md_weight_result — Результаты взвешивания</a>
+  <div class="toc-group">Накладные и контейнеры</div>
+  <a href="#dlg-fill-invoice">fill_railcar_for_invoice — Вагон для накладной</a>
+  <a href="#dlg-move-cont">create_md_move_cont — Перемещение контейнеров</a>
+  <a href="#dlg-return-invoice">create_return_invoice — Обратная накладная</a>
+  <div class="toc-group">Производство / Прочее</div>
+  <a href="#dlg-export-samples">create_md_export_samples — Экспорт образцов</a>
+  <a href="#dlg-export-shop">create_md_export_shop_info — Экспорт инфо магазина</a>
+  <a href="#dlg-processing">create_md_processing_of_wagons — Обработка вагонов</a>
+  <a href="#dlg-manual-upd">create_md_manual_upd_wagon — Ручное принятие</a>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════ УТИЛИТЫ ═══════════════════ -->
+<div class="group-title" id="group-utils">Утилиты</div>
+
+<details id="dlg-info">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_info_modal_dialog</span>
+  <span class="fn-title">Информационный / предупреждающий диалог</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Описание</div>
+  <p>Универсальный диалог для отображения сообщений, ошибок и предупреждений. Вызывается из большинства других форм при ошибках валидации или AJAX-ответах.</p>
+
+  <div class="section-title">Параметры функции</div>
+  <table>
+    <tr><th>Параметр</th><th>Тип</th><th>Описание</th></tr>
+    <tr><td><code>p_title</code></td><td>string</td><td>Заголовок диалога</td></tr>
+    <tr><td><code>p_msg</code></td><td>string / HTML</td><td>Текст сообщения</td></tr>
+  </table>
+
+  <div class="section-title">Конфигурация диалога</div>
+  <div class="info-row"><span class="info-label">ID элемента:</span><span class="info-val"><code>#modalDialog</code></span></div>
+  <div class="info-row"><span class="info-label">Ширина:</span><span class="info-val">400px</span></div>
+  <div class="info-row"><span class="info-label">Modal / Resize:</span><span class="info-val">да / нет</span></div>
+  <div class="info-row"><span class="info-label">Кнопки:</span><span class="info-val">«Закрыть»</span></div>
+
+  <div class="section-title">AJAX-запросы</div>
+  <p style="color:var(--muted);font-size:12px">Нет.</p>
+</div>
+</details>
+
+<!-- ═══════════════════ ПЕРЕМЕЩЕНИЯ ═══════════════════ -->
+<div class="group-title" id="group-move">Перемещения вагонов</div>
+
+<details id="dlg-move-inside">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_modal_dialog_move_inside_station</span>
+  <span class="fn-title">Перемещение вагонов внутри станции</span>
+  <span class="tag modal">Modal</span><span class="tag ajax">4 AJAX</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Переместить внутри станции». Правый клик на выбранных вагонах.</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID / Название</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td>station_from (disabled)</td><td>text</td><td>Станция отправления</td><td>—</td></tr>
+    <tr><td>station_to (disabled)</td><td>text</td><td>Станция назначения</td><td>—</td></tr>
+    <tr><td><code>md_operation_date</code></td><td>datetime</td><td>Дата и время операции (Мск)</td><td><span class="req">Обязательно</span>, проверка открытого периода, диапазон −30 дней</td></tr>
+    <tr><td><code>md_comment</code></td><td>text</td><td>Комментарий</td><td><span class="opt">Необязательно</span>, 350px</td></tr>
+    <tr><td><code>md_new_parent</code></td><td>combobox (select)</td><td>Куда перемещаем</td><td><span class="req">Обязательно</span>, menuMaxHeight: 50em, заполняется из <code>get_all_station_child</code></td></tr>
+    <tr><td><code>md_moved_add_car</code></td><td>autocomplete text</td><td>Номер вагона для добавления</td><td>maxlength=8, ищет вагоны на текущей станции</td></tr>
+  </table>
+
+  <div class="section-title">Таблица вагонов</div>
+  <p style="font-size:12px">Колонки: ↑↓, №, Вагон, Груз, Вес нетто, Тара, Вес брутто, Длина. Итоговая строка с суммами.</p>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">move_inside_station_few_child</span> — сохранение операции</div>
+    <ul class="ajax-params">
+      <li><code>cars</code> — строка вагонов через разделитель</li>
+      <li><code>parent_id</code>, <code>parent_type</code> — цель перемещения</li>
+      <li><code>operation_date</code> — дата операции</li>
+      <li><code>comment</code> — комментарий</li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code> или текст ошибки</div>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">get_current_time</span> — получение серверного времени</div>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">get_all_station_child</span> — пути и парки для combobox</div>
+    <ul class="ajax-params">
+      <li><code>station_id</code></li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: JSON <code>[{ID, TYPE, NAME, DISABLED, LVL, COUNT_RAILCARS, FREE_LENGTH}]</code></div>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">addInfo</span> — загрузка данных добавляемого вагона</div>
+    <ul class="ajax-params">
+      <li><code>id</code>, <code>type='railcar'</code>, <code>station_id</code></li>
+    </ul>
+  </div>
+
+  <div class="section-title">Дополнительные функции</div>
+  <div class="calls-block">
+    <code>up_down_moved_cars_table_tr()</code> — сортировка вагонов ↑↓<br>
+    <code>change_moved_cars_table_total_tr()</code> — пересчёт итогов<br>
+    <code>check_open_period(period_id, date)</code> — проверка открытого периода перед сохранением
+  </div>
+
+  <div class="section-title">Ограничения</div>
+  <div class="note">Перемещение только внутри своей станции. Дата операции должна попадать в открытый период. Максимум 100 вагонов в автодополнении (источник).</div>
+</div>
+</details>
+
+<details id="dlg-send-station">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_modal_dialog_send_to_station</span>
+  <span class="fn-title">Отправка вагонов на станцию</span>
+  <span class="tag modal">Modal</span><span class="tag ajax">7 AJAX</span><span class="tag report">Отчёты ВУ/ДУ</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Отправить на станцию». Правый клик по станции-назначению в дереве.</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация / Ограничения</th></tr>
+    <tr><td>station_from (disabled)</td><td>text</td><td>Станция отправления</td><td>Из <code>user_station_name</code></td></tr>
+    <tr><td>station_to (disabled)</td><td>text</td><td>Станция назначения</td><td>Из target в дереве</td></tr>
+    <tr><td><code>md_send_to_station_sending_time</code></td><td>datetime</td><td>Дата отправления (Мск)</td><td><span class="req">Обязательно</span>, открытый период, диапазон −30 / +2ч</td></tr>
+    <tr><td><code>md_send_to_station_arrival_time</code></td><td>datetime</td><td>Дата прибытия (Мск)</td><td><span class="req">Обязательно</span>, вычисляется автоматически</td></tr>
+    <tr><td><code>md_send_to_station_estimated_time</code> (disabled)</td><td>text</td><td>Расчётное время в пути</td><td>Авто: arrival − sending</td></tr>
+    <tr><td><code>md_send_to_station_reason</code></td><td>text</td><td>Комментарий</td><td><span class="opt">Необязательно</span>, size=60</td></tr>
+    <tr><td><code>md_send_to_station_train_num</code></td><td>text</td><td>Номер поезда</td><td><span class="req">Обязательно</span>, size=4</td></tr>
+    <tr><td><code>md_send_to_station_loco1_num</code></td><td>select</td><td>№ локомотива (лок. 1)</td><td><span class="req">Обязательно</span>, из <code>get_select_locomotives()</code></td></tr>
+    <tr><td><code>md_send_to_station_loco1_driver1/2</code></td><td>select</td><td>Машинист / Пом. машиниста</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_send_to_station_loco1_conductor</code></td><td>select</td><td>Кондуктор</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td>loco2_* (аналогично)</td><td>select ×4</td><td>Локомотив 2 (все поля)</td><td><span class="opt">Необязательно</span></td></tr>
+    <tr><td><code>md_send_to_station_add_car</code></td><td>autocomplete text</td><td>—</td><td>maxlength=8, menuWidth=120</td></tr>
+  </table>
+
+  <div class="section-title">Сохранение / загрузка шаблонов</div>
+  <table>
+    <tr><th>Элемент</th><th>Действие</th></tr>
+    <tr><td><code>md_save_send_to_station_form_btn</code></td><td>Сохранить текущие значения формы</td></tr>
+    <tr><td><code>md_load_send_to_station_form_btn</code></td><td>Загрузить ранее сохранённый шаблон</td></tr>
+    <tr><td><code>md_del_send_to_station_form_btn</code></td><td>Удалить шаблон</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">send_to_station_few_cars</span> — основной запрос отправки</div>
+    <ul class="ajax-params">
+      <li><code>cars</code> — вагоны через разделитель</li>
+      <li><code>send_stat_id</code>, <code>dest_stat_id</code></li>
+      <li><code>send_date</code>, <code>arrival_date</code></li>
+      <li><code>reason</code>, <code>train_num</code></li>
+      <li><code>loco1_num</code>, <code>loco1_driver1</code>, <code>loco1_driver2</code>, <code>loco1_conductor</code></li>
+      <li><code>loco2_num</code>, <code>loco2_driver1</code>, <code>loco2_driver2</code>, <code>loco2_conductor</code></li>
+      <li><code>save_name</code> — имя шаблона</li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code> или текст ошибки</div>
+  </div>
+  <div class="ajax-block"><div><span class="action">save_send_to_station_form</span> — сохранение шаблона формы</div></div>
+  <div class="ajax-block"><div><span class="action">load_send_to_station_form</span> — загрузка шаблона</div></div>
+  <div class="ajax-block"><div><span class="action">get_saved_send_to_station_forms</span> — список шаблонов</div></div>
+  <div class="ajax-block"><div><span class="action">del_send_to_station_form</span> — удаление шаблона</div></div>
+
+  <div class="section-title">Кнопки</div>
+  <div class="info-row"><span class="info-label">«Отправить»</span><span class="info-val">Проверяет открытый период → вызывает <code>send_to_station_ajax()</code></span></div>
+  <div class="info-row"><span class="info-label">«ВУ-14»</span><span class="info-val">Открывает отчёт ВУ в новом окне</span></div>
+  <div class="info-row"><span class="info-label">«ДУ-1»</span><span class="info-val">Открывает отчёт ДУ в новом окне</span></div>
+
+  <div class="section-title">Ограничения</div>
+  <div class="note">Дата отправления: не ранее −30 дней и не позже текущего+2ч. Обязателен как минимум один локомотив с полным экипажем. Вагоны удаляются из дерева после успешной отправки.</div>
+</div>
+</details>
+
+<details id="dlg-received">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_received_into_station_new</span>
+  <span class="fn-title">Принятие вагонов на станцию</span>
+  <span class="tag modal">Modal</span><span class="tag ajax">AJAX</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Принять вагоны». Приём поезда с локомотивом.</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>operation_date</code></td><td>datetime</td><td>Дата и время операции (Мск)</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>comment</code></td><td>text</td><td>Комментарий</td><td><span class="opt">Необязательно</span></td></tr>
+    <tr><td><code>railway</code></td><td>select</td><td>Путь назначения</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>bef_after</code></td><td>select</td><td>Расположение (перед/после)</td><td>—</td></tr>
+    <tr><td><code>bef_after_railcar</code></td><td>select</td><td>Вагон-ориентир</td><td>—</td></tr>
+    <tr><td><code>train_num</code></td><td>text size=4</td><td>Номер поезда</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>sending_time</code></td><td>datetime</td><td>Дата и время отправления (Мск)</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td>loco1/loco2 (8 полей)</td><td>select</td><td>Локомотив, машинисты, кондуктор</td><td>Лок.1 — обязателен</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">received_into_station_new</span></div>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code> или текст ошибки</div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-return-psp">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_return_from_PSP</span>
+  <span class="fn-title">Возврат вагонов с ПСП</span>
+  <span class="tag modal">Modal</span><span class="tag station">ПСП</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Вернуть с ПСП». Только для ПСП-станции.</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>return_time</code></td><td>datetime size=15</td><td>Дата и время возврата (Мск)</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>return_reason</code></td><td>select</td><td>Причина</td><td><span class="req">Обязательно</span>: «Ошибка» / «Возврат»</td></tr>
+    <tr><td><code>return_comment</code></td><td>text</td><td>Комментарий</td><td><span class="opt">Необязательно</span></td></tr>
+    <tr><td><code>return_correction_reason</code></td><td>select</td><td>Причина возврата</td><td>—</td></tr>
+    <tr><td><code>station_operator</code></td><td>text</td><td>ФИО дежурного ПСП</td><td><span class="opt">Необязательно</span></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">return_from_psp</span></div>
+    <ul class="ajax-params">
+      <li><code>car_numbers</code>, <code>return_time</code>, <code>return_reason</code></li>
+      <li><code>return_comment</code>, <code>return_correction_reason</code>, <code>station_operator</code></li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+</div>
+</details>
+
+<!-- ═══════════════════ АТРИБУТЫ ═══════════════════ -->
+<div class="group-title" id="group-attrs">Атрибуты вагонов и контейнеров</div>
+
+<details id="dlg-fill-attr">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_modal_dialog_fill_railcar_attr</span>
+  <span class="fn-title">Заполнение атрибутов вагона (первичное)</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню на вагоне без типа или груза (класс <code>need_fill_attr</code>).</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>modalDialogCarType</code></td><td>select</td><td>Тип</td><td><span class="req">Обязательно</span>, из <code>g_car_type_list</code>; disabled если уже задан</td></tr>
+    <tr><td><code>modalDialogFreightName</code></td><td>select</td><td>Наименование груза</td><td><span class="req">Обязательно</span>, из <code>g_freight_list</code>; disabled если уже задан</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">fill_railcar_attr</span></div>
+    <ul class="ajax-params">
+      <li><code>car_number</code>, <code>car_type</code>, <code>freight_name</code></li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+
+  <div class="section-title">После сохранения</div>
+  <div class="calls-block">Удаляет класс <code>need_fill_attr</code> с элемента дерева. Синхронизирует <code>addInfoTable</code>.</div>
+</div>
+</details>
+
+<details id="dlg-change-attr">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_change_attr</span>
+  <span class="fn-title">Изменение атрибутов вагона</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Изменить атрибуты вагона».</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>Поле</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td>Тип вагона</td><td>select</td><td>Тип</td><td>Из <code>g_car_type_list</code></td></tr>
+    <tr><td>Наименование груза</td><td>select</td><td>Груз</td><td>Из <code>g_freight_list</code></td></tr>
+    <tr><td>Предприятие</td><td>text</td><td>Владелец</td><td>—</td></tr>
+    <tr><td>Вес нетто</td><td>text</td><td>Вес нетто</td><td>Числовое</td></tr>
+    <tr><td>Тара</td><td>text</td><td>Тара</td><td>Числовое</td></tr>
+    <tr><td>Вес брутто</td><td>text</td><td>Вес брутто</td><td>Числовое</td></tr>
+    <tr><td>Длина</td><td>text</td><td>Длина</td><td>Числовое</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">change_railcar_add_info</span> — сохранение изменений</div>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">get_add_info_for_cars_with_round</span> — загрузка текущих данных вагона</div>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>{FREIGHT_NAME, WEIGHT_NET, WEIGHT_DEP, WEIGHT_GROSS, CAR_LENGTH, ...}</code></div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-cont-attr">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_change_cont_attr</span>
+  <span class="fn-title">Атрибуты контейнера</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Параметры</div>
+  <div class="info-row"><span class="info-label">p_clicked_li</span><span class="info-val">Элемент дерева вагона</span></div>
+  <div class="info-row"><span class="info-label">p_cont_number</span><span class="info-val">Номер контейнера</span></div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>Поле</th><th>Тип</th><th>Метка</th><th>Ограничения</th></tr>
+    <tr><td>freight</td><td>select</td><td>Груз</td><td><span class="opt">Необязательно</span>, из <code>g_freight_list</code></td></tr>
+    <tr><td>weight_dep</td><td>text</td><td>Тара</td><td>maxlength=5, size=5, числовое</td></tr>
+    <tr><td>owner</td><td>text</td><td>Предприятие</td><td>maxlength=20</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">get_add_info_for_cont</span> — загрузка текущих данных</div>
+    <ul class="ajax-params"><li><code>car_number</code> = номер контейнера</li></ul>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">change_cont_add_info</span> — сохранение</div>
+    <ul class="ajax-params">
+      <li><code>cont_number</code>, <code>freight_name</code>, <code>weight_dep</code>, <code>owner</code></li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code> или <code>"cant change"</code> (если есть накладная)</div>
+  </div>
+
+  <div class="section-title">Ограничения</div>
+  <div class="note">Если на контейнер оформлена накладная — изменение заблокировано (ответ <code>"cant change"</code>).</div>
+</div>
+</details>
+
+<details id="dlg-passport">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_cars_passport</span>
+  <span class="fn-title">Паспорт вагона</span>
+  <span class="tag modal">Modal</span><span class="tag report">Отчёт</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Паспорт вагона».</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>Поле</th><th>Тип</th><th>Описание</th></tr>
+    <tr><td><code>car_input</code></td><td>autocomplete, 5em</td><td>Выбор / изменение вагона для просмотра</td></tr>
+    <tr><td>Таблица паспорта</td><td>dynamic</td><td>Заполняется из <code>get_cars_passport</code></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">get_cars_passport</span></div>
+    <ul class="ajax-params"><li><code>cars</code> — номер(а) вагонов</li></ul>
+  </div>
+
+  <div class="section-title">Отчёт</div>
+  <div class="info-row"><span class="info-label">URL:</span><span class="info-val"><code>xx_car_nsi_report/xx_car_nsi_report.php</code></span></div>
+</div>
+</details>
+
+<!-- ═══════════════════ ВВОД / ВЫВОД ═══════════════════ -->
+<div class="group-title" id="group-io">Ввод / Вывод вагонов и контейнеров</div>
+
+<details id="dlg-entry-foreign">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">entry_foreign_railcar</span>
+  <span class="fn-title">Ввод чужих вагонов</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы (на каждую строку таблицы)</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Ограничения</th></tr>
+    <tr><td><code>modalDialogDateFact</code></td><td>datetime size=14</td><td>Дата и время операции</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>modalDialogCarNumber</code></td><td>text maxlength=8</td><td>Номер вагона</td><td><span class="req">Обязательно</span>, только цифры</td></tr>
+    <tr><td><code>modalDialogCarType</code></td><td>select</td><td>Тип</td><td>Из <code>g_car_type_list</code></td></tr>
+    <tr><td><code>modalDialogStatus</code></td><td>select</td><td>Статус</td><td>—</td></tr>
+    <tr><td><code>modalDialogFreightName</code></td><td>select</td><td>Наименование груза</td><td>Из <code>g_freight_list</code></td></tr>
+    <tr><td><code>modalDialogWeightNet</code></td><td>text</td><td>Вес нетто</td><td>Числовое</td></tr>
+    <tr><td><code>modalDialogWeightDep</code></td><td>text</td><td>Тара</td><td>Числовое</td></tr>
+    <tr><td><code>modalDialogCont</code></td><td>text</td><td>№ контейнера</td><td>—</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">entry_foreign_railcar</span></div>
+    <ul class="ajax-params"><li><code>railcars</code> — JSON массив вагонов</li><li><code>date_fact</code></li></ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-entry-cont">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">entry_foreign_container</span>
+  <span class="fn-title">Ввод чужих контейнеров</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>Поле</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>new_place_type</code></td><td>select</td><td>Тип места</td><td>«Площадка» / «Вагон»</td></tr>
+    <tr><td><code>new_place_station</code></td><td>select</td><td>Станция</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>new_place</code></td><td>select</td><td>Место назначения</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td colspan="4">+ таблица с полями контейнера: номер, место, статус, груз, веса, тара, накладная, предприятие</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div><span class="action">get_places_for_cont</span> — список мест для выбранного типа/станции</div></div>
+  <div class="ajax-block">
+    <div><span class="action">entry_foreign_container</span></div>
+    <ul class="ajax-params"><li><code>container</code> — JSON объект контейнера</li><li><code>date_fact</code></li></ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-send-ugl">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_send_from_ugl</span>
+  <span class="fn-title">Вывод вагонов из системы</span>
+  <span class="tag modal">Modal</span><span class="tag station">Углеуральская</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>modalDialogDateFact</code></td><td>datetime size=15</td><td>Дата и время операции (Мск)</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>modalDialogComment</code></td><td>text size=60</td><td>Комментарий (указать накладную)</td><td><span class="req">Обязательно</span></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">send_cars_from_ugl</span></div>
+    <ul class="ajax-params"><li><code>id_type</code>, <code>dateFact</code>, <code>comment</code></li></ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-output-cars">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_output_cars</span>
+  <span class="fn-title">Вывод (вагон разобран)</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>custom_time</code></td><td>datetime size=15</td><td>Дата и время операции</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>comment</code></td><td>text</td><td>Комментарий</td><td><span class="req">Обязательно</span></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">output_cars</span></div>
+    <ul class="ajax-params"><li><code>cars</code>, <code>oper_date</code>, <code>comment</code></li></ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-bandwagon-add">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">createModalDialogAddBandwagon</span>
+  <span class="fn-title">Добавление группы вагонов</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>modalDialogAddName</code></td><td>text size=40</td><td>Наименование</td><td><span class="req">Обязательно</span></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">addBandwagon</span></div>
+    <ul class="ajax-params"><li><code>name</code>, <code>parent_id</code>, <code>parent_type</code></li></ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: ID новой группы или <code>'0'</code> при ошибке</div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-bandwagon-del">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">createModalDialogDeleteBandwagon</span>
+  <span class="fn-title">Удаление группы вагонов</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <p style="font-size:12px;color:var(--muted)">Полей нет. Диалог подтверждения удаления.</p>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">deleteBandwagon</span></div>
+    <ul class="ajax-params"><li><code>id</code>, <code>type</code></li></ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+</div>
+</details>
+
+<!-- ═══════════════════ УВЕДОМЛЕНИЯ ═══════════════════ -->
+<div class="group-title" id="group-notif">Уведомления</div>
+
+<details id="dlg-notif-psp">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_modal_dialog_notification</span>
+  <span class="fn-title">Регистрация уведомлений от ПСП</span>
+  <span class="tag modal">Modal</span><span class="tag ajax">5 AJAX</span><span class="tag station">ПСП</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Зарегистрировать уведомление ПСП».</div>
+
+  <div class="section-title">Маршрут</div>
+  <div class="info-row"><span class="info-label">Откуда:</span><span class="info-val">Углеуральская (фиксировано)</span></div>
+  <div class="info-row"><span class="info-label">Куда:</span><span class="info-val">ПСП (фиксировано)</span></div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>md_notification_time_from</code></td><td>datetime</td><td>Дата и время уведомления (Мск)</td><td><span class="req">Обязательно</span>, открытый период</td></tr>
+    <tr><td><code>md_notification_person_from</code></td><td>text</td><td>Фамилия передавшего</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_notification_railway_number</code></td><td>text</td><td>Номер пути</td><td><span class="opt">Необязательно</span></td></tr>
+    <tr><td><code>md_notification_time_to</code></td><td>datetime</td><td>Дата и время получения (Мск)</td><td><span class="req">Обязательно</span>, открытый период</td></tr>
+    <tr><td><code>md_notification_person_to</code></td><td>select</td><td>Кто принял</td><td><span class="req">Обязательно</span>, из <code>get_users</code></td></tr>
+    <tr><td><code>md_notification_add_car</code></td><td>autocomplete</td><td>—</td><td>maxlength=8, menuWidth=120, ищет вагоны в Углеуральской</td></tr>
+  </table>
+
+  <div class="section-title">Сохранение / загрузка шаблонов</div>
+  <div class="info-row"><span class="info-label">Шаблон (имя):</span><span class="info-val"><code>md_save_notification_inp</code>, maxlength=30, default: username_timestamp</span></div>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">register_notification</span></div>
+    <ul class="ajax-params">
+      <li><code>cars</code>, <code>notification_time_from</code>, <code>notification_person_from</code></li>
+      <li><code>notification_railway_number</code>, <code>notification_time_to</code></li>
+      <li><code>notification_person_to</code>, <code>notification_name</code></li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+  <div class="ajax-block"><div><span class="action">get_cars_in_ugl</span> — список вагонов для autocomplete</div>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>[{COLUMN_VALUE}]</code></div>
+  </div>
+  <div class="ajax-block"><div><span class="action">get_saved_notifications</span> / <span class="action">save_notification</span> / <span class="action">del_notification</span></div></div>
+
+  <div class="section-title">После сохранения</div>
+  <div class="calls-block">Вагоны удаляются из дерева. Вызывается <code>l_request_this.refresh_requests()</code>.</div>
+</div>
+</details>
+
+<details id="dlg-notif-gu-list">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_modal_dialog_list_notification_gu</span>
+  <span class="fn-title">Выбор уведомления ГУ (список)</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Ограничения</th></tr>
+    <tr><td><code>notification_select</code></td><td>combobox (select)</td><td>Номер уведомления</td><td><span class="req">Обязательно</span>, menuMaxHeight=30em, из <code>get_notifications_gu</code></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">get_notifications_gu</span></div>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>[{ID, NAME}]</code></div>
+  </div>
+
+  <div class="section-title">Дополнительные вызовы</div>
+  <div class="calls-block">«Открыть» → вызывает <code>create_modal_dialog_notification_gu(selected_id)</code></div>
+</div>
+</details>
+
+<details id="dlg-notif-gu">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_modal_dialog_notification_gu</span>
+  <span class="fn-title">Регистрация уведомления ГУ 26-2б ВЦ</span>
+  <span class="tag modal">Modal</span><span class="tag ajax">6 AJAX</span><span class="tag report">ЭТРАН</span>
+</summary>
+<div class="body">
+  <div class="section-title">Параметр</div>
+  <div class="info-row"><span class="info-label">p_not_id</span><span class="info-val">null = новое уведомление; число = просмотр/редактирование существующего</span></div>
+
+  <div class="section-title">Маршрут</div>
+  <div class="info-row"><span class="info-label">Откуда:</span><span class="info-val">Водораздельная (фиксировано)</span></div>
+  <div class="info-row"><span class="info-label">Куда:</span><span class="info-val">ПСП (фиксировано)</span></div>
+
+  <div class="section-title">Режимы работы</div>
+  <table>
+    <tr><th>Режим</th><th>Поведение</th></tr>
+    <tr><td>Новое (<code>p_not_id = null</code>)</td><td>Все поля активны, кнопка «Сохранить»</td></tr>
+    <tr><td>Просмотр (<code>p_not_id != null</code>)</td><td>Все поля disabled, кнопка «Редактировать»</td></tr>
+    <tr><td>Редактирование</td><td>После нажатия «Редактировать» — поля включаются, кнопка «Сохранить»</td></tr>
+  </table>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Ограничения</th></tr>
+    <tr><td><code>crg_pcalid_num</code></td><td>select</td><td>Договор на ЭП</td><td><span class="opt">Необязательно</span>, из <code>get_contract_default_for_gu</code></td></tr>
+    <tr><td><code>notification_num</code></td><td>text size=20</td><td>Номер уведомления</td><td><span class="req">Обязательно</span>; disabled при редактировании</td></tr>
+    <tr><td><code>not_number_etran</code> (disabled)</td><td>text</td><td>Номер уведомления (ЭТРАН)</td><td>Только чтение</td></tr>
+    <tr><td><code>not_state_etran</code> (disabled)</td><td>text</td><td>Статус (ЭТРАН)</td><td>Только чтение</td></tr>
+    <tr><td><code>notification_time</code></td><td>datetime</td><td>Дата и время уведомления (Мск)</td><td><span class="req">Обязательно</span>, открытый период</td></tr>
+    <tr><td><code>notification_person_from</code></td><td>select</td><td>Фамилия передавшего</td><td><span class="req">Обязательно</span>, из <code>get_users_for_notification</code></td></tr>
+    <tr><td><code>comment</code></td><td>text 300px</td><td>Комментарий</td><td><span class="opt">Необязательно</span></td></tr>
+    <tr><td><code>notification_time_fact</code></td><td>datetime</td><td>Дата факта передачи (Мск)</td><td><span class="req">Обязательно</span>, открытый период</td></tr>
+    <tr><td><code>notification_person_to</code></td><td>text size=20</td><td>Кто принял</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>add_carnumber_input</code></td><td>autocomplete text maxlength=8</td><td>—</td><td>menuWidth=120, проверяет наличие в дереве</td></tr>
+  </table>
+
+  <div class="section-title">Таблица вагонов (railcar_table_const_for_not_gu)</div>
+  <p style="font-size:12px">Колонки: ↑↓, №, Вагон, Груз, Нетто, Тара, Брутто, Длина, Усл.длина, Контейнер (из накладной), ЗПУ (ID/Тип/Знак).</p>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">register_notification_gu</span> — сохранение</div>
+    <ul class="ajax-params">
+      <li><code>not_id</code>, <code>cars</code>, <code>num</code>, <code>notification_time</code></li>
+      <li><code>notification_person_from</code>, <code>comment</code>, <code>notification_time_fact</code></li>
+      <li><code>notification_person_to</code>, <code>crg_pcalid</code></li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code> или строка ошибки</div>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">export_notif_etran</span> — экспорт в ЭТРАН</div>
+    <ul class="ajax-params"><li><code>not_id</code>, <code>pcalid</code></li></ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">get_notification_gu</span> — загрузка при открытии существующего</div>
+    <ul class="ajax-params"><li><code>not_id</code></li></ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>{NOT_NUMBER, NOT_NUMBER_ETRAN, NOT_STATE_ETRAN, NOT_TIME, NOT_PERSON_FROM, NOT_COMMENT, NOT_TIME_FACT, NOT_PERSON_TO, CRG_PCALID, CARS}</code></div>
+  </div>
+  <div class="ajax-block"><div><span class="action">get_add_info_for_cars_with_round</span> — данные вагонов для таблицы</div>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>{FREIGHT_NAME, WEIGHT_NET, WEIGHT_DEP, WEIGHT_GROSS, CAR_LENGTH, COND_LENGTH_TRAIN, CONT_FROM_INV, CSL}</code></div>
+  </div>
+  <div class="ajax-block"><div><span class="action">get_users_for_notification</span> + <span class="action">get_contract_default_for_gu</span> — справочники</div></div>
+
+  <div class="section-title">Кнопки</div>
+  <table>
+    <tr><th>Кнопка</th><th>Условие показа</th><th>Действие</th></tr>
+    <tr><td>«Сохранить»</td><td>Новое / режим редактирования</td><td>Проверяет открытый период → <code>notification_gu_ajax()</code></td></tr>
+    <tr><td>«Редактировать»</td><td>Только при просмотре</td><td>Включает поля формы</td></tr>
+    <tr><td>«Экспорт в ЭТРАН»</td><td>Скрыто если уже экспортировано</td><td><code>export_notif_etran_ajax()</code></td></tr>
+    <tr><td>«Отчёт в Excel»</td><td>Только при просмотре существующего</td><td>Открывает отчёт</td></tr>
+  </table>
+
+  <div class="section-title">Ограничения</div>
+  <div class="note">Кнопка «Экспорт в ЭТРАН» скрыта если NOT_STATE_ETRAN уже заполнен. Номер уведомления нельзя изменить при редактировании. Вагоны проверяются по дереву.</div>
+</div>
+</details>
+
+<!-- ═══════════════════ ОСМОТРЫ ═══════════════════ -->
+<div class="group-title" id="group-ins">Осмотры</div>
+
+<details id="dlg-inspections">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_inspections</span>
+  <span class="fn-title">Осмотры вагонов</span>
+  <span class="tag modal">Modal</span><span class="tag ajax">4 AJAX</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Осмотры» на вагоне.</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>md_ins_refresh_car_number</code></td><td>autocomplete text</td><td>Установить вагон</td><td>menuMaxHeight=15em, menuWidth=120</td></tr>
+    <tr><td><code>md_ins_enter_car_number</code> (disabled)</td><td>text</td><td>Вагон</td><td>Только чтение</td></tr>
+    <tr><td><code>md_ins_history</code></td><td>select</td><td>Осмотры (история)</td><td>Список прошлых осмотров</td></tr>
+    <tr><td><code>md_ins_inspection_date</code></td><td>text maxlength=16</td><td>Дата и время осмотра (местное)</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_ins_inspection_place</code></td><td>combobox select</td><td>Место осмотра вагона</td><td><span class="req">Обязательно</span>, menuMaxHeight=50em, menuWidth=250</td></tr>
+    <tr><td><code>md_ins_inspection_person</code></td><td>combobox select</td><td>Осмотр произвел ФИО</td><td><span class="req">Обязательно</span>, menuMaxHeight=50em</td></tr>
+    <tr><td><code>md_ins_inspection_person_appoint</code> (disabled)</td><td>text</td><td>Должность осмотревшего</td><td>Авто из выбранного ФИО</td></tr>
+    <tr><td><code>md_ins_master</code></td><td>combobox select</td><td>Мастер смены ФИО</td><td><span class="req">Обязательно</span>, menuMaxHeight=50em</td></tr>
+    <tr><td><code>md_ins_asset_number</code> (disabled)</td><td>text</td><td>Сер. номер актива</td><td>Только чтение</td></tr>
+    <tr><td><code>md_ins_asset_group</code> (disabled)</td><td>text</td><td>Группа активов</td><td>Только чтение</td></tr>
+    <tr><td><code>md_ins_priority</code></td><td>combobox select</td><td>Приоритет</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_ins_result</code></td><td>combobox select</td><td>Результат осмотра</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_ins_status_kurs</code></td><td>combobox select</td><td>Статус курсирования</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_ins_comment</code></td><td>text</td><td>Комментарий</td><td><span class="opt">Необязательно</span></td></tr>
+  </table>
+
+  <div class="section-title">Таблица дефектов</div>
+  <p style="font-size:12px">Динамическая таблица с полями: код дефекта, описание, документ.</p>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">enter_inspection</span> — сохранение осмотра</div>
+    <ul class="ajax-params">
+      <li><code>car_number</code>, <code>inspection_date</code>, <code>inspection_place</code></li>
+      <li><code>inspection_person</code>, <code>master</code>, <code>priority</code></li>
+      <li><code>result</code>, <code>status_kurs</code>, <code>comment</code>, <code>defects</code></li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+  <div class="ajax-block"><div><span class="action">delete_inspection</span> — удаление записи</div>
+    <ul class="ajax-params"><li><code>inspection_id</code></li></ul>
+  </div>
+  <div class="ajax-block"><div><span class="action">create_work_request</span> — создание заявки на ремонт</div></div>
+  <div class="ajax-block"><div><span class="action">refusal_to_repair</span> — отказ от ремонта</div></div>
+</div>
+</details>
+
+<details id="dlg-fix-device-ins">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_fix_device</span>
+  <span class="fn-title">Осмотры ЗУ (запорных устройств)</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Осмотры ЗУ» на запорном устройстве.</div>
+
+  <div class="section-title">Поля формы</div>
+  <p style="font-size:12px;margin-bottom:8px">Аналогичны <code>create_md_inspections</code>, но для ЗУ вместо вагона. Поле «instance_id="0"» идентифицирует ЗУ.</p>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th></tr>
+    <tr><td><code>md_ins_refresh_car_number</code></td><td>autocomplete</td><td>Установить ЗУ</td></tr>
+    <tr><td><code>md_ins_enter_car_number</code> (disabled)</td><td>text</td><td>ЗУ (номер устройства)</td></tr>
+    <tr><td>Остальные поля</td><td colspan="2">Те же что у <code>create_md_inspections</code></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div><span class="action">enter_dev_inspection</span> — сохранение</div></div>
+  <div class="ajax-block"><div><span class="action">get_device_id</span> — получение ID устройства</div></div>
+  <div class="ajax-block"><div><span class="action">delete_dev_inspection</span> — удаление</div></div>
+  <div class="ajax-block"><div><span class="action">refusal_dev_to_repair</span> — отказ от ремонта ЗУ</div></div>
+</div>
+</details>
+
+<details id="dlg-few-ins">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_enter_inspection_for_few_cars</span>
+  <span class="fn-title">Осмотры нескольких вагонов / контейнеров</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Осмотры (группа)» при выборе нескольких объектов.</div>
+
+  <div class="section-title">Таблица объектов</div>
+  <p style="font-size:12px">Колонки: №, Вагон/Контейнер, Груз, Контейнер, Статус, ✓ NSI, Удалить.</p>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>md_inspection_add_car</code></td><td>text autocomplete</td><td>Добавить вагон/контейнер</td><td>—</td></tr>
+    <tr><td><code>md_inspection_date</code></td><td>text maxlength=16</td><td>Дата и время осмотра (местное)</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_inspection_place</code></td><td>combobox select</td><td>Место осмотра</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_inspection_person</code></td><td>combobox select</td><td>Осмотр произвел ФИО</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_inspection_person_appoint</code> (disabled)</td><td>text</td><td>Должность</td><td>Авто</td></tr>
+    <tr><td><code>md_inspection_master</code></td><td>combobox select</td><td>Мастер смены</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_inspection_priority</code></td><td>combobox select</td><td>Приоритет</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_inspection_result</code></td><td>combobox select</td><td>Результат осмотра</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_inspection_status_kurs</code></td><td>combobox select</td><td>Статус курсирования</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>md_inspection_comment</code></td><td>text</td><td>Комментарий</td><td><span class="opt">Необязательно</span></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">enter_inspection_for_few_cars</span></div>
+    <ul class="ajax-params">
+      <li><code>obj_numbers</code> — список объектов</li>
+      <li><code>obj_type</code> — тип: вагон / контейнер</li>
+      <li><code>inspection_date</code>, <code>inspection_place</code>, <code>inspection_person</code></li>
+      <li><code>master</code>, <code>priority</code>, <code>result</code>, <code>status_kurs</code></li>
+      <li><code>comment</code>, <code>cars_nsi</code> — список с отметкой NSI</li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+</div>
+</details>
+
+<!-- ═══════════════════ ЗУ ═══════════════════ -->
+<div class="group-title" id="group-zu">Запорные устройства (ЗУ)</div>
+
+<details id="dlg-add-zu">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_window_add_fix_device</span>
+  <span class="fn-title">Назначение ЗУ на путь</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Контекстное меню → «Назначить ЗУ» на пути/парке.</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>Поле</th><th>Тип</th><th>Описание</th></tr>
+    <tr><td><code>add_carnumber_input</code></td><td>text maxlength=8</td><td>Добавить вагон в таблицу</td></tr>
+    <tr><td>Таблица вагонов</td><td>dynamic</td><td>Колонки: №, Вагон, Вес груза, Кол-во осей</td></tr>
+    <tr><td>Поля стороны</td><td>select/input</td><td>Параметры секции и нормы ЗУ</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div><span class="action">add_fix_device</span> — назначение устройств</div></div>
+</div>
+</details>
+
+<details id="dlg-undock-zu">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_window_undock_fix_device</span>
+  <span class="fn-title">Снятие ЗУ</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>Поле</th><th>Тип</th><th>Описание</th></tr>
+    <tr><td>Таблица устройств</td><td>dynamic с checkbox</td><td>Нечётная / чётная стороны (ЧЁТ/НЕЧ)</td></tr>
+    <tr><td><code>seg2</code></td><td>select</td><td>Сегмент 2: БО / СН</td></tr>
+    <tr><td><code>seg4_f</code>, <code>seg4_l</code></td><td>input</td><td>Параметры сегмента 4</td></tr>
+    <tr><td><code>seg5</code></td><td>input</td><td>Параметр сегмента 5</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">get_device_for_ondock</span> — загрузка устройств для снятия</div>
+    <ul class="ajax-params">
+      <li><code>params</code> = JSON: <code>{railway_id, part_id, seg2, seg4f, seg4l, seg5, side_id, side_type}</code></li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: JSON массив устройств</div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-update-zu">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_window_update_fix_device</span>
+  <span class="fn-title">Корректировка ЗУ</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <p style="font-size:12px">Аналогична <code>create_window_add_fix_device</code>, но для корректировки существующих назначений ЗУ.</p>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div>Несколько запросов для загрузки и обновления данных ЗУ (управление назначениями)</div></div>
+</div>
+</details>
+
+<!-- ═══════════════════ ВЗВЕШИВАНИЕ ═══════════════════ -->
+<div class="group-title" id="group-weigh">Взвешивание</div>
+
+<details id="dlg-weigh-import">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_weigh_import</span>
+  <span class="fn-title">Импорт данных взвешивания</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <p style="font-size:12px">Таблица с данными взвешивания: вагон, вес, дата взвешивания, тип, скорость, комментарий.</p>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div><span class="action">weigh_import</span> — импорт результатов с весов</div>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: JSON</div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-weigh-result">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_weight_result</span>
+  <span class="fn-title">Результаты взвешивания</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>Поле</th><th>Описание</th></tr>
+    <tr><td>Таблица результатов</td><td>Дата, тип, скорость, вес с весов, итоговый вес, «для акта» (checkbox), комментарий</td></tr>
+    <tr><td>Ручной ввод веса</td><td>Поле для ввода веса вручную при необходимости</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div>Несколько запросов для загрузки, сохранения и управления данными взвешивания.</div></div>
+</div>
+</details>
+
+<!-- ═══════════════════ НАКЛАДНЫЕ ═══════════════════ -->
+<div class="group-title" id="group-invoice">Накладные и контейнеры</div>
+
+<details id="dlg-fill-invoice">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">fill_railcar_for_invoice</span>
+  <span class="fn-title">Ввод вагона для накладной</span>
+  <span class="tag modal">Modal</span><span class="tag station">Углеуральская</span>
+</summary>
+<div class="body">
+  <div class="section-title">Триггер</div>
+  <div class="trigger-block">Только станция 1 (Углеуральская). Кнопка/меню при наличии «плохих» накладных.</div>
+
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация / Ограничения</th></tr>
+    <tr><td><code>md_invoice</code></td><td>select</td><td>Накладная</td><td><span class="req">Обязательно</span>, поля: INV_NUMBER, INVOICE_ID, CONT_NUMBER, OWNER</td></tr>
+    <tr><td><code>md_cont_number</code> (disabled)</td><td>text</td><td>Контейнеры</td><td>Авто из накладной</td></tr>
+    <tr><td><code>md_owner</code> (disabled)</td><td>text</td><td>Предприятие</td><td>Авто из накладной</td></tr>
+    <tr><td><code>md_invoice_car_number</code></td><td>text maxlength=8</td><td>Номер вагона</td><td><span class="req">Обязательно</span>, только цифры 0–9, 8 знаков</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">returnBadInvoices</span> — загрузка накладных без вагона</div>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>[{INV_NUMBER, INVOICE_ID, CONT_NUMBER, OWNER}]</code></div>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">fill_railcar_for_invoice</span> — привязка вагона</div>
+    <ul class="ajax-params"><li><code>inv_id</code>, <code>carnumber</code></li></ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">returnCountBadInvoices</span> — проверка оставшихся «плохих» накладных</div>
+  </div>
+
+  <div class="section-title">Ограничения</div>
+  <div class="note">Кнопка «Добавить» активируется только после ввода корректного номера вагона (8 цифр). Фоновый цвет меняется при наличии других ожидающих накладных.</div>
+</div>
+</details>
+
+<details id="dlg-move-cont">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_move_cont</span>
+  <span class="fn-title">Перемещение контейнеров</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>operation_date</code></td><td>datetime size=15</td><td>Дата и время операции (местное)</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>comment</code></td><td>text 350px</td><td>Комментарий</td><td><span class="opt">Необязательно</span></td></tr>
+    <tr><td><code>new_place_type</code></td><td>combobox select</td><td>Тип места</td><td>«Площадка» / «Вагон»</td></tr>
+    <tr><td><code>new_place_station</code></td><td>combobox select</td><td>Станция</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>new_place</code></td><td>combobox select</td><td>Место назначения</td><td><span class="req">Обязательно</span>, загружается через <code>get_places_for_cont</code></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block">
+    <div><span class="action">get_places_for_cont</span> — список мест при смене типа/станции</div>
+    <div style="margin-top:4px;color:var(--muted)">Параметры: <code>place_type</code>, <code>station_id</code></div>
+  </div>
+  <div class="ajax-block">
+    <div><span class="action">move_conts</span> — выполнение перемещения</div>
+    <ul class="ajax-params">
+      <li><code>conts</code> — список контейнеров</li>
+      <li><code>place_type</code>, <code>place_id</code>, <code>oper_date</code>, <code>comment</code></li>
+    </ul>
+    <div style="margin-top:4px;color:var(--muted)">Ответ: <code>"done"</code></div>
+  </div>
+</div>
+</details>
+
+<details id="dlg-return-invoice">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_return_invoice</span>
+  <span class="fn-title">Обратная накладная (ЗПУ)</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>Поле</th><th>Тип</th><th>Описание</th></tr>
+    <tr><td><code>conts</code></td><td>select</td><td>Выбор контейнеров</td></tr>
+    <tr><td>Таблица ЗПУ (на каждую пломбу)</td><td>dynamic</td><td>Тип ЗПУ, Знаки (×3), Кол-во, Год изг., Принадлежность</td></tr>
+  </table>
+
+  <div class="section-title">Формат пломбы (ЗПУ)</div>
+  <table>
+    <tr><th>Поле</th><th>Тип</th><th>Описание</th></tr>
+    <tr><td><code>seal_type</code></td><td>select</td><td>Тип ЗПУ, из <code>get_seal_types</code></td></tr>
+    <tr><td><code>seal_marks</code> [1..3]</td><td>text ×3</td><td>Знаки пломбы (до 3 частей)</td></tr>
+    <tr><td><code>seal_quantity</code></td><td>text</td><td>Количество</td></tr>
+    <tr><td><code>seal_year</code></td><td>text</td><td>Год изготовления</td></tr>
+    <tr><td><code>seal_owner_type</code></td><td>select</td><td>Принадлежность, из <code>get_seal_owner_types</code></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div><span class="action">get_seal_types</span> — справочник типов ЗПУ</div></div>
+  <div class="ajax-block"><div><span class="action">get_seal_owner_types</span> — справочник принадлежности</div></div>
+</div>
+</details>
+
+<!-- ═══════════════════ ПРОИЗВОДСТВО ═══════════════════ -->
+<div class="group-title" id="group-prod">Производство и прочее</div>
+
+<details id="dlg-export-samples">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_export_samples</span>
+  <span class="fn-title">Экспорт образцов (цеховые операции)</span>
+  <span class="tag modal">Modal</span><span class="tag ajax">5 AJAX</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>Поле</th><th>Тип</th><th>Описание</th></tr>
+    <tr><td>Тип загрузки</td><td>select</td><td>Из <code>get_loadind_type_oebs_list</code></td></tr>
+    <tr><td>Статус</td><td>select</td><td>Из <code>get_loadind_status_oebs_list</code></td></tr>
+    <tr><td>Продукт</td><td>select</td><td>Из <code>get_product_for_freight</code></td></tr>
+    <tr><td>Груз</td><td>select</td><td>—</td></tr>
+    <tr><td>Таблица образцов</td><td>dynamic</td><td>Заголовок из <code>get_sample_tbl_header</code>, данные из <code>get_disl_samples_info</code></td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div><span class="action">get_loadind_type_oebs_list</span> + <span class="action">get_loadind_status_oebs_list</span> + <span class="action">get_product_for_freight</span></div></div>
+  <div class="ajax-block"><div><span class="action">get_sample_tbl_header</span> — заголовки таблицы образцов</div></div>
+  <div class="ajax-block"><div><span class="action">get_disl_samples_info</span> — данные образцов</div></div>
+</div>
+</details>
+
+<details id="dlg-export-shop">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_export_shop_info</span>
+  <span class="fn-title">Экспорт информации магазина</span>
+  <span class="tag modal">Modal</span><span class="tag report">Отчёт</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Ограничения</th></tr>
+    <tr><td>freight</td><td>select</td><td>Наименование груза</td><td>Из <code>get_product_name_list</code></td></tr>
+    <tr><td>date_from</td><td>datetime</td><td>Дата от</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td>date_to</td><td>datetime</td><td>Дата до</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td>status</td><td>select</td><td>Статус</td><td>Из <code>get_loadind_status_oebs_list</code></td></tr>
+    <tr><td>type</td><td>select</td><td>Тип</td><td>Из <code>get_loadind_type_oebs_list</code></td></tr>
+  </table>
+
+  <div class="section-title">AJAX / Отчёт</div>
+  <div class="ajax-block"><div>Открывает отчёт: <code>xx_etw_disl_009/xx_etw_disl_009.php</code> с параметрами фильтра</div></div>
+</div>
+</details>
+
+<details id="dlg-processing">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_processing_of_wagons</span>
+  <span class="fn-title">Обработка вагонов</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Метка</th><th>Валидация</th></tr>
+    <tr><td><code>begin_processing_date</code></td><td>datetime size=15</td><td>Дата/время начала обработки</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>end_processing_date</code></td><td>datetime size=15</td><td>Дата/время окончания обработки</td><td><span class="req">Обязательно</span></td></tr>
+    <tr><td><code>processing_add_wagon</code></td><td>text size=11 maxlength=11</td><td>Добавить вагон/платформу</td><td>—</td></tr>
+  </table>
+
+  <div class="section-title">Таблица вагонов</div>
+  <p style="font-size:12px">Колонки: №, Вагон/платформа, Контейнер, Груз, Номер позиции, Номер задания, Дата нач. обр., Дата оконч. обр.</p>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div><span class="action">get_disl_freight_oebs</span> — маппинг грузов</div></div>
+  <div class="ajax-block"><div>Запросы на сохранение обработки вагонов (производственные операции)</div></div>
+</div>
+</details>
+
+<details id="dlg-manual-upd">
+<summary>
+  <span class="toggle-icon">▶</span>
+  <span class="fn-name">create_md_manual_upd_wagon</span>
+  <span class="fn-title">Ручное принятие вагонов</span>
+  <span class="tag modal">Modal</span>
+</summary>
+<div class="body">
+  <div class="section-title">Поля формы</div>
+  <table>
+    <tr><th>ID</th><th>Тип</th><th>Описание</th></tr>
+    <tr><td><code>manual_upd_add_wagon</code></td><td>text size=8 maxlength=8</td><td>Номер вагона для добавления</td></tr>
+    <tr><td>Таблица</td><td>dynamic</td><td>Колонки: №, Вагон/платформа, Номер накладной, Статус обработки</td></tr>
+  </table>
+
+  <div class="section-title">AJAX-запросы</div>
+  <div class="ajax-block"><div>Запросы для ручного принятия / обновления статуса вагонов в системе.</div></div>
+
+  <div class="section-title">Ограничения</div>
+  <div class="note">Поле ввода вагона: только 8 символов. Используется для ручной коррекции статуса при сбоях автоматики.</div>
+</div>
+</details>
+
+</div><!-- /container -->
+
+<script>
+// Раскрыть/свернуть все по двойному клику на заголовке группы
+document.querySelectorAll('.group-title').forEach(function(title) {
+  title.style.cursor = 'pointer';
+  title.title = 'Двойной клик — раскрыть/свернуть все в группе';
+  title.addEventListener('dblclick', function() {
+    var next = title.nextElementSibling;
+    while (next && next.tagName === 'DETAILS') {
+      next.open = !next.open;
+      next = next.nextElementSibling;
+    }
+  });
+});
+// Авто-закрытие других при открытии (опционально — убрать если нужно иметь несколько открытых)
+// document.querySelectorAll('details').forEach(function(d) {
+//   d.addEventListener('toggle', function() {
+//     if (d.open) {
+//       document.querySelectorAll('details').forEach(function(o) { if (o !== d) o.open = false; });
+//     }
+//   });
+// });
+</script>
+</body>
+</html>
